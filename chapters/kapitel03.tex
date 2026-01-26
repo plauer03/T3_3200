@@ -1,0 +1,39 @@
+\section{Dimensionierung des Bootstrap-Kondensators $C_\mathrm{BOOT}$}
+
+Die Dimensionierung des Bootstrap-Kondensators ($C_\mathrm{BOOT}$) ist ein kritischer Aspekt beim Design von High-Side-Treiberschaltungen. Der Kondensator dient als schwimmende Spannungsquelle (Floating Supply) für den High-Side-Teil des Gatetreibers und wird jeweils aufgeladen, wenn der Low-Side-Schalter leitend ist und das Referenzpotential auf Masse zieht. Entladen wird der Kondensator ausschließlich während der Einschaltphase des High-Side-MOSFETs.
+
+Ein wesentliches Auslegungskriterium ist der maximal zulässige Spannungsabfall $\Delta V_\mathrm{BOOT}$ über dem Kondensator während der Einschaltzeit ($t_\mathrm{on}$). Fällt die Spannung am Kondensator zu stark ab, sinkt die effektive Gate-Source-Spannung $V_\mathrm{GS}$ des High-Side-Transistors. Dies kann dazu führen, dass der Transistor den Sättigungsbereich verlässt, was die Leitendverluste signifikant erhöht, oder dass die Unterspannungsabschaltung (UVLO) des Treibers aktiviert wird. Gemäß der Auslegungsvorschriften für Bootstrap-Schaltungen muss der Kondensator daher eine ausreichende Ladungsreserve $Q_\mathrm{Total}$ bereitstellen, um den Spannungsabfall innerhalb definierter Grenzen zu halten \cite{Quelle_AN6076}.
+
+Die zur Dimensionierung notwendige Gesamtkapazität berechnet sich nach:
+\begin{equation}
+C_\mathrm{BOOT} = \frac{Q_\mathrm{Total}}{\Delta V_\mathrm{BOOT}}
+\label{eq:cboot_def}
+\end{equation}
+Die benötigte Gesamtladung $Q_\mathrm{Total}$ setzt sich dabei additiv aus der Gateladung des MOSFETs, der Ladung für den internen Level-Shifter sowie den Verlusten durch Leckströme zusammen.
+
+Für den hier verwendeten MOSFET IPP034N08N5 ist im Datenblatt eine Gateladung von \SI{87}{\nano\coulomb} bei einer Ansteuerung von \SI{10}{\volt} spezifiziert. Da der Gatetreiber IR2104 jedoch mit $V_\mathrm{CC} = \SI{15}{\volt}$ versorgt wird, muss die Gateladung für diesen Arbeitspunkt extrapoliert werden. Unter Einbeziehung der Eingangskapazität $C_\mathrm{iss}$ ergibt sich eine effektive Gateladung von:
+\begin{equation}
+Q_\mathrm{Gate} \approx \SI{5}{\volt} \cdot C_\mathrm{iss} + Q_\mathrm{Gate,10V} = \SI{111}{\nano\coulomb}
+\end{equation}
+
+Zusätzlich zur statischen Gateladung müssen die zeitabhängigen Verluste durch Leckströme während der maximalen Einschaltdauer berücksichtigt werden. Für die Berechnung wird ein Worst-Case-Szenario mit einer Periodendauer $T = \SI{50}{\micro\second}$ (entsprechend $f_s = \SI{20}{\kilo\hertz}$) als relevante Entladezeit $t_\mathrm{on}$ angenommen. Die relevanten Leckströme ergeben sich aus den Datenblättern des Treibers und der Peripherie:
+\begin{itemize}
+    \item Treiber-Leckstrom: $I_\mathrm{LK} = \SI{50}{\micro\ampere}$
+    \item Ruhestrom der Bootstrap-Schaltung: $I_\mathrm{QBS} = \SI{55}{\micro\ampere}$
+    \item Gate-Source-Leckstrom: $I_\mathrm{GSS} = \SI{100}{\nano\ampere}$
+    \item Leckstrom der Bootstrap-Diode: $I_\mathrm{LKDIODE} = \SI{10}{\micro\ampere}$
+\end{itemize}
+Der Leckstrom des Kondensators selbst ($I_\mathrm{LKCAP}$) wird vernachlässigt, da ein Keramikkondensator mit vernachlässigbarer Selbstentladung zum Einsatz kommt. Die Summe der Leckströme beträgt somit $I_\mathrm{Leak} \approx \SI{115,1}{\micro\ampere}$. Über die Einschaltdauer $t_\mathrm{on}$ resultiert daraus ein Ladungsverlust von:
+\begin{equation}
+Q_\mathrm{Leak} = I_\mathrm{Leak} \cdot t_\mathrm{on} = \SI{115,1}{\micro\ampere} \cdot \SI{50}{\micro\second} \approx \SI{5,8}{\nano\coulomb}
+\end{equation}
+Unter Berücksichtigung der für Hochvolt-Treiber typischen Ladung des Level-Shifters von $Q_\mathrm{LS} = \SI{3}{\nano\coulomb}$ ergibt sich die Gesamtladung zu:
+\begin{equation}
+Q_\mathrm{Total} = Q_\mathrm{Gate} + Q_\mathrm{LS} + Q_\mathrm{Leak} = \SI{111}{\nano\coulomb} + \SI{3}{\nano\coulomb} + \SI{5,8}{\nano\coulomb} = \SI{119,8}{\nano\coulomb}
+\end{equation}
+
+Um eine sichere Ansteuerung des High-Side-MOSFETs zu gewährleisten, wird ein maximaler Spannungsabfall (Ripple) von $\Delta V_\mathrm{BOOT} = \SI{1}{\volt}$ definiert. Eingesetzt in Gleichung \ref{eq:cboot_def} folgt daraus der minimal notwendige Kapazitätswert:
+\begin{equation}
+C_\mathrm{BOOT,min} = \frac{\SI{119,8}{\nano\coulomb}}{\SI{1}{\volt}} = \SI{119,8}{\nano\farad}
+\end{equation}
+In der praktischen Anwendung wird empfohlen, den Kondensator so zu dimensionieren, dass er nicht zu groß gewählt wird, um die Ladezeit in kurzen Low-Side-Phasen nicht unnötig zu verlängern, aber ausreichend Reserve bietet. Ein Normwert von \SI{150}{\nano\farad} oder \SI{220}{\nano\farad} ist für diese Anwendung angemessen.

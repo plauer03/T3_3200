@@ -1,0 +1,91 @@
+\documentclass[12pt,a4paper,twoside]{article}
+
+% Kodierung, Sprache
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{color}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\numberwithin{equation}{section}
+\usepackage{nomencl}
+\makenomenclature
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{array}
+\usepackage{parskip}
+\usepackage{hyperref}
+% Zeilenabstand
+\usepackage[onehalfspacing]{setspace}
+% Seitenränder: inner = Bindungsseite 3cm, outer = gegenüberliegende Seite 2.5cm
+\usepackage[
+  inner=3cm,
+  outer=2.5cm,
+  top=2.5cm,
+  bottom=2.5cm,
+  bindingoffset=0cm
+]{geometry}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} % alle Kopf- und Fußzeilen leeren
+\fancyfoot[R]{\thepage} % Seitenzahl unten rechts
+\renewcommand{\headrulewidth}{0pt} % keine Linie oben
+\renewcommand{\footrulewidth}{0pt} % keine Linie unten
+\usepackage{siunitx}
+\sisetup{
+  per-mode = symbol,      % für A/V etc.
+  detect-all             % passt Schriftart an Fließtext an
+}
+
+
+
+
+% Optional: Rahmen anzeigen zum Testen (entfernen im finalen Dokument)
+%\usepackage{showframe}
+
+\graphicspath{{images/}}
+
+% Metadaten (zentral definieren)
+\newcommand{\titel}{Entwicklung eines BLDC-Motorcontrollers}
+\newcommand{\projektart}{Studienarbeit II (T3\_3200)}
+\newcommand{\studiengang}{Elektrotechnik}
+\newcommand{\hochschule}{Duale Hochschule Baden-Württemberg Karlsruhe}
+\newcommand{\firma}{ARKU Maschinenbau GmbH}
+\newcommand{\autor}{Pascal Lauer}
+\newcommand{\matrikel}{5558179}
+\newcommand{\kurs}{TEL23B1}
+\newcommand{\abgabedatum}{09.04.2026}
+\newcommand{\bearbeitungszeitraum}{12 Wochen}
+\newcommand{\firmaadresse}{76532 Baden-Baden}
+\newcommand{\betreuerfirma}{B. Eng. Adrian Fleig}
+\newcommand{\gutachterdh}{Titel Vorname Nachname}
+
+% Deckblatt einbinden
+\begin{document}
+\input{deckblatt}
+\clearpage
+
+% Leere Seite zum Drucken und Binden
+\newpage 
+\thispagestyle{empty}
+\quad 
+\newpage
+% ---
+
+\pagenumbering{Roman}
+
+\input{disclaimer/disclaimers}
+\clearpage
+
+% Platz für Inhaltsverzeichnis und Text
+\tableofcontents
+\clearpage
+
+% Hier geht die Arbeit los
+\pagenumbering{arabic}
+\input{chapters/kapitel01}
+\input{chapters/kapitel02}
+\input{chapters/kapitel03}
+
+\end{document}

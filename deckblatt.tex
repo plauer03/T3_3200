@@ -1,0 +1,49 @@
+% Nur Inhalt der Titelseite, keine \documentclass oder \begin{document}
+\begin{titlepage}
+  \centering
+  %\vspace*{1.5cm}
+
+  % Logos oben links und rechts (optional)
+  \begin{minipage}{0.45\textwidth}
+    \raggedright
+  %  \includegraphics[width=0.6\linewidth]{arku_logo.png} % ersetze Dateinamen falls nötig
+  \end{minipage}%
+  \begin{minipage}{0.10\textwidth}
+    \hfill
+  \end{minipage}%
+  \begin{minipage}{0.45\textwidth}
+    \raggedleft
+  %  \includegraphics[width=0.6\linewidth]{dhbw_logo.png} % ersetze Dateinamen falls nötig
+  \end{minipage}
+
+  \vspace{1.5cm}
+
+  % Titel (zweizeilig möglich)
+  {\LARGE\bfseries \titel \par}
+  \vspace{0.6cm}
+  {\large \projektart \par}
+
+  \vspace{2.0cm}
+
+  % Studiengang und Beschreibung
+  {\large des Studienganges \studiengang \par}
+  {\large an der \hochschule \par}
+
+  \vspace{1.5cm}
+
+  % Autor
+  {\large von \par}
+  {\large \autor \par}
+
+  \vspace{6.5cm}
+
+  % Metadaten in einer Tabelle
+  \begin{tabular}{@{}p{0.5\textwidth} p{0.35\textwidth}@{}}
+    \textbf{Abgabedatum:} & \abgabedatum \\
+    \textbf{Bearbeitungszeitraum:} & \bearbeitungszeitraum \\
+    \textbf{Matrikelnummer, Kurs:} & \matrikel, \kurs \\
+    \textbf{Dualer Partner:} & \firma \\ & \firmaadresse \\
+    \textbf{Betreuer des Dualen Partners:} & \betreuerfirma \\
+    \textbf{Gutachter der Dualen Hochschule:} & \gutachterdh \\
+  \end{tabular}
+\end{titlepage}

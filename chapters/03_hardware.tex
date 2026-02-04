@@ -1,0 +1,28 @@
+\chapter{Hardware-Entwurf und Dimensionierung}
+\label{chap:hardware}
+\todo[inline, color=red!40]{KERNSTÜCK (8-10 Seiten). Hier Datenblätter referenzieren!}
+
+\section{Auswahl der Leistungshalbleiter}
+Für die \SI{36}{\volt}-Anwendung (max. \SI{42}{\volt} Ladespannung) wurde der \textbf{Infineon IPP034N08N5} (\SI{80}{\volt}, TO-220) gewählt.
+\todo[inline]{Begründung: 80V bietet genügend Sicherheitsmarge für induktive Spikes. $R_{DS(on)}$ ist extrem niedrig.}
+
+\subsection{Berechnung der Leitendverluste}
+Basierend auf der Infineon Application Note AN 2015-05 lassen sich die statischen Verluste $P_{Cond}$ abschätzen. Bei einem Phasenstrom von $I_{rms} \approx \SI{30}{\ampere}$ und $R_{DS(on)} = \SI{3,4}{\milli\ohm}$ gilt pro MOSFET:
+\begin{equation}
+    P_{Cond} = I_{rms}^2 \cdot R_{DS(on)} = (\SI{30}{\ampere})^2 \cdot \SI{0,0034}{\ohm} = \SI{3,06}{\watt}
+\end{equation}
+\todo[inline]{Diskutieren: 3W sind beherrschbar, erfordern aber Kühlung (siehe Kap \ref{chap:thermik}).}
+
+\subsection{Schaltverluste}
+\todo[inline]{Formel für $P_{SW}$ (Switching Losses) aus AN einfügen. Abhängig von Schaltfrequenz $f_{sw}$ und Rise/Fall-Time.}
+
+\section{Gate-Treiber und Bootstrap-Dimensionierung}
+Als Treiber kommt der \textbf{IR2104} zum Einsatz. Die Versorgung der High-Side erfolgt über eine Bootstrap-Schaltung.
+
+\subsection{Berechnung des Bootstrap-Kondensators}
+% --- HIER IHREN TEXT ZUM BOOTSTRAP-KONDENSATOR EINFÜGEN ---
+Die benötigte Ladung $Q_{Total}$ muss vom Kondensator $C_{BS}$ bereitgestellt werden.
+\todo[inline]{Hier Ihren bereits verfassten Text einfügen!}
+
+\section{Zwischenkreis (DC-Link)}
+\todo[inline]{Auslegung der Elkos für den Ripplestrom. Parallelschaltung von Keramik-Kondensatoren zur Filterung hoher Frequenzen.}

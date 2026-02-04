@@ -1,0 +1,66 @@
+% settings.tex
+% -------------------------------------------------------------------
+% PAKETE & EINSTELLUNGEN
+% -------------------------------------------------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[ngerman]{babel}
+
+% Typografie & Mathe
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{microtype} % Verbessert das Schriftbild enorm
+\usepackage[onehalfspacing]{setspace} % 1.5 Zeilenabstand
+
+% Layout & Seitenränder (DHBW konform)
+\usepackage[
+  inner=3cm,      % Bundsteg
+  outer=2.5cm, 
+  top=2.5cm, 
+  bottom=2.5cm
+]{geometry}
+
+% Kopf- und Fußzeilen
+\usepackage[automark, headsepline]{scrlayer-scrpage}
+\clearpairofpagestyles
+\ihead{\headmark}
+\ohead{\pagemark}
+\pagestyle{scrheadings}
+
+% Einheiten (WICHTIG für Ihre Berechnungen!)
+\usepackage{siunitx}
+\sisetup{
+  locale = DE, 
+  per-mode = symbol,
+  detect-all
+}
+
+% Grafiken & Tabellen
+\usepackage{graphicx}
+\graphicspath{{images/}}
+\usepackage{booktabs} % Schöne Tabellenlinien
+
+% Literatur
+\usepackage{csquotes}
+\usepackage[backend=biber, style=ieee]{biblatex}
+\addbibresource{references.bib}
+
+% Verlinkungen (als letztes laden)
+\usepackage[hidelinks]{hyperref}
+\usepackage[colorinlistoftodos, prependcaption]{todonotes}
+
+% Metadaten-Kommandos
+\newcommand{\titel}{Entwicklung eines BLDC-Motorcontrollers}
+\newcommand{\projektart}{Studienarbeit II (T3\_3200)}
+\newcommand{\studiengang}{Elektrotechnik}
+\newcommand{\hochschule}{Duale Hochschule Baden-Württemberg Karlsruhe}
+\newcommand{\firma}{ARKU Maschinenbau GmbH}
+\newcommand{\autor}{Pascal Lauer}
+\newcommand{\matrikel}{5558179}       
+\newcommand{\kurs}{TEL23B1}
+\newcommand{\abgabedatum}{09.04.2026}
+\newcommand{\bearbeitungszeitraum}{12 Wochen}
+\newcommand{\firmaadresse}{76532 Baden-Baden}
+%\newcommand{\betreuerfirma}{B. Eng. Adrian Fleig}
+\newcommand{\betreuerfirma}{Prof. Dr. Markus Bell}
+\newcommand{\gutachterdh}{Titel Vorname Nachname}

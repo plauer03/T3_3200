@@ -1,0 +1,26 @@
+\chapter{Theoretische Grundlagen der Ansteuerung}
+\label{chap:grundlagen}
+\todo[inline, color=green!40]{Zielumfang: ca. 4-5 Seiten. Hier mathematisches Verständnis beweisen!}
+
+\section{Der bürstenlose Gleichstrommotor (BLDC)}
+\todo[inline]{Kurz: Statoraufbau, Rotorlageerkennung via Hall-Sensoren. Ersatzschaltbild (R, L, BEMF).}
+
+\section{Topologie des B6-Wechselrichters}
+Die Ansteuerung erfolgt über eine 3-phasige Brückenschaltung (B6-Topologie).
+\todo[inline]{Erklären: Kommutierungszelle. Was passiert in der Totzeit? (Freilaufdioden-Strom).}
+% Hier Bild einfügen: 
+
+\section{Raumzeigermodulation (SVPWM)}
+Im Gegensatz zur blockförmigen Kommutierung ermöglicht die SVPWM eine bessere Ausnutzung der Zwischenkreisspannung um den Faktor $2/\sqrt{3} \approx 1,15$.
+\todo[inline]{Das Hexagon-Diagramm einfügen. Sektoren erklären.}
+
+Die Einschaltzeiten $T_1, T_2$ und $T_0$ (Nullzeiger) für einen Referenzvektor $V_{ref}$ im Sektor 1 berechnen sich trigonometrisch:
+\begin{equation}
+    T_1 = \frac{\sqrt{3} \cdot T_s \cdot |V_{ref}|}{V_{DC}} \cdot \sin\left(\frac{\pi}{3} - \theta\right)
+\end{equation}
+\begin{equation}
+    T_2 = \frac{\sqrt{3} \cdot T_s \cdot |V_{ref}|}{V_{DC}} \cdot \sin(\theta)
+\end{equation}
+\begin{equation}
+    T_0 = T_s - T_1 - T_2
+\end{equation}

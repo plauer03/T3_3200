@@ -1,91 +1,47 @@
-\documentclass[12pt,a4paper,twoside]{article}
+% main.tex
+\documentclass[
+  12pt, 
+  a4paper, 
+  twoside,      % Zweiseitig für Druck
+  openright,    % Kapitel beginnen immer rechts
+  parskip=half, % Absatzabstand
+  listof=totoc, % Verzeichnisse ins Inhaltsverzeichnis
+  bibliography=totoc
+]{scrreprt}
 
-% Kodierung, Sprache
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage[ngerman]{babel}
-\usepackage{color}
-\usepackage{amssymb}
-\usepackage{amsthm}
-\usepackage{amsmath}
-\numberwithin{equation}{section}
-\usepackage{nomencl}
-\makenomenclature
-\usepackage{graphicx}
-\usepackage{microtype}
-\usepackage{array}
-\usepackage{parskip}
-\usepackage{hyperref}
-% Zeilenabstand
-\usepackage[onehalfspacing]{setspace}
-% Seitenränder: inner = Bindungsseite 3cm, outer = gegenüberliegende Seite 2.5cm
-\usepackage[
-  inner=3cm,
-  outer=2.5cm,
-  top=2.5cm,
-  bottom=2.5cm,
-  bindingoffset=0cm
-]{geometry}
-\usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhf{} % alle Kopf- und Fußzeilen leeren
-\fancyfoot[R]{\thepage} % Seitenzahl unten rechts
-\renewcommand{\headrulewidth}{0pt} % keine Linie oben
-\renewcommand{\footrulewidth}{0pt} % keine Linie unten
-\usepackage{siunitx}
-\sisetup{
-  per-mode = symbol,      % für A/V etc.
-  detect-all             % passt Schriftart an Fließtext an
-}
+% Einstellungen laden
+\input{settings}
 
-
-
-
-% Optional: Rahmen anzeigen zum Testen (entfernen im finalen Dokument)
-%\usepackage{showframe}
-
-\graphicspath{{images/}}
-
-% Metadaten (zentral definieren)
-\newcommand{\titel}{Entwicklung eines BLDC-Motorcontrollers}
-\newcommand{\projektart}{Studienarbeit II (T3\_3200)}
-\newcommand{\studiengang}{Elektrotechnik}
-\newcommand{\hochschule}{Duale Hochschule Baden-Württemberg Karlsruhe}
-\newcommand{\firma}{ARKU Maschinenbau GmbH}
-\newcommand{\autor}{Pascal Lauer}
-\newcommand{\matrikel}{5558179}
-\newcommand{\kurs}{TEL23B1}
-\newcommand{\abgabedatum}{09.04.2026}
-\newcommand{\bearbeitungszeitraum}{12 Wochen}
-\newcommand{\firmaadresse}{76532 Baden-Baden}
-\newcommand{\betreuerfirma}{B. Eng. Adrian Fleig}
-\newcommand{\gutachterdh}{Titel Vorname Nachname}
-
-% Deckblatt einbinden
 \begin{document}
-\input{deckblatt}
-\clearpage
 
-% Leere Seite zum Drucken und Binden
-\newpage 
-\thispagestyle{empty}
-\quad 
-\newpage
-% ---
-
+% --- VORSPANN ---
 \pagenumbering{Roman}
 
+% Deckblatt
+\input{deckblatt} 
+\cleardoublepage % Sorgt für leere Rückseite falls nötig
+
+% Disclaimer
 \input{disclaimer/disclaimers}
-\clearpage
+\cleardoublepage
 
-% Platz für Inhaltsverzeichnis und Text
+% Inhaltsverzeichnis
 \tableofcontents
-\clearpage
+\cleardoublepage
 
-% Hier geht die Arbeit los
+% --- HAUPTTEIL ---
 \pagenumbering{arabic}
-\input{chapters/kapitel01}
-\input{chapters/kapitel02}
-\input{chapters/kapitel03}
+
+
+\input{chapters/01_einleitung}
+\input{chapters/02_grundlagen}
+\input{chapters/03_hardware}
+\input{chapters/04_thermik}
+\input{chapters/05_pcb}
+\input{chapters/06_software}
+\input{chapters/07_fazit}
+
+% --- NACHSPANN ---
+\printbibliography
 
 \end{document}

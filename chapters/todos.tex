@@ -1,0 +1,129 @@
+% ===================================================================
+% KAPITEL 1: EINLEITUNG
+% ===================================================================
+\chapter{Einleitung}
+\todo[inline, color=green!40]{Zielumfang: ca. 2 Seiten}
+
+\section{Motivation}
+\todo[inline]{Beschreiben: Trend zur E-Mobilität, Anforderungen an hochintegrierte Antriebe im E-Kart-Bereich.}
+
+\section{Zielsetzung}
+Ziel dieser Arbeit ist die Entwicklung und Validierung einer Motorsteuerung für einen 36V BLDC-Motor. Der Controller soll für einen Dauerphasenstrom von 30A ausgelegt werden und mittels Space Vector PWM (SVPWM) angesteuert werden.
+
+\section{Abgrenzung}
+\todo[inline]{Fokus: Hardware-Design (Leistungselektronik) und Open-Loop SVPWM. Keine feldorientierte Regelung (FOC) mit Stromrückführung in dieser Phase.}
+
+% ===================================================================
+% KAPITEL 2: GRUNDLAGEN
+% ===================================================================
+\chapter{Theoretische Grundlagen der Ansteuerung}
+\todo[inline, color=green!40]{Zielumfang: ca. 4-5 Seiten. Hier mathematisches Verständnis beweisen!}
+
+\section{Der bürstenlose Gleichstrommotor (BLDC)}
+\todo[inline]{Kurz: Statoraufbau, Rotorlageerkennung via Hall-Sensoren. Ersatzschaltbild (R, L, BEMF).}
+
+\section{Topologie des B6-Wechselrichters}
+Die Ansteuerung erfolgt über eine 3-phasige Brückenschaltung (B6-Topologie).
+\todo[inline]{Erklären: Kommutierungszelle. Was passiert in der Totzeit? (Freilaufdioden-Strom).}
+
+
+
+\section{Raumzeigermodulation (SVPWM)}
+Im Gegensatz zur blockförmigen Kommutierung ermöglicht die SVPWM eine bessere Ausnutzung der Zwischenkreisspannung um den Faktor $2/\sqrt{3} \approx 1,15$.
+\todo[inline]{Das Hexagon-Diagramm einfügen. Sektoren erklären.}
+
+Die Einschaltzeiten $T_1, T_2$ und $T_0$ (Nullzeiger) für einen Referenzvektor $V_{ref}$ im Sektor 1 berechnen sich trigonometrisch:
+\begin{equation}
+    T_1 = \frac{\sqrt{3} \cdot T_s \cdot |V_{ref}|}{V_{DC}} \cdot \sin\left(\frac{\pi}{3} - \theta\right)
+\end{equation}
+\begin{equation}
+    T_2 = \frac{\sqrt{3} \cdot T_s \cdot |V_{ref}|}{V_{DC}} \cdot \sin(\theta)
+\end{equation}
+\begin{equation}
+    T_0 = T_s - T_1 - T_2
+\end{equation}
+
+% ===================================================================
+% KAPITEL 3: HARDWARE DESIGN (KERNSTÜCK)
+% ===================================================================
+\chapter{Hardware-Entwurf und Dimensionierung}
+\todo[inline, color=red!40]{KERNSTÜCK (8-10 Seiten). Hier Datenblätter und Application Notes referenzieren!}
+
+\section{Auswahl der Leistungshalbleiter}
+Für die 36V-Anwendung (max. 42V Ladespannung) wurde der \textbf{Infineon IPP034N08N5} (80V, TO-220) gewählt.
+\todo[inline]{Begründung: 80V bietet genügend Sicherheitsmarge für induktive Spikes. $R_{DS(on)}$ ist extrem niedrig.}
+
+\subsection{Berechnung der Leitendverluste}
+Basierend auf der Infineon Application Note AN 2015-05 lassen sich die statischen Verluste $P_{Cond}$ abschätzen. Bei einem Phasenstrom von $I_{rms} \approx 30A$ und $R_{DS(on)} = 3,4m\Omega$ gilt pro MOSFET:
+\begin{equation}
+    P_{Cond} = I_{rms}^2 \cdot R_{DS(on)} = (30A)^2 \cdot 0,0034\Omega = 3,06 W
+\end{equation}
+\todo[inline]{Diskutieren: 3W sind beherrschbar, erfordern aber Kühlung (siehe Kap 4).}
+
+\subsection{Schaltverluste}
+\todo[inline]{Formel für $P_{SW}$ (Switching Losses) aus AN einfügen. Abhängig von Schaltfrequenz $f_{sw}$ und Rise/Fall-Time.}
+
+\section{Gate-Treiber und Bootstrap-Dimensionierung}
+Als Treiber kommt der \textbf{IR2104} zum Einsatz. Die Versorgung der High-Side erfolgt über eine Bootstrap-Schaltung.
+
+\subsection{Berechnung des Bootstrap-Kondensators}
+Die benötigte Ladung $Q_{Total}$ muss vom Kondensator $C_{BS}$ bereitgestellt werden, ohne dass die Spannung zu stark einbricht.
+\begin{equation}
+    Q_{Total} = Q_{Gate} + Q_{LS} + (I_{Leak} \cdot t_{on})
+\end{equation}
+Mit $Q_{Gate} \approx 69nC$ (aus Datenblatt IPP034N08N5) und $Q_{LS} \approx 3nC$ sowie Sicherheitsfaktoren ergibt sich:
+\begin{equation}
+    C_{BS} \geq \frac{Q_{Total}}{\Delta V_{Ripple}}
+\end{equation}
+\todo[inline]{Berechnung einfügen: Gewählt 220nF - 470nF (X7R Keramik).}
+\todo[inline]{Erwähnen: Bootstrap-Diode UF4007 (Ultra Fast) statt 1N4007, da $t_{rr}$ kritisch ist bei hohen Frequenzen.}
+
+
+
+\section{Zwischenkreis (DC-Link)}
+\todo[inline]{Auslegung der Elkos für den Ripplestrom. Parallelschaltung von Keramik-Kondensatoren zur Filterung hoher Frequenzen.}
+
+% ===================================================================
+% KAPITEL 4: THERMIK
+% ===================================================================
+\chapter{Thermisches Management}
+\todo[inline, color=green!40]{Ingenieurs-Aspekt: Kühlkörperberechnung.}
+
+\section{Thermisches Ersatzschaltbild}
+Um die Junction-Temperatur $T_J$ unter dem Maximum ($175^\circ C$) zu halten, gilt:
+\begin{equation}
+    T_J = P_{tot} \cdot (R_{thJC} + R_{thCH} + R_{thHA}) + T_{Amb}
+\end{equation}
+Dabei ist:
+\begin{itemize}
+    \item $R_{thJC}$: Wärmewiderstand Chip-Gehäuse (aus Datenblatt: $1,1 K/W$).
+    \item $R_{thCH}$: Wärmewiderstand Gehäuse-Kühlkörper (Isolierscheibe! Glimmer $\approx 0,5 K/W$).
+    \item $R_{thHA}$: Wärmewiderstand Kühlkörper-Luft (zu berechnen).
+\end{itemize}
+
+\section{Auslegung des Kühlkörpers}
+\todo[inline]{Rechnung: Welchen Rth-Wert muss der Kühlkörper haben, um bei 30A (ca. 4-5W Gesamtverlust pro FET) stabil zu bleiben?}
+
+% ===================================================================
+% KAPITEL 5: PCB DESIGN
+% ===================================================================
+\chapter{PCB-Design und Layout}
+\section{Masseführung}
+\todo[inline]{Trennung von Power-GND und Signal-GND (Sternpunkt beim Elko).}
+\section{Strompfade}
+\todo[inline]{Minimierung der Leiterschleifen in der Kommutierungszelle zur Reduktion parasitärer Induktivitäten.}
+
+% ===================================================================
+% KAPITEL 6: IMPLEMENTIERUNG
+% ===================================================================
+\chapter{Software-Implementierung und Validierung}
+\section{STM32 Konfiguration}
+\todo[inline]{Timer-Setup: Center-Aligned PWM für SVPWM. ADC-Triggerung in der PWM-Mitte.}
+\section{Messergebnisse}
+\todo[inline]{Platzhalter für Oszi-Bilder: Gate-Signale, Totzeit-Überprüfung, Phasenstrom.}
+
+% ===================================================================
+% KAPITEL 7: FAZIT
+% ===================================================================
+\chapter{Fazit und Ausblick}
+\todo[inline]{Zusammenfassung. Nächste Schritte: Strommessung integrieren, FOC-Regelung.}

@@ -1,0 +1,18 @@
+\chapter{Thermisches Management}
+\label{chap:thermik}
+\todo[inline, color=green!40]{Ingenieurs-Aspekt: Kühlkörperberechnung.}
+
+\section{Thermisches Ersatzschaltbild}
+Um die Junction-Temperatur $T_J$ unter dem Maximum (\SI{175}{\celsius}) zu halten, gilt:
+\begin{equation}
+    T_J = P_{tot} \cdot (R_{thJC} + R_{thCH} + R_{thHA}) + T_{Amb}
+\end{equation}
+Dabei ist:
+\begin{itemize}
+    \item $R_{thJC}$: Wärmewiderstand Chip-Gehäuse (aus Datenblatt: \SI{1,1}{\kelvin\per\watt}).
+    \item $R_{thCH}$: Wärmewiderstand Gehäuse-Kühlkörper (Isolierscheibe! Glimmer $\approx \SI{0,5}{\kelvin\per\watt}$).
+    \item $R_{thHA}$: Wärmewiderstand Kühlkörper-Luft (zu berechnen).
+\end{itemize}
+
+\section{Auslegung des Kühlkörpers}
+\todo[inline]{Rechnung: Welchen Rth-Wert muss der Kühlkörper haben, um bei 30A (ca. 4-5W Gesamtverlust pro FET) stabil zu bleiben?}

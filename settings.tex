@@ -9,8 +9,9 @@
 
 % Typografie & Mathe
 \usepackage{amsmath, amssymb, amsthm}
-\usepackage{microtype} % Verbessert das Schriftbild enorm
+\usepackage[nopatch=footnote]{microtype}
 \usepackage[onehalfspacing]{setspace} % 1.5 Zeilenabstand
+\setlength{\emergencystretch}{5em} % für overbox full
 
 % Layout & Seitenränder (DHBW konform)
 \usepackage[
@@ -34,6 +35,10 @@
   per-mode = symbol,
   detect-all
 }
+
+%Cirkuitz
+\usepackage[european, straightvoltages]{circuitikz}
+\usepackage{tikz} 
 
 % Grafiken & Tabellen
 \usepackage{graphicx}

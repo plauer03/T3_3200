@@ -3,6 +3,41 @@
 
 Ziel des Hardware-Entwurfs ist die Realisierung einer robusten 3-Phasen-Brückenschaltung (B6-Topologie), die für einen Nennstrom von \SI{30}{\ampere} bei einer Zwischenkreisspannung von \SI{36}{\volt} ausgelegt ist. Im folgenden Kapitel werden die zentralen Komponenten die Leistungshalbleiter und deren Ansteuerung ausgewählt und dimensioniert.
 
+\section{Hardwareaufbau des Prototpys}
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        % Paths, nodes and wires:
+        \node[shape=rectangle, draw, line width=1pt, minimum width=3.965cm, minimum height=1.965cm] at (6, 5){};
+        \draw (4.5, 6) -- (4.5, 7);
+        \draw (5.5, 6) -- (5.5, 7);
+        \draw (6.5, 6) -- (6.5, 7);
+        \draw (7.5, 6) -- (7.5, 7);
+        \draw (4.5, 3) -- (4.5, 4);
+        \draw (5.5, 3) -- (5.5, 4);
+        \draw (6.5, 3) -- (6.5, 4);
+        \draw (7.5, 3) -- (7.5, 4);
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.965cm] at (4.5, 5.5){} node[anchor=center, align=center, text width=0.577cm, inner sep=6pt] at (4.5, 5.5){GND};
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.965cm] at (5.5, 5.5){} node[anchor=center, align=center, text width=0.577cm, inner sep=6pt] at (5.5, 5.5){LIN*};
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.965cm] at (6.5, 5.5){} node[anchor=center, align=center, text width=0.577cm, inner sep=6pt] at (6.5, 5.5){HIN};
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.965cm] at (7.5, 5.5){} node[anchor=center, align=center, text width=0.577cm, inner sep=6pt] at (7.5, 5.5){VCC};
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.965cm] at (4.5, 4.5){} node[anchor=center, align=center, text width=0.577cm, inner sep=6pt] at (4.5, 4.5){LO};
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.965cm] at (5.5, 4.5){} node[anchor=center, align=center, text width=0.577cm, inner sep=6pt] at (5.5, 4.5){VS};
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.965cm] at (6.5, 4.5){} node[anchor=center, align=center, text width=0.577cm, inner sep=6pt] at (6.5, 4.5){HO};
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.965cm] at (7.5, 4.5){} node[anchor=center, align=center, text width=0.577cm, inner sep=6pt] at (7.5, 4.5){VB};
+        \node[shape=circle, draw, line width=1pt, minimum width=0.465cm] at (3.677, 6.323){};
+        \draw (9, 6) to[empty diode] (9, 4);
+        \draw (9, 6) -| (9, 7) -- (7.5, 7);
+        \draw (7.5, 3) -- (9, 3) -| (9, 4);
+        \node[sground, xscale=-1, yscale=-1] at (4.5, 7){};
+        \draw (7.5, 2) to[capacitor, l={$220\space\mathrm{nF} /63\space\mathrm{V}$}] (5.5, 2);
+        \draw (5.5, 2) -| (5.5, 3);
+        \draw (7.5, 2) -| (7.5, 3);
+    \end{tikzpicture}
+    \caption{}
+    \label{fig:prototype}
+\end{figure}
+
 \section{Dimensionierung der Leistungsendstufe}
 Die Auswahl der Schaltelemente ist entscheidend für den Wirkungsgrad und die thermische Stabilität des Controllers. Aufgrund der Anforderungen an hohe Schaltgeschwindigkeiten und geringe Verluste kommen N-Kanal-MOSFETs zum Einsatz.
 

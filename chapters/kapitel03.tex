@@ -37,3 +37,143 @@ Um eine sichere Ansteuerung des High-Side-MOSFETs zu gewährleisten, wird ein ma
 C_\mathrm{BOOT,min} = \frac{\SI{119,8}{\nano\coulomb}}{\SI{1}{\volt}} = \SI{119,8}{\nano\farad}
 \end{equation}
 In der praktischen Anwendung wird empfohlen, den Kondensator so zu dimensionieren, dass er nicht zu groß gewählt wird, um die Ladezeit in kurzen Low-Side-Phasen nicht unnötig zu verlängern, aber ausreichend Reserve bietet. Ein Normwert von \SI{150}{\nano\farad} oder \SI{220}{\nano\farad} ist für diese Anwendung angemessen.
+
+
+
+%----------
+
+
+\chapter{Hardware-Entwurf und Dimensionierung}
+\label{chap:hardware}
+
+Ziel des Hardware-Entwurfs ist die Realisierung einer robusten 3-Phasen-Brückenschaltung (B6-Topologie), die für einen Nennstrom von \SI{30}{\ampere} bei einer Zwischenkreisspannung von \SI{36}{\volt} ausgelegt ist. Im folgenden Kapitel werden die zentralen Komponenten die Leistungshalbleiter und deren Ansteuerung ausgewählt und dimensioniert.
+
+\section{Hardwareaufbau des Prototpys}
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        % Paths, nodes and wires:
+        \node[shape=rectangle, draw, line width=1pt, minimum width=3.965cm, minimum height=1.965cm] at (6, 5){};
+        \draw (4.5, 6) -- (4.5, 7);
+        \draw (5.5, 6) -- (5.5, 7);
+        \draw (6.5, 6) -- (6.5, 7);
+        \draw (7.5, 6) -- (7.5, 7);
+        \draw (4.5, 3) -- (4.5, 4);
+        \draw (5.5, 3) -- (5.5, 4);
+        \draw (6.5, 3) -- (6.5, 4);
+        \draw (7.5, 3) -- (7.5, 4);
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.965cm] at (4.5, 5.5){} node[anchor=center, align=center, text width=0.577cm, inner sep=6pt] at (4.5, 5.5){GND};
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.965cm] at (5.5, 5.5){} node[anchor=center, align=center, text width=0.577cm, inner sep=6pt] at (5.5, 5.5){LIN*};
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.965cm] at (6.5, 5.5){} node[anchor=center, align=center, text width=0.577cm, inner sep=6pt] at (6.5, 5.5){HIN};
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.965cm] at (7.5, 5.5){} node[anchor=center, align=center, text width=0.577cm, inner sep=6pt] at (7.5, 5.5){VCC};
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.965cm] at (4.5, 4.5){} node[anchor=center, align=center, text width=0.577cm, inner sep=6pt] at (4.5, 4.5){LO};
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.965cm] at (5.5, 4.5){} node[anchor=center, align=center, text width=0.577cm, inner sep=6pt] at (5.5, 4.5){VS};
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.965cm] at (6.5, 4.5){} node[anchor=center, align=center, text width=0.577cm, inner sep=6pt] at (6.5, 4.5){HO};
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.965cm] at (7.5, 4.5){} node[anchor=center, align=center, text width=0.577cm, inner sep=6pt] at (7.5, 4.5){VB};
+        \node[shape=circle, draw, line width=1pt, minimum width=0.465cm] at (3.677, 6.323){};
+        \draw (9, 6) to[empty diode] (9, 4);
+        \draw (9, 6) -| (9, 7) -- (7.5, 7);
+        \draw (7.5, 3) -- (9, 3) -| (9, 4);
+        \node[sground, xscale=-1, yscale=-1] at (4.5, 7){};
+        \draw (7.5, 2) to[capacitor, l={$220\space\mathrm{nF} /63\space\mathrm{V}$}] (5.5, 2);
+        \draw (5.5, 2) -| (5.5, 3);
+        \draw (7.5, 2) -| (7.5, 3);
+    \end{tikzpicture}
+    \caption{}
+    \label{fig:prototype}
+\end{figure}
+
+\section{Dimensionierung der Leistungsendstufe}
+Die Auswahl der Schaltelemente ist entscheidend für den Wirkungsgrad und die thermische Stabilität des Controllers. Aufgrund der Anforderungen an hohe Schaltgeschwindigkeiten und geringe Verluste kommen N-Kanal-MOSFETs zum Einsatz.
+
+\subsection{Auswahl des MOSFETs}
+Für diese Anwendung fiel die Wahl auf den \textbf{Infineon IPP034N08N5} im TO-220-Gehäuse. Diese Entscheidung basiert auf einer Analyse der kritischen Parameter Spannungsfestigkeit und Einschaltwiderstand.
+
+Da die Ladeschlussspannung des \SI{36}{\volt}-Akkus bis zu \SI{42}{\volt} betragen kann und beim generatorischen Bremsen oder durch parasitäre Induktivitäten Spannungsspitzen auftreten, ist eine Sperrspannung ($V_{DS}$) deutlich oberhalb der Batteriespannung notwendig. Der IPP034N08N5 bietet mit \SI{80}{\volt} eine Sicherheitsreserve von fast Faktor 2, was den Verzicht auf komplexe Netzwerke ermöglicht.
+
+Ein weiteres entscheidendes Kriterium ist der statische Drain-Source-Einschaltwiderstand ($R_{DS(on)}$). Mit einem Maximalwert von \SI{3,4}{\milli\ohm} gehört dieser Transistor zu den effizientesten seiner Klasse. Ein geringer $R_{DS(on)}$ ist essenziell, da die Durchlassverluste quadratisch mit dem Laststrom steigen.
+
+Die wesentlichen Kennwerte sind in Tabelle \ref{tab:mosfet_data} zusammengefasst.
+
+\begin{table}[h!]
+    \centering
+    \caption{Zentrale Parameter des IPP034N08N5}
+    \label{tab:mosfet_data}
+    \begin{tabular}{l l r}
+        \toprule
+        Parameter & Symbol & Wert \\
+        \midrule
+        Max. Drain-Source-Spannung & $V_{DS}$ & \SI{80}{\volt} \\
+        Max. Dauerstrom ($T_C = 25^\circ C$) & $I_D$ & \SI{120}{\ampere} \\
+        Einschaltwiderstand & $R_{DS(on)}$ & \SI{3,4}{\milli\ohm} \\
+        Gate-Ladung (0..\SI{10}{\volt}) & $Q_G$ & \SI{69}{\nano\coulomb} \\
+        Eingangskapazität & $C_{iss}$ & \SI{4800}{\pico\farad} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        % Paths, nodes and wires:
+        \node[shape=circle, draw, line width=0.5pt, minimum width=1.429cm] at (5.414, 9.268){};
+        \node[nigfete, bodydiode] at (5.5, 9.27){};
+        \node[shape=rectangle, minimum width=0.926cm, minimum height=0.544cm](N1) at (3.196, 9.013){} node[anchor=center] at (N1.text){$\mathrm{Gate}$};
+        \node[shape=rectangle, minimum width=0.926cm, minimum height=0.544cm](N2) at (6.243, 8.135){} node[anchor=center] at (N2.text){$\mathrm{Source}$};
+        \node[shape=rectangle, minimum width=0.926cm, minimum height=0.544cm](N3) at (6.176, 10.359){} node[anchor=center] at (N3.center){$\mathrm{Drain}$};
+        \node[ocirc] at (3.952, 8.997){};
+        \node[ocirc] at (5.502, 7.943){};
+        \node[ocirc] at (5.501, 10.554){};
+        \draw (5.5, 10.04) -| (5.5, 10.5);
+        \draw (5.5, 8.5) -- (5.5, 8);
+        \draw (4.5, 9) -- (4, 9);
+    \end{tikzpicture}
+    \caption{Symbol des verwendeten N-Kanal MOSFETs mit interner Freilaufdiode.}
+    \label{fig:mosfet_symbol}
+\end{figure}
+
+\subsection{Berechnung der Verlustleistung}
+Um die thermische Auslegung in Kapitel \ref{chap:thermik} vorzubereiten, werden die zu erwartenden Verluste im Nennbetrieb abgeschätzt. Die Gesamtverluste setzen sich aus den Durchlassverlusten ($P_{Cond}$) und den Schaltverlusten ($P_{SW}$) zusammen.
+
+Die statischen Durchlassverluste lassen sich über das Ohmsche Gesetz herleiten. Bei einem angenommenen maximalen Phasenstrom von $I_{rms} = \SI{30}{\ampere}$ ergibt sich pro Schalter:
+\begin{equation}
+    P_{Cond} = I_{rms}^2 \cdot R_{DS(on)} = (\SI{30}{\ampere})^2 \cdot \SI{0,0034}{\ohm} = \SI{3,06}{\watt}
+\end{equation}
+
+Dies stellt den dominanten Anteil der Verluste dar. Hinzu kommen die Schaltverluste, die durch das nicht-ideale Schalten (gleichzeitiges Anliegen von Strom und Spannung während der Umschaltphasen) entstehen. Diese werden maßgeblich durch die Gate-Treiber-Stufe und die gewählte Schaltfrequenz beeinflusst.
+
+\section{Auslegung der Gate-Treiber-Stufe}
+Da N-Kanal-MOSFETs in der High-Side-Position einer Brückenschaltung eine Ansteuerspannung oberhalb des Versorgungspotentials benötigen ($V_G > V_S + V_{th}$), ist der Einsatz spezialisierter Halbbrückentreiber erforderlich. Für dieses Design wurde der \textbf{IR2104} ausgewählt.
+
+Der Baustein übernimmt zwei zentrale Aufgaben: Zum einen generiert er mittels einer internen Logik die notwendige Totzeit (Deadtime) von typisch \SI{520}{\nano\second}, um ein gleichzeitiges Leiten beider Transistoren (Shoot-Through) hardwareseitig zu unterbinden. Zum anderen ermöglicht er über eine externe Bootstrap-Beschaltung die Versorgung des High-Side-Schalters.
+
+\subsection{Dimensionierung der Bootstrap-Kapazität}
+Ein kritischer Aspekt des Designs ist die Dimensionierung des Bootstrap-Kondensators ($C_{BS}$). Dieser Kondensator fungiert als schwimmende Spannungsquelle für den High-Side-Treiber. Er muss genügend Ladung $Q_{Total}$ speichern, um das Gate des MOSFETs vollständig umzuladen und Leckströme während der Leitphase zu kompensieren, ohne dass die Spannung signifikant einbricht.
+
+Die benötigte Gesamtladung $Q_{Total}$ setzt sich additiv aus drei Komponenten zusammen: der Gateladung $Q_{Gate}$, dem Verbrauch des Level-Shifters $Q_{LS}$ und den Verlusten durch Leckströme $Q_{Leak}$.
+
+\subsubsection*{1. Ermittlung der Gateladung}
+Der Treiber wird mit einer Spannung von $V_{CC} = \SI{15}{\volt}$ betrieben. Da das Datenblatt des MOSFETs die Gateladung nur für \SI{10}{\volt} spezifiziert, muss der Wert extrapoliert werden. Unter Berücksichtigung der Eingangskapazität $C_{iss}$ ergibt sich eine effektive Ladungsmenge von:
+\begin{equation}
+    Q_{Gate} \approx Q_{G(10V)} + (V_{CC} - \SI{10}{\volt}) \cdot C_{iss} \approx \SI{111}{\nano\coulomb}
+\end{equation}
+
+\subsubsection*{2. Leckströme und Gesamtladung}
+Zusätzlich muss der Kondensator die Leckströme der Schaltung während der maximalen Einschaltdauer ($t_{on}$) puffern. Für den Worst-Case ($f_s = \SI{20}{\kilo\hertz} \rightarrow t_{on} = \SI{50}{\micro\second}$) summieren sich die Leckströme von Treiber, Diode und Kondensator auf ca. \SI{115}{\micro\ampere}. Dies entspricht einem Ladungsverlust von $Q_{Leak} \approx \SI{5,8}{\nano\coulomb}$.
+
+Mit einer Reserve für den Level-Shifter ($Q_{LS} \approx \SI{3}{\nano\coulomb}$) resultiert eine Gesamtladung von:
+\begin{equation}
+    Q_{Total} = \SI{111}{\nano\coulomb} + \SI{5,8}{\nano\coulomb} + \SI{3}{\nano\coulomb} \approx \SI{120}{\nano\coulomb}
+\end{equation}
+
+\subsubsection*{3. Ergebnis}
+Um sicherzustellen, dass die Gate-Spannung auch am Ende der Einschaltdauer stabil bleibt, wird ein maximal zulässiger Spannungsabfall (Ripple) von $\Delta V_{BS} = \SI{1}{\volt}$ definiert. Die Mindestkapazität berechnet sich somit zu:
+\begin{equation}
+    C_{BS,min} = \frac{Q_{Total}}{\Delta V_{BS}} = \frac{\SI{120}{\nano\coulomb}}{\SI{1}{\volt}} = \SI{120}{\nano\farad}
+\end{equation}
+
+Um Toleranzen und Alterungseffekte (DC-Bias bei Keramikkondensatoren) auszugleichen, wird der nächsthöhere Normwert gewählt. Es kommt ein \textbf{\SI{220}{\nano\farad}} Keramikkondensator (X7R) zum Einsatz.
+
+\section{Zwischenkreis-Auslegung}
+Der Zwischenkreis (DC-Link) dient als Energiespeicher und stabilisiert die Spannung bei den hochfrequenten Schaltvorgängen.
+\todo[inline]{Hier folgt später der Text zu den Elkos.}

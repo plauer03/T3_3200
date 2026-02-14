@@ -32,17 +32,33 @@
 % --- HAUPTTEIL ---
 \pagenumbering{arabic}
 
-
 \input{chapters/01_einleitung}
 \input{chapters/02_grundlagen}
-\input{chapters/03_hardware}
-\input{chapters/04_thermik}
-\input{chapters/05_pcb}
-\input{chapters/06_software}
-\input{chapters/07_fazit}
+\input{chapters/03_prototyp}
+\input{chapters/04_konzept_transfer}
+\input{chapters/05_entwurf_leistung}
+\input{chapters/06_realisierung}
+\input{chapters/07_diskussion}
+\input{chapters/08_fazit}
 
 % --- NACHSPANN ---
 \nocite{*}
 \printbibliography
+
+% --- ANHANG ---
+\appendix
+\chapter{Gesamtschaltplan}
+%\label{app:schaltplan}
+\todo[inline]{Hier das PDF des kompletten Schaltplans (alle Seiten) einfügen.}
+% Befehl zum Einfügen: \includepdf[pages=-, landscape=true]{anhang/schaltplan_komplett.pdf}
+
+\chapter{PCB-Layout}
+%\label{app:pcb}
+\todo[inline]{Hier Bilder von Top-Layer, Bottom-Layer und 3D-Ansicht einfügen.}
+
+\chapter{Quellcode}
+%\label{app:code}
+\todo[inline]{Hier den relevanten C-Code (Main-Loop, Timer-Config) einfügen oder Link zum Git-Repo.}
+
 
 \end{document}

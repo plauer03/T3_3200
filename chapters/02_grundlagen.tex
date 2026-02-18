@@ -1,13 +1,262 @@
 \chapter{Theoretische Grundlagen}
 \label{chap:grundlagen}
 
+Dieses Kapitel legt das theoretische Fundament für die Dimensionierung des Motorcontrollers. Im Fokus stehen das elektromechanische Modell des BLDC-Motors, die sensorbasierte Kommutierung sowie die leistungselektronischen Verlust- und Temperaturmodelle, welche die hardwareseitigen Grenzen des Systems definieren. Die hier hergeleiteten Zusammenhänge bilden die Basis für die Bauteilauswahl in Kapitel \ref{chap:entwurf_leistung}.
+
+% ============================================================
+% 2.1 Der BLDC Motor
+% ============================================================
 \section{Der BLDC-Motor}
-\todo[inline]{Text: Funktionsweise, Hall-Sensoren (120 Grad).}
-\todo[inline, color=blue!40]{BILD: Prinzipskizze Kommutierung (Blockkommutierung Signalverlauf) einfügen.}
+\label{sec:bldc_motor}
 
-\section{Ansteuerverfahren}
-\todo[inline]{Text: Block vs. FOC vs. SVPWM.}
+Der BLDC-Motor stellt eine technologische Weiterentwicklung der konventionellen Gleichstrommaschine dar, bei der die mechanische Kommutierung durch eine elektronische Steuerung ersetzt wird. Im Gegensatz zu bürstenbehafteten Motoren, bei denen Kohlebürsten und ein Kollektor für die Stromwendung sorgen, erfolgt die Ansteuerung der Statorwicklungen hier in Abhängigkeit von der Rotorlage. Dies eliminiert den mechanischen Verschleiß und die Funkenbildung, was zu einer höheren Zuverlässigkeit, geringerem Wartungsaufwand und einer verbesserten thermischen Charakteristik führt, da die Verlustwärme primär im außenliegenden Stator entsteht und effektiv abgeführt werden kann \cite{MPS_BLDC_AN}.
 
-\section{Raumzeigermodulation (SVPWM)}
-\todo[inline]{Text: Erklärung Raumzeiger, Sektoren, Bus-Ausnutzung.}
-\todo[inline, color=blue!40]{BILD: Das SVPWM-Hexagon (Zeigerdiagramm) ist hier PFLICHT!}
+Technisch betrachtet handelt es sich bei einem BLDC-Motor um eine permanentmagneterregte Synchronmaschine (PMSM). Der Begriff DC bezieht sich hierbei nicht auf das interne elektromagnetische Wirkprinzip, sondern auf die externe Speisung aus einer Gleichspannungsquelle, die durch den Inverter in die benötigten Phasenströme umgewandelt wird.
+
+\subsection{Aufbau und physikalisches Wirkprinzip}
+Der mechanische Aufbau gliedert sich primär in den feststehenden Stator und den rotierenden Rotor (schematische Darstellung \ref{fig:bldc_aufbau}). 
+
+\paragraph{Stator}
+Der Stator besteht aus geschichteten Stahlblechen (Lamellen), um Wirbelstromverluste zu minimieren. In den Nuten des Stators sind die Wicklungen untergebracht, die meist in drei Phasen ($U, V, W$) angeordnet sind. Diese Wicklungen sind im Stern verschaltet, wobei der Sternpunkt im Motor isoliert ist und nicht herausgeführt wird.
+
+\paragraph{Rotor}
+Der Rotor trägt die Permanentmagnete. Je nach Anordnung unterscheidet man zwischen Innenläufern, bei denen der Rotor innerhalb des Stators dreht, und Außenläufern. Die Anzahl der magnetischen Pole ($N$ und $S$) variiert je nach Applikation, ist jedoch stets geradzahlig. Eine höhere Polpaarzahl führt bei gleicher elektrischer Frequenz zu einer geringeren mechanischen Drehzahl, erhöht jedoch das Drehmoment.
+
+Das Drehmoment entsteht durch die Lorentzkraft, die auf die bestromten Leiter im Magnetfeld wirkt. Damit eine kontinuierliche Rotation gewährleistet ist, muss das magnetische Feld des Stators dem des Rotors stets um $90^\circ$ vorauseilen.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{BLDC_1.png}
+    \caption{Querschnitt und prinzipieller Aufbau eines BLDC-Motors \cite{MPS_BLDC_AN}.}
+    \label{fig:bldc_aufbau}
+\end{figure}
+
+\subsection{Elektrisches Ersatzmodell und BEMF}
+Für die steuerungstechnische Betrachtung und die Dimensionierung der Endstufe wird jede Phase des Motors durch ein elektrisches Ersatzschaltbild modelliert (siehe Abbildung \ref{fig:bldc_phase}). Dieses besteht aus einer Reihenschaltung des ohmschen Wicklungswiderstands $R$, der Wicklungsinduktivität $L$ und einer induzierten Spannungsquelle, der sogenannten Gegen-Elektromotorischen Kraft (Back Electromotive Force, BEMF).
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{BLDC_phase.png}
+    \caption{Elektrisches Ersatzschaltbild einer einzelnen Motorphase \cite{Xia2012}.}
+    \label{fig:bldc_phase}
+\end{figure}
+
+Die Spannungsgleichung für eine einzelne Phase (z.\,B. Phase $U$) lautet nach dem Maschensatz:
+
+\begin{equation}
+    v_U(t) = R \cdot i_U(t) + L \cdot \frac{d i_U(t)}{dt} + e_U(t)
+    \label{eq:phase_voltage}
+\end{equation}
+
+Hierbei ist $v_U$ die anliegende Klemmenspannung, $i_U$ der Phasenstrom und $e_U$ die induzierte Gegenspannung. 
+
+\paragraph{Bedeutung der Parameter für die Auslegung:}
+\begin{itemize}
+    \item \textbf{Widerstand $R$:} Bestimmt die statischen Kupferverluste ($P = I^2R$) und damit die Erwärmung des Motors.
+    \item \textbf{Induktivität $L$:} Glättet den Stromverlauf bei PWM-Ansteuerung. Eine zu kleine Induktivität führt zu hohem Stromrippel, was die Kondensatoren im Zwischenkreis belastet. Die elektrische Zeitkonstante $\tau_{el} = L/R$ ist ein Maß für die Stromanstiegsgeschwindigkeit.
+    \item \textbf{BEMF $e_U$:} Begrenzt die maximale Drehzahl. Wenn die BEMF die Versorgungsspannung erreicht, kann kein Strom mehr in den Motor getrieben werden.
+\end{itemize}
+
+Die BEMF entsteht durch die Rotation des magnetischen Rotorfeldes relativ zu den Statorwicklungen (Induktionsgesetz). Nach \cite{Pillay1991} ist die Amplitude der BEMF direkt proportional zur Winkelgeschwindigkeit $\omega_m$ des Rotors:
+
+\begin{equation}
+    e(t) = k_e \cdot \omega_m \cdot f(\theta_e)
+\end{equation}
+
+Wobei $k_e$ die spezifische BEMF-Konstante des Motors ist. Charakteristisch für BLDC-Motoren ist der trapezförmige Verlauf der Funktion $f(\theta_e)$, resultierend aus der rechteckigen Verteilung des magnetischen Flusses im Luftspalt. Dies unterscheidet den BLDC-Motor vom PMSM, welcher eine sinusförmige BEMF aufweist. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{BEMF.png}
+    \caption{Trapezförmiger Verlauf der Gegen-EMK und korrespondierende Blockströme \cite{MPS_BLDC_AN}.}
+    \label{fig:bemf_trapez}
+\end{figure}
+
+Um ein konstantes Drehmoment zu erzeugen, sollte der Phasenstrom idealerweise rechteckförmig in die Phasen eingeprägt werden, um mit dem flachen Dach der trapezförmigen BEMF zu korrespondieren (vgl. Abb. \ref{fig:bemf_trapez}).
+
+% ============================================================
+% 2.2 Kommutierung
+% ============================================================
+\section{Kommutierung und Rotorlageerfassung}
+\label{sec:kommutierung}
+
+Damit der Motor ein kontinuierliches Drehmoment erzeugt, müssen die Statorwicklungen synchron zur aktuellen Rotorposition bestromt werden. Ziel der Kommutierung ist es, den Winkel zwischen dem Erregerfeld des Rotors und dem Statorfeld im Bereich von $90^\circ$ elektrisch zu halten, da hierbei die maximale Lorentzkraft wirkt.
+
+\subsection{Hall-Sensorik}
+Im vorliegenden Projekt wird ein sensorbasiertes Verfahren eingesetzt. Dazu befinden sich im Stator drei Hall-Effekt-Sensoren ($H_1, H_2, H_3$), die das Magnetfeld der vorbeidrehenden Rotorpole detektieren. Üblicherweise sind diese Sensoren räumlich um $120^\circ$ elektrisch versetzt angeordnet. Dieser Versatz führt dazu, dass pro elektrischer Umdrehung ($360^\circ$) sechs diskrete Zustände (Sektoren) unterscheidbar sind.
+
+\subsection{Blockkommutierung}
+Das gängigste Ansteuerverfahren für BLDC-Motoren ist die Blockkommutierung. Basierend auf den digitalen Signalen der Hall-Sensoren ordnet die Steuerelektronik jedem Sektor ein festes Bestromungsmuster zu.
+Charakteristisch ist, dass zu jedem Zeitpunkt immer nur zwei der drei Motorphasen aktiv bestromt werden: eine Phase gegen $V_{DC}$, eine gegen $GND$, während die dritte Phase unbeschaltet (floating) bleibt.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Kommutierungslogik}
+    \label{tab:kommutierung}
+    \begin{tabular}{c c c | c c c | c}
+        \hline
+        \multicolumn{3}{c|}{\textbf{Hall-Sensoren}} & \multicolumn{3}{c|}{\textbf{Phasenzustand}} & \textbf{Sektor} \\
+        $H_1$ & $H_2$ & $H_3$ & $U$ & $V$ & $W$ & \\
+        \hline
+        1 & 0 & 1 & $V_{DC}$ & GND & NC & I \\
+        1 & 0 & 0 & $V_{DC}$ & NC & GND & II \\
+        1 & 1 & 0 & NC & $V_{DC}$ & GND & III \\
+        0 & 1 & 0 & GND & $V_{DC}$ & NC & IV \\
+        0 & 1 & 1 & GND & NC & $V_{DC}$ & V \\
+        0 & 0 & 1 & NC & GND & $V_{DC}$ & VI \\
+        \hline
+    \end{tabular}
+\end{table}
+
+% ============================================================
+% 2.3 Brückentopologie
+% ============================================================
+\section{Leistungselektronische Ansteuerung}
+\label{sec:topologie}
+
+Die physikalische Umsetzung der in Tabelle \ref{tab:kommutierung} definierten Schaltzustände erfolgt über eine dreiphasige Wechselrichterbrücke (B6-Brücke).
+
+\subsection{Brückentopologie}
+Die Schaltung besteht aus drei Halbbrücken, die parallel am Gleichspannungszwischenkreis ($V_{DC}$) liegen. Jede Halbbrücke verfügt über zwei Leistungsschalter (MOSFETs):
+\begin{itemize}
+    \item \textbf{High-Side-MOSFET (HS):} Verbindet den Phasenausgang mit $V_{DC}$.
+    \item \textbf{Low-Side-MOSFET (LS):} Verbindet den Phasenausgang mit $GND$.
+\end{itemize}
+In modernen Niederspannungsanwendungen werden fast ausschließlich N-Kanal-MOSFETs eingesetzt, da diese bei gleicher Chipfläche einen geringeren Einschaltwiderstand $R_{DS(on)}$ aufweisen.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        % Paths, nodes and wires:
+        \node[nigfete, bodydiode] at (3, 7.008){};
+        \node[nigfete, bodydiode] at (3, 5){};
+        \node[nigfete, bodydiode] at (5, 7.008){};
+        \node[nigfete, bodydiode] at (5, 5){};
+        \node[nigfete, bodydiode] at (7, 7){};
+        \node[nigfete, bodydiode] at (7, 4.992){};
+
+        \draw (3, 7.778) -- (3, 8.25) -- (5, 8.25) -| (5, 7.778);
+        \draw (7, 7.75) -| (7, 8.25) -- (5, 8.25);
+        \draw (3, 4.25) -| (3, 3.75) -- (5, 3.75) -| (5, 4.23);
+        \draw (7, 4.222) -| (7, 3.75) |- (5, 3.75);
+
+        \draw (3, 6.238) -- (3, 5.75);
+        \draw (5, 6.238) -| (5, 5.77);
+        \draw (7, 6.25) -| (7, 5.75);
+
+        \node[circ](N1) at (3, 6){} node[anchor=west] at ([xshift=0.04cm]N1.east){$U$};
+        \node[circ](N2) at (5, 6){} node[anchor=west] at (N2.east){$V$};
+        \node[circ](N3) at (7, 6){} node[anchor=west] at (N3.east){$W$};
+
+        \draw (1, 7) to[european voltage source, 
+              /tikz/circuitikz/bipoles/length=0.910cm, 
+              l={$36\,\mathrm{V}$}] (1, 5);
+
+        \draw (1, 7) -| (1, 8.25) -- (3, 8.25);
+        \draw (1, 5) -| (1, 3.75) -- (3, 3.75);
+    \end{tikzpicture}
+    \caption{Dreiphasige MOSFET-Vollbrücke zur Ansteuerung des BLDC-Motors.}
+    \label{fig:three_phase_bridge}
+\end{figure}
+
+
+\subsection{Ansteuerung und Bootstrap-Prinzip}
+Die Verwendung von N-Kanal-MOSFETs im HS-Pfad erfordert eine Gate-Spannung, die über der Zwischenkreisspannung liegt ($V_{Gate} > V_{DC} + V_{GS,th}$), um den Transistor vollständig durchzusteuern. Diese Spannung wird üblicherweise durch eine Bootstrap-Schaltung generiert. Dabei lädt sich ein Bootstrap-Kondensator über eine Diode auf $V_{CC}$ auf, solange der LS-MOSFET leitend ist. Schaltet die Halbbrücke um, „schwimmt“ das Potential des Kondensators mit der Source-Spannung des HS-MOSFETs nach oben und stellt so die nötige Gate-Spannung bereit \cite{AN6076}.
+
+\subsection{Pulsweitenmodulation (PWM)}
+Um nicht nur die Richtung, sondern auch die Amplitude des Stroms (und damit das Drehmoment) zu steuern, werden die Schalter nicht statisch eingeschaltet, sondern hochfrequent getaktet. Durch Variation des Tastverhältnisses $d$ (Duty Cycle) ergibt sich die effektive Phasenspannung zu $\bar{v}_{ph} = d \cdot V_{DC}$.
+
+% ============================================================
+% 2.4 Modulationsverfahren (SVPWM)
+% ============================================================
+\section{Modulationsverfahren}
+\label{sec:modulation}
+
+Während die Blockkommutierung (Kapitel \ref{sec:kommutierung}) festlegt, welche Phasen prinzipiell bestromt werden, bestimmt das Modulationsverfahren, wie die Spannung innerhalb dieser Phasen gestellt wird. Neben der einfachen Sinus-Pulsweitenmodulation (SPWM) hat sich die Raumzeigermodulation (Space Vector PWM, SVPWM) als Industriestandard für dreiphasige Antriebe etabliert.
+
+\subsection{Grundlagen der Raumzeigermodulation}
+Die SVPWM betrachtet den dreiphasigen Wechselrichter nicht als drei separate Halbbrücken, sondern als eine Einheit, die einen Spannungsraumzeiger $\vec{v}_s$ im komplexen Raum erzeugt \cite{Xia2012,Nahin2022-ts}.
+
+Da jede der drei Halbbrücken zwei Zustände annehmen kann (High oder Low), ergeben sich insgesamt $2^3 = 8$ mögliche Schaltzustände. Diese lassen sich in zwei Gruppen unterteilen:
+\begin{itemize}
+    \item \textbf{Sechs aktive Vektoren ($\vec{V}_1$ bis $\vec{V}_6$):} Diese spannen ein regelmäßiges Sechseck (Hexagon) auf und haben eine konstante Amplitude von $\frac{2}{3} V_{DC}$.
+    \item \textbf{Zwei Nullvektoren ($\vec{V}_0$ und $\vec{V}_7$):} Bei $\vec{V}_0$ (000) sind alle unteren Schalter leitend, bei $\vec{V}_7$ (111) alle oberen. In beiden Fällen ist die verkettete Ausgangsspannung null.
+\end{itemize}
+
+Diese Schaltzustände und Zusamenhänge sind in Abbildung \ref{fig:svpwm} dargestellt.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{SVPWM.png}
+    \caption{SVPWM \cite{Nahin2022-ts}.}
+    \label{fig:svpwm}
+\end{figure}
+
+\subsection{Synthese des Referenzspannungszeigers}
+Jeder beliebige Zielspannungszeiger $\vec{v}_{ref}$, der innerhalb des Hexagons liegt, kann durch eine zeitliche Mittelung der beiden benachbarten aktiven Vektoren sowie der Nullvektoren gebildet werden.
+Befindet sich der Referenzzeiger beispielsweise im ersten Sektor zwischen $\vec{V}_1$ und $\vec{V}_2$, so gilt für die Periodendauer $T_{PWM}$:
+
+\begin{equation}
+    \int_{0}^{T_{PWM}} \vec{v}_{ref} \, dt = \int_{0}^{T_1} \vec{V}_1 \, dt + \int_{T_1}^{T_1+T_2} \vec{V}_2 \, dt + \int_{T_1+T_2}^{T_{PWM}} \vec{V}_0 \, dt
+\end{equation}
+
+Hierbei sind $T_1$, $T_2$ und $T_0$ die Einschaltzeiten der jeweiligen Vektoren. Durch die geschickte Anordnung der Schaltsequenzen (z.\,B. symmetrische Ausrichtung um die Periodenmitte) lässt sich der Oberschwingungsgehalt der Ausgangsströme minimieren.
+
+\subsection{Vorteile gegenüber klassischer PWM}
+Der entscheidende Vorteil der SVPWM gegenüber der sinusförmigen PWM liegt in der besseren Ausnutzung der Zwischenkreisspannung.
+Während bei der Sinus-PWM die maximale Ausgangsspannung durch die Phasenspannung limitiert ist, erlaubt die SVPWM durch die Überlagerung einer Nullsystemkomponente (oft als „saddle shape“ oder „3. Harmonische“ im zeitlichen Verlauf sichtbar) eine höhere Amplitude der verketteten Spannung.
+
+Der maximale lineare Aussteuergrad erhöht sich um den Faktor:
+\begin{equation}
+    \frac{V_{SVPWM,max}}{V_{SPWM,max}} = \frac{1}{\cos(30^\circ)} = \frac{2}{\sqrt{3}} \approx 1,155
+\end{equation}
+
+Dies entspricht einem Gewinn von ca. $15,5\,\%$. Da im vorliegenden Projekt mit einer 36\,V-Batterie eine vergleichsweise niedrige Zwischenkreisspannung zur Verfügung steht, ist dieser Gewinn an Spannungsreserve essenziell, um höhere Drehzahlen und ein besseres dynamisches Verhalten zu erreichen \cite{Xia2012}.
+
+% ============================================================
+% 2.5 Verluste
+% ============================================================
+\section{Verlustmechanismen in MOSFETs}
+\label{sec:verluste}
+
+Ein idealer Schalter würde verlustfrei arbeiten. Reale Leistungshalbleiter weisen jedoch parasitäre Effekte auf, die zu Verlustleistung führen. Diese muss als Wärme abgeführt werden, um eine Zerstörung des Bauteils zu verhindern. Die Gesamtverluste $P_{tot}$ setzen sich primär aus Leit- und Schaltverlusten zusammen \cite{MOSFET_Power_Loss}.
+
+\subsection{Leitverluste (Conduction Losses)}
+Im eingeschalteten Zustand verhält sich der MOSFET wie ein ohmscher Widerstand $R_{DS(on)}$. Die resultierenden Verluste berechnen sich zu:
+\begin{equation}
+    P_{cond} = I_{rms}^2 \cdot R_{DS(on)}(T_j)
+    \label{eq:p_cond}
+\end{equation}
+Kritisch ist hierbei die Temperaturabhängigkeit: Der $R_{DS(on)}$ steigt mit zunehmender Sperrschichttemperatur $T_j$ stark an (typ. Faktor 1,5 bis 2 bei $100^\circ$C). Dies führt zu einem positiven Rückkopplungseffekt, der bei der thermischen Auslegung berücksichtigt werden muss.
+
+\subsection{Schaltverluste (Switching Losses)}
+Da MOSFETs nicht unendlich schnell schalten können, treten beim Übergang zwischen leitendem und sperrendem Zustand Phasen auf, in denen gleichzeitig hohe Spannung und hoher Strom am Bauteil anliegen.
+Für eine induktive Last lassen sich die Einschalt- ($P_{on}$) und Ausschaltverluste ($P_{off}$) näherungsweise linear zur Schaltfrequenz $f_{SW}$ beschreiben:
+\begin{equation}
+    P_{sw} \approx \frac{1}{2} V_{DC} \cdot I_{D} \cdot (t_r + t_f) \cdot f_{SW}
+    \label{eq:p_sw}
+\end{equation}
+Hierbei sind $t_r$ (Rise Time) und $t_f$ (Fall Time) die Schaltzeiten, die maßgeblich vom Gate-Treiberstrom und den Gate-Widerständen abhängen. Eine Erhöhung der PWM-Frequenz führt zu linear steigenden Schaltverlusten.
+
+% ============================================================
+% 2.6 Thermik
+% ============================================================
+\section{Thermisches Modell}
+\label{sec:thermik}
+
+Um sicherzustellen, dass die maximal zulässige Sperrschichttemperatur $T_{j,max}$ (meist $150^\circ$C oder $175^\circ$C) nicht überschritten wird, wird ein thermisches Ersatzschaltbild verwendet. Der Wärmestrom $P_{tot}$ fließt von der Wärmequelle (Chip/Junction) durch verschiedene thermische Widerstände $R_{th}$ zur Umgebung (Ambient).
+
+Im stationären Zustand gilt:
+\begin{equation}
+    T_j = T_a + P_{tot} \cdot (R_{thJC} + R_{thCH} + R_{thHA})
+    \label{eq:thermik}
+\end{equation}
+
+Die Widerstände beschreiben folgende Übergänge:
+\begin{itemize}
+    \item $R_{thJC}$ (Junction-to-Case): Innerer Wärmewiderstand des MOSFETs (datenblattabhängig).
+    \item $R_{thCH}$ (Case-to-Heatsink): Übergangswiderstand durch Montagematerial (Wärmeleitpaste, Isolierfolie). Insbesondere bei der isolierten Montage von TO-220-Gehäusen ist dieser Wert dominant.
+    \item $R_{thHA}$ (Heatsink-to-Ambient): Wärmewiderstand des Kühlkörpers zur Umgebungsluft.
+\end{itemize}
+
+Diese Kette verdeutlicht, dass eine rein elektrische Betrachtung für die Auslegung von Leistungselektronik nicht ausreichend ist. Erst die thermische Analyse validiert die gewählten Komponenten für den Nennbetrieb.

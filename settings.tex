@@ -1,57 +1,88 @@
-% settings.tex
 % -------------------------------------------------------------------
-% PAKETE & EINSTELLUNGEN
+% settings.tex - Layout, Pakete & Typografie
 % -------------------------------------------------------------------
+
+% --- KOPF- UND FUSSZEILEN ---
+\usepackage[automark]{scrlayer-scrpage}
+
+% Löscht alle Standardvorgaben
+\clearpairofpagestyles 
+
+% 1. KOPFZEILE: Rechts den aktuellen Abschnitt (Section)
+% Das [\headmark]{\headmark} sorgt dafür, dass es (falls gewünscht) 
+% auch auf Kapitelseiten erscheint. Normalerweise lässt man das [] leer.
+\ihead{\textbf{T3\_3200} | Pascal Lauer}
+\ohead{\headmark} 
+
+% 2. FUSSZEILE: Rechts die Seitenzahl
+% WICHTIG: Das [\pagemark]{\pagemark} sorgt dafür, dass die Seitenzahl 
+% AUCH auf Inhaltsverzeichnis- und Kapitelstartseiten (Stil "plain") steht!
+\ofoot[\pagemark]{\pagemark} 
+
+% 3. LINIE: Trennlinie unter dem Header
+\KOMAoptions{headsepline=true}
+
+% 4. SCHRIFTART: Header/Footer an das Dokument anpassen (Helvet/Serifenlos)
+\setkomafont{pageheadfoot}{\normalfont\sffamily\fontsize{12pt}{14pt}\selectfont}
+\setkomafont{pagenumber}{\normalfont\sffamily\fontsize{12pt}{14pt}\selectfont}
+
+
+% --- GRUNDLAGEN & SPRACHE ---
+\usepackage{layout} 
+\usepackage{geometry}
+\geometry{
+   left=2.5cm,
+   right=2.5cm,
+	 top=3cm,
+	 bottom=3cm}
+\usepackage{setspace}
+\onehalfspacing % 1,5 Zeilenabstand 		
+\setlength{\parindent}{0pt} % nicht einrücken
+
+\usepackage{caption} % fett gedruckt Abbildung/Tabelle
+\captionsetup[figure]{labelfont=bf,textfont=normalfont}
+\captionsetup[table]{labelfont=bf,textfont=normalfont}
+
+
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{lmodern}
 \usepackage[ngerman]{babel}
+\usepackage[nopatch=footnote]{microtype} % Typografische Feinheiten
+\setlength{\marginparwidth}{2cm}
 
-% Typografie & Mathe
-\usepackage{amsmath, amssymb, amsthm}
-\usepackage[nopatch=footnote]{microtype}
-\usepackage[onehalfspacing]{setspace} % 1.5 Zeilenabstand
+\usepackage{epsfig}		% needed to import eps files
+\usepackage{lipsum}		% needed to generate blindtext
+\usepackage{helvet}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\renewcommand{\familydefault}{\sfdefault}
 
-% Layout & Seitenränder (DHBW konform)
-\usepackage[
-  inner=3cm,      % Bundsteg
-  outer=2.5cm, 
-  top=2.5cm, 
-  bottom=2.5cm
-]{geometry}
 
-% Kopf- und Fußzeilen
-\usepackage[automark, headsepline]{scrlayer-scrpage}
-\clearpairofpagestyles
-\ihead{\headmark}
-\ohead{\pagemark}
-\pagestyle{scrheadings}
-
-% Einheiten (WICHTIG für Ihre Berechnungen!)
+% --- MATHE & TECHNIK ---
+\usepackage{amsmath, amssymb}
 \usepackage{siunitx}
-\sisetup{
-  locale = DE, 
-  per-mode = symbol,
-  detect-all
-}
-
-%Cirkuitz
+\sisetup{locale = DE, per-mode = symbol, detect-all}
 \usepackage[european, straightvoltages]{circuitikz}
-\usepackage{tikz} 
 
-% Grafiken & Tabellen
+% --- GRAFIKEN & TABELLEN ---
 \usepackage{graphicx}
 \graphicspath{{images/}}
-\usepackage{booktabs} % Schöne Tabellenlinien
+\usepackage{booktabs}
+\usepackage{pdfpages} 
 
-% Literatur
+% --- LITERATUR (IEEE) ---
 \usepackage{csquotes}
-\usepackage[backend=biber, style=ieee]{biblatex}
+\usepackage[
+  backend=biber, 
+  style=ieee, 
+  dashed=false
+]{biblatex}
 \addbibresource{references.bib}
 
-% Verlinkungen (als letztes laden)
-\usepackage[hidelinks]{hyperref}
-\usepackage[colorinlistoftodos, prependcaption, textsize=small]{todonotes}
+% --- SONSTIGES ---
+\usepackage[colorlinks=true, allcolors=black, hidelinks]{hyperref}
+\usepackage[colorinlistoftodos, textsize=tiny]{todonotes}
+
 
 % Metadaten-Kommandos
 \newcommand{\titel}{Entwicklung eines BLDC-Motorcontrollers}
@@ -68,3 +99,4 @@
 %\newcommand{\betreuerfirma}{B. Eng. Adrian Fleig}
 \newcommand{\betreuerfirma}{Prof. Dr. Markus Bell}
 \newcommand{\gutachterdh}{Titel Vorname Nachname}
+

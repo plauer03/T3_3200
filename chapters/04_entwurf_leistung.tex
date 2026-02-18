@@ -1,0 +1,50 @@
+\chapter{Entwurf der Leistungselektronik}
+\label{chap:entwurf_leistung}
+
+\section{MOSFET-Auswahl}
+\todo[inline]{Hier wird die Auswahl der MOSFETs begründet: Sperrspannung, R$_{DS(on)}$, Gateladung, Gehäusewahl usw.}
+
+\section{Verlustanalyse}
+\todo[inline]{Berechnung und Abschätzung der statischen und dynamischen Verluste pro MOSFET/Phase.}
+
+\section{Gate-Treiber}
+\todo[inline]{Beschreibung des gewählten Treibers, Totzeiten, Schutzfunktionen, Ansteuerlogik.}
+
+\section{Bootstrap}
+\label{sec:bootstrap}
+
+Für die Ansteuerung der High-Side-MOSFETs in der Halbbrücke wird ein Bootstrap-Konzept verwendet, bei dem ein Kondensator als kurzzeitige, schwimmende Spannungsquelle dient. 
+Dieser \emph{Bootstrap-Kondensator} wird während der Leitphase des Low-Side-MOSFETs aufgeladen und liefert die notwendige Energie, um das Gate des High-Side-MOSFETs vollständig zu treiben. 
+Ohne eine korrekt dimensionierte Bootstrap-Schaltung kann die Gate-Spannung während der Einschaltzeit des High-Side-MOSFETs unter den erforderlichen Wert fallen, was zu erhöhten Leitverlusten oder einem Auslösen der Unterspannungsabschaltung des Treibers führen würde.
+
+Die Dimensionierung des Bootstrap-Kondensators basiert auf der Gesamtladung, die während einer Einschaltphase bereitgestellt werden muss. Diese setzt sich aus der Gateladung des MOSFETs, dem Energiebedarf des Level-Shifters im Treiber sowie den Verlusten durch Leckströme zusammen. 
+Für die vorliegende Schaltung mit dem MOSFET \textbf{IPP034N08N5} und dem Treiber \textbf{IR2104} wurde die Berechnung auf Basis der MOSFET-Datenblätter sowie der Applikationsanleitung AN-6076 von ON Semiconductor durchgeführt \cite{AN6076}. 
+Hierbei wurden alle relevanten Parameter wie Gateladung, Eingangskapazität, Leckströme des Treibers und der Bootstrap-Diode sowie die maximale Einschaltdauer der High-Side-Schalter berücksichtigt, um eine robuste Auslegung auch im Worst-Case zu gewährleisten.
+
+In Tabelle \ref{tab:bootstrap_params} sind die wesentlichen Größen zusammengefasst, die in die Berechnung der erforderlichen Kapazität eingeflossen sind:
+
+\begin{table}[h!]
+    \centering
+    \caption{Parameter zur Dimensionierung des Bootstrap-Kondensators}
+    \label{tab:bootstrap_params}
+    \begin{tabular}{l c c}
+        \toprule
+        Größe & Symbol & Wert \\
+        \midrule
+        Gateladung MOSFET & $Q_\mathrm{Gate}$ & \SI{111}{\nano\coulomb} \\
+        Level-Shifter-Verbrauch & $Q_\mathrm{LS}$ & \SI{3}{\nano\coulomb} \\
+        Leckströme während $t_\mathrm{on}$ & $Q_\mathrm{Leak}$ & \SI{5,8}{\nano\coulomb} \\
+        Gesamtladung & $Q_\mathrm{Total}$ & \SI{120}{\nano\coulomb} \\
+        Maximaler Spannungsabfall & $\Delta V_\mathrm{BOOT}$ & \SI{1}{\volt} \\
+        Minimale Kapazität & $C_\mathrm{BOOT,min}$ & \SI{120}{\nano\farad} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Auf Basis dieser Analyse wurde für die praktische Umsetzung ein Keramikkondensator mit \SI{220}{\nano\farad} gewählt, um Fertigungstoleranzen, Alterungseffekte sowie den DC-Bias-Einfluss bei Keramikkondensatoren ausreichend zu berücksichtigen. 
+Die hier dargestellte Vorgehensweise zeigt, dass die Auslegung des Bootstrap-Kondensators nicht trivial ist und eine detaillierte Analyse unter Berücksichtigung der Datenblattangaben und der einschlägigen Applikationsliteratur notwendig ist, um sowohl Zuverlässigkeit als auch Effizienz der Schaltung sicherzustellen. 
+Eine vollständige, tiefgehende Berechnung inklusive aller Zwischenwerte und Datenblattangaben ist im Anhang \ref{app:bootstrap} dokumentiert.
+
+
+\section{Zwischenkreis}
+\todo[inline]{Dimensionierung des DC-Links: Kapazität, Ripple, Wahl der Elkos und Spannungsreserve.}

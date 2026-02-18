@@ -1,13 +1,32 @@
 \chapter{Einleitung}
 \label{chap:einleitung}
 
+Die vorliegende Studienarbeit behandelt die Entwicklung eines leistungselektronischen Motorcontrollers zur Ansteuerung eines bürstenlosen Gleichstrommotors (BLDC) im Niederspannungsbereich. Ziel ist die hardwareseitige Realisierung einer dreiphasigen Leistungsendstufe für eine Betriebsspannung von 36\,V und Ströme bis 30\,A. Im Mittelpunkt stehen die Auslegung der Leistungshalbleiter, die Dimensionierung der Treiberstufen sowie die Analyse elektrischer Verlustmechanismen und thermischer Randbedingungen. Darüber hinaus werden Aspekte der elektromagnetischen Verträglichkeit und des leiterplattentechnischen Designs berücksichtigt, da diese maßgeblich die Zuverlässigkeit und Funktion des Gesamtsystems beeinflussen.
+
+Die Entwicklung eines diskreten Motorcontrollers erfordert ein fundiertes Verständnis der maschinen- und leistungselektronischen Zusammenhänge. Hohe Stromanstiege, schnelle Schaltvorgänge und dynamische Lastwechsel führen zu elektrischen und thermischen Belastungen, die bei der Auslegung aller Komponenten berücksichtigt werden müssen. Neben der rein elektrischen Dimensionierung spielen parasitäre Effekte, Layoutführung und Wärmeabfuhr eine zentrale Rolle. Ziel ist die Realisierung eines robusten und reproduzierbaren Prototyps, der unter realistischen Betriebsbedingungen zuverlässig arbeitet.
+
 \section{Motivation}
-\todo[inline]{Text: E-Mobilität, Kleinantriebe.}
+
+Elektrische Antriebssysteme gewinnen sowohl im industriellen Umfeld als auch in mobilen und privaten Anwendungen zunehmend an Bedeutung. Bürstenlose Gleichstrommotoren zeichnen sich durch hohe Leistungsdichte, geringe Wartungsanforderungen und gute Regelbarkeit aus und werden daher in einer Vielzahl moderner Systeme eingesetzt. Mit steigenden Leistungsanforderungen wachsen jedoch auch die Anforderungen an die zugehörige Leistungselektronik.
+
+Die Auslegung eines Motorcontrollers ist mit mehreren technischen Herausforderungen verbunden. Steile Schaltflanken und hohe Transienten führen zu elektromagnetischen Störungen und zusätzlichen Verlusten. Gleichzeitig entstehen in den Leistungshalbleitern sowohl Leit- als auch Schaltverluste, die eine sorgfältige thermische Auslegung erfordern. Unzureichend dimensionierte Bauteile oder eine ungünstige Leiterplattenführung können zu Instabilitäten, erhöhter Bauteilbelastung oder im Extremfall zu Bauteilversagen führen.
+
+Zwar sind kommerzielle Motorcontroller verfügbar, diese bieten jedoch häufig nur eingeschränkte Transparenz hinsichtlich ihrer Auslegung oder sind für spezifische Anwendungen optimiert. Eine eigenständige Entwicklung ermöglicht es, die leistungselektronischen Zusammenhänge systematisch zu analysieren und alle relevanten Parameter gezielt auf die vorgegebenen Betriebsbedingungen abzustimmen. Insbesondere hohe Anlaufströme und schnelle Lastwechsel machen eine robuste und nachvollziehbare Dimensionierung erforderlich.
 
 \section{Zielsetzung}
-\todo[inline]{Text: 36V/30A Controller, diskreter Aufbau.}
+
+Ziel dieser Arbeit ist die Entwicklung eines BLDC-Motorcontrollers für eine Gleichspannungsversorgung von 36\,V und einen Dauerstrom von bis zu 30\,A. Der Schwerpunkt liegt auf einem diskreten Aufbau der Leistungselektronik unter Verwendung einzelner MOSFETs, Gate-Treiber und passiver Komponenten. Dabei soll eine dreiphasige Brückentopologie ausgelegt und hinsichtlich elektrischer Belastbarkeit, Verlustleistung und thermischer Stabilität dimensioniert werden.
+
+Im Rahmen der Entwicklung werden geeignete Leistungshalbleiter ausgewählt und deren Betriebsverhalten unter Berücksichtigung von Leit- und Schaltverlusten analysiert. Darüber hinaus erfolgt die Auslegung eines stromtragfähigen und EMV-gerechten Leiterplattenlayouts. Die thermische Bewertung der Baugruppe erfolgt auf Basis berechneter Verlustleistungen und relevanter Wärmewiderstände. Ziel ist ein funktionsfähiger Prototyp, der auch unter erhöhten Anlaufströmen und dynamischen Betriebsbedingungen einen sicheren und stabilen Betrieb gewährleistet.
 
 \section{Abgrenzung}
-\todo[inline]{Text: Open-Loop SVPWM, kein FOC, Fokus Hardware.}
+
+Der Schwerpunkt dieser Studienarbeit liegt auf der hardwareseitigen Auslegung des Motorcontrollers. Die Ansteuerung des BLDC-Motors erfolgt im Open-Loop-Betrieb unter Verwendung der Space Vector Pulse Width Modulation (SVPWM). Eine feldorientierte Regelung (FOC) ist nicht Bestandteil dieser Arbeit.
+
+Komplexe geschlossene Regelkreise zur Drehmoment- oder Drehzahlregelung werden nur insoweit betrachtet, wie sie für das grundlegende Systemverständnis erforderlich sind. Der Fokus liegt auf der leistungselektronischen Struktur, der sicheren Ansteuerung der Halbleiter, der Dimensionierung der Verlustleistung sowie der thermischen und elektromagnetischen Auslegung des Gesamtsystems.
+
 \section{Aufbau der Arbeit}
-\todo[inline]{Kurzer Abriss: Von Grundlagen über Prototyp zur finalen Auslegung.}
+
+Nach der Einleitung werden zunächst die theoretischen Grundlagen zu BLDC-Motoren, Leistungshalbleitern und Modulationsverfahren dargestellt. Darauf aufbauend erfolgt die systematische Auslegung des Motorcontrollers, beginnend mit der Auswahl der Topologie über die Dimensionierung der Leistungskomponenten bis hin zur thermischen Bewertung.
+
+Im weiteren Verlauf wird das Leiterplattendesign erläutert, wobei insbesondere Stromtragfähigkeit, Minimierung parasitärer Effekte und EMV-gerechte Layoutführung betrachtet werden. Abschließend werden der Aufbau des Prototyps, die Inbetriebnahme sowie Messergebnisse präsentiert und bewertet. Die Arbeit schließt mit einer Zusammenfassung der wesentlichen Ergebnisse und einem Ausblick auf mögliche Weiterentwicklungen.

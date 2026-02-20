@@ -18,10 +18,16 @@
 \pagestyle{plain}
 \pagenumbering{roman}
 \input{flyleaf/deckblatt}
-%\input{abstract}
+\input{flyleaf/abstract}
+\newpage
 \input{disclaimer/disclaimers}
 \cleardoublepage
-\tableofcontents                  
+\tableofcontents  
+%\input{abkürzungen}
+%\input{symbol_formel}
+\listoffigures
+\listoftables   
+%\listoflistings             
 \newpage
 \pagestyle{headings}
 \pagenumbering{arabic}
@@ -38,10 +44,12 @@
 % --- VERZEICHNISSE & LITERATUR ---
 \printbibliography
 
+\newpage
 % --- ANHANG ---
 \appendix
 
-\chapter{Berechnung des Bootstrap-Kondensators}
+\chapter{Anhang}
+\section{Berechnung des Bootstrap-Kondensators}
 \label{app:bootstrap}
 
 Dieser Anhang dokumentiert die vollständige, schrittweise Berechnung des Bootstrap-Kondensators $C_\mathrm{BOOT}$ für die High-Side-Ansteuerung des MOSFETs IPP034N08N5 über den IR2104-Treiber. Alle Werte basieren auf den Datenblättern der Bauteile sowie der ON Semiconductor Applikationsnote AN-6076 \cite{AN6076}.
@@ -68,7 +76,6 @@ Q_\mathrm{Gate} &= \SI{87}{\nano\coulomb} + \SI{24}{\nano\coulomb} \\
 Q_\mathrm{Gate} &\approx \SI{111}{\nano\coulomb}
 \end{align}
 
-\subsection*{1.2 Level-Shifter-Ladung}
 Typischer Verbrauch des IR2104-Level-Shifters während einer High-Side-Einschaltphase:
 \begin{equation}
 Q_\mathrm{LS} \approx \SI{3}{\nano\coulomb}
@@ -83,8 +90,8 @@ t_\mathrm{on} = \frac{1}{f_s} / 2 = \SI{50}{\micro\second}
 Summe der relevanten Leckströme:
 \begin{align}
 I_\mathrm{Leak} &= I_\mathrm{Driver} + I_\mathrm{QBS} + I_\mathrm{GSS} + I_\mathrm{DIODE} \\
-I_\mathrm{Leak} &= 50\si{\micro\ampere} + 55\si{\micro\ampere} + 0,1\si{\micro\ampere} + 10\si{\micro\ampere} \\
-I_\mathrm{Leak} &\approx 115,1\si{\micro\ampere}
+I_\mathrm{Leak} &= \SI{50}{\micro\ampere} + \SI{55}{\micro\ampere} + \SI{0,1}{\micro\ampere} + \SI{10}{\micro\ampere} \\
+I_\mathrm{Leak} &\approx \SI{115,1}{\micro\ampere}
 \end{align}
 
 Ladungsverlust während der Einschaltdauer:
@@ -111,17 +118,5 @@ C_\mathrm{BOOT,min} &= \SI{120}{\nano\farad}
 
 \section*{3. Auswahl des Kondensators}
 Unter Berücksichtigung von Fertigungstoleranzen, DC-Bias-Effekten bei Keramikkondensatoren und Alterung wird ein \SI{220}{\nano\farad} X7R-Keramikkondensator gewählt. 
-Dies gewährleistet eine stabile Gate-Spannung auch unter Worst-Case-Bedingungen und ausreichend Reserve für die Leckströme und den Level-Shifter.
-
-\section*{Referenzen}
-\begin{thebibliography}{9}
-\bibitem{AN6076} ON Semiconductor, \emph{AN-6076: Design and Application Guide of Bootstrap Circuit for High-Voltage Gate-Drive IC}, 2021. [Online]. Available: \url{https://www.onsemi.com/download/application-notes/pdf/and9674-d.pdf}
-\end{thebibliography}
-
-\chapter{Gesamtschaltplan}
-% \includepdf[pages=-, landscape=true]{anhang/schaltplan.pdf}
-
-\chapter{Quellcode}
-% Code hier einfügen
 
 \end{document}

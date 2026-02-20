@@ -1,0 +1,132 @@
+{
+    "version": "0.1",
+    "components": [
+        {
+            "type": "path",
+            "points": [
+                {
+                    "x": 226.772,
+                    "y": 226.772
+                },
+                {
+                    "x": 226.772,
+                    "y": 340.157
+                }
+            ],
+            "label": {
+                "value": "P_\\mathrm{tot}",
+                "distance": "0.12cm"
+            },
+            "id": "european current source"
+        },
+        {
+            "type": "path",
+            "points": [
+                {
+                    "x": 226.772,
+                    "y": 226.772
+                },
+                {
+                    "x": 340.157,
+                    "y": 226.772
+                }
+            ],
+            "label": {
+                "value": "R_\\mathrm{th,JC}",
+                "distance": "0.12cm"
+            },
+            "id": "european resistor"
+        },
+        {
+            "type": "path",
+            "points": [
+                {
+                    "x": 340.157,
+                    "y": 226.772
+                },
+                {
+                    "x": 453.542,
+                    "y": 226.772
+                }
+            ],
+            "label": {
+                "value": "R_\\mathrm{th,CS}",
+                "distance": "0.12cm"
+            },
+            "id": "european resistor"
+        },
+        {
+            "type": "path",
+            "points": [
+                {
+                    "x": 453.543,
+                    "y": 340.157
+                },
+                {
+                    "x": 453.543,
+                    "y": 226.772
+                }
+            ],
+            "label": {
+                "value": "R_\\mathrm{th,SA}",
+                "distance": "0.12cm"
+            },
+            "id": "european resistor"
+        },
+        {
+            "type": "wire",
+            "points": [
+                {
+                    "x": 226.772,
+                    "y": 340.157
+                },
+                {
+                    "x": 453.543,
+                    "y": 340.157
+                }
+            ],
+            "stroke": {
+                "width": "0.4pt"
+            },
+            "directions": [
+                "-|"
+            ]
+        },
+        {
+            "type": "node",
+            "position": {
+                "x": 453.543,
+                "y": 340.157
+            },
+            "id": "ground"
+        },
+        {
+            "type": "node",
+            "label": {
+                "value": "T_\\mathrm{J}",
+                "anchor": "default",
+                "position": "north",
+                "distance": "0.12cm"
+            },
+            "position": {
+                "x": 226.772,
+                "y": 226.772
+            },
+            "id": "circ"
+        },
+        {
+            "type": "node",
+            "label": {
+                "value": "T_\\mathrm{A}",
+                "anchor": "default",
+                "position": "east",
+                "distance": "0.12cm"
+            },
+            "position": {
+                "x": 453.543,
+                "y": 340.157
+            },
+            "id": "circ"
+        }
+    ]
+}

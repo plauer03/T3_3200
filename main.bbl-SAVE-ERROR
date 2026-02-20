@@ -16,5 +16,212 @@
   {}
 \endgroup
 
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{MPS_BLDC_AN}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=4e8e970606abedd72af71dccbf0e9c85}{%
+           family={{Monolithic Power Systems}},
+           familyi={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{4e8e970606abedd72af71dccbf0e9c85}
+      \strng{fullhash}{4e8e970606abedd72af71dccbf0e9c85}
+      \strng{fullhashraw}{4e8e970606abedd72af71dccbf0e9c85}
+      \strng{bibnamehash}{4e8e970606abedd72af71dccbf0e9c85}
+      \strng{authorbibnamehash}{4e8e970606abedd72af71dccbf0e9c85}
+      \strng{authornamehash}{4e8e970606abedd72af71dccbf0e9c85}
+      \strng{authorfullhash}{4e8e970606abedd72af71dccbf0e9c85}
+      \strng{authorfullhashraw}{4e8e970606abedd72af71dccbf0e9c85}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{AN047, Rev. 1.0}
+      \field{title}{Brushless DC Motor Fundamentals}
+      \field{year}{2014}
+      \verb{urlraw}
+      \verb https://media.monolithicpower.com/document/Brushless_DC_Motor_Fundamentals.pdf
+      \endverb
+      \verb{url}
+      \verb https://media.monolithicpower.com/document/Brushless_DC_Motor_Fundamentals.pdf
+      \endverb
+    \endentry
+    \entry{Pillay1991}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=2740db1c4ad86697c256946537938184}{%
+           family={Pillay},
+           familyi={P\bibinitperiod},
+           given={P.},
+           giveni={P\bibinitperiod}}}%
+        {{hash=79e41b14b0523dc4ab7e0b06a9beeeb0}{%
+           family={Krishnan},
+           familyi={K\bibinitperiod},
+           given={R.},
+           giveni={R\bibinitperiod}}}%
+      }
+      \strng{namehash}{2d1a85c895ef162623839d340883ea91}
+      \strng{fullhash}{2d1a85c895ef162623839d340883ea91}
+      \strng{fullhashraw}{2d1a85c895ef162623839d340883ea91}
+      \strng{bibnamehash}{2d1a85c895ef162623839d340883ea91}
+      \strng{authorbibnamehash}{2d1a85c895ef162623839d340883ea91}
+      \strng{authornamehash}{2d1a85c895ef162623839d340883ea91}
+      \strng{authorfullhash}{2d1a85c895ef162623839d340883ea91}
+      \strng{authorfullhashraw}{2d1a85c895ef162623839d340883ea91}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Transactions on Industry Applications}
+      \field{number}{5}
+      \field{title}{Application Characteristics of Permanent Magnet Synchronous and Brushless DC Motors for Servo Drives}
+      \field{volume}{27}
+      \field{year}{1991}
+      \field{pages}{986\bibrangedash 996}
+      \range{pages}{11}
+      \verb{doi}
+      \verb 10.1109/28.90357
+      \endverb
+    \endentry
+    \entry{AN6076}{manual}{}{}
+      \name{author}{1}{}{%
+        {{hash=e53a96542e62222130baf6a1ffa923e2}{%
+           family={{ON Semiconductor}},
+           familyi={O\bibinitperiod}}}%
+      }
+      \strng{namehash}{e53a96542e62222130baf6a1ffa923e2}
+      \strng{fullhash}{e53a96542e62222130baf6a1ffa923e2}
+      \strng{fullhashraw}{e53a96542e62222130baf6a1ffa923e2}
+      \strng{bibnamehash}{e53a96542e62222130baf6a1ffa923e2}
+      \strng{authorbibnamehash}{e53a96542e62222130baf6a1ffa923e2}
+      \strng{authornamehash}{e53a96542e62222130baf6a1ffa923e2}
+      \strng{authorfullhash}{e53a96542e62222130baf6a1ffa923e2}
+      \strng{authorfullhashraw}{e53a96542e62222130baf6a1ffa923e2}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Rev. 3}
+      \field{title}{AN-6076: Design and Application Guide of Bootstrap Circuit for High-Voltage Gate-Drive IC}
+      \field{year}{2021}
+      \verb{urlraw}
+      \verb https://www.onsemi.com/download/application-notes/pdf/and9674-d.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.onsemi.com/download/application-notes/pdf/and9674-d.pdf
+      \endverb
+    \endentry
+    \entry{Xia2012}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=f276505d309c4fef0996d04c994e2e12}{%
+           family={Xia},
+           familyi={X\bibinitperiod},
+           given={Chang-liang},
+           giveni={C\bibinithyphendelim l\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Wiley-IEEE Press}%
+      }
+      \strng{namehash}{f276505d309c4fef0996d04c994e2e12}
+      \strng{fullhash}{f276505d309c4fef0996d04c994e2e12}
+      \strng{fullhashraw}{f276505d309c4fef0996d04c994e2e12}
+      \strng{bibnamehash}{f276505d309c4fef0996d04c994e2e12}
+      \strng{authorbibnamehash}{f276505d309c4fef0996d04c994e2e12}
+      \strng{authornamehash}{f276505d309c4fef0996d04c994e2e12}
+      \strng{authorfullhash}{f276505d309c4fef0996d04c994e2e12}
+      \strng{authorfullhashraw}{f276505d309c4fef0996d04c994e2e12}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-1-118-18833-0}
+      \field{title}{Permanent Magnet Brushless DC Motor Drives and Controls}
+      \field{year}{2012}
+    \endentry
+    \entry{Nahin2022-ts}{inproceedings}{}{}
+      \name{author}{3}{}{%
+        {{hash=6af26a52b4ea81e0063567f4fa6d3cf8}{%
+           family={Nahin},
+           familyi={N\bibinitperiod},
+           given={Nazmul\bibnamedelima Islam},
+           giveni={N\bibinitperiod\bibinitdelim I\bibinitperiod}}}%
+        {{hash=1b453e616c13f460317fed72a8e0b1b2}{%
+           family={Biswas},
+           familyi={B\bibinitperiod},
+           given={Shuvra\bibnamedelima Prokash},
+           giveni={S\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+        {{hash=d131848bcb2c44bf7593705567ed516a}{%
+           family={Islam},
+           familyi={I\bibinitperiod},
+           given={Md\bibnamedelima Rabiul},
+           giveni={M\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \list{language}{1}{%
+        {en}%
+      }
+      \list{location}{1}{%
+        {Singapore}%
+      }
+      \list{publisher}{1}{%
+        {Springer Nature Singapore}%
+      }
+      \strng{namehash}{b88e95be894bc672f473c63a65dde75f}
+      \strng{fullhash}{9fabe42778bf1718cd1d820bcc35fedc}
+      \strng{fullhashraw}{9fabe42778bf1718cd1d820bcc35fedc}
+      \strng{bibnamehash}{9fabe42778bf1718cd1d820bcc35fedc}
+      \strng{authorbibnamehash}{9fabe42778bf1718cd1d820bcc35fedc}
+      \strng{authornamehash}{b88e95be894bc672f473c63a65dde75f}
+      \strng{authorfullhash}{9fabe42778bf1718cd1d820bcc35fedc}
+      \strng{authorfullhashraw}{9fabe42778bf1718cd1d820bcc35fedc}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Lecture Notes in Electrical Engineering}
+      \field{series}{Lecture Notes in Electrical Engineering}
+      \field{title}{A modified {SVPWM} strategy to improve the performance of variable frequency induction motor drive}
+      \field{year}{2022}
+      \field{pages}{481\bibrangedash 493}
+      \range{pages}{13}
+    \endentry
+    \entry{Infineon_MOSFET_Losses}{manual}{}{}
+      \name{author}{3}{}{%
+        {{hash=b65130e2b1fab751488608db489fe124}{%
+           family={Graovac},
+           familyi={G\bibinitperiod},
+           given={Dušan},
+           giveni={D\bibinitperiod}}}%
+        {{hash=bacc0647ff13038b01abe768a3c08959}{%
+           family={Pürschel},
+           familyi={P\bibinitperiod},
+           given={Marco},
+           giveni={M\bibinitperiod}}}%
+        {{hash=7cf729afe3472bee4406e22f4a4d9560}{%
+           family={Kiep},
+           familyi={K\bibinitperiod},
+           given={Andreas},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Infineon Technologies}%
+      }
+      \strng{namehash}{83ce774f10465ee39f6d18555a6a15ce}
+      \strng{fullhash}{92f1a4cac6296c8e16b632c076b4cd49}
+      \strng{fullhashraw}{92f1a4cac6296c8e16b632c076b4cd49}
+      \strng{bibnamehash}{92f1a4cac6296c8e16b632c076b4cd49}
+      \strng{authorbibnamehash}{92f1a4cac6296c8e16b632c076b4cd49}
+      \strng{authornamehash}{83ce774f10465ee39f6d18555a6a15ce}
+      \strng{authorfullhash}{92f1a4cac6296c8e16b632c076b4cd49}
+      \strng{authorfullhashraw}{92f1a4cac6296c8e16b632c076b4cd49}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Application Note, V 1.1}
+      \field{title}{{MOSFET Power Losses Calculation Using the Data-Sheet Parameters}}
+      \field{year}{2006}
+    \endentry
+  \enddatalist
+\endrefsection
 \endinput
 

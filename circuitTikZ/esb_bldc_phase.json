@@ -1,0 +1,223 @@
+{
+    "version": "0.1",
+    "components": [
+        {
+            "type": "node",
+            "label": {
+                "value": "+",
+                "anchor": "default",
+                "position": "east",
+                "distance": "0.12cm"
+            },
+            "position": {
+                "x": 37.795,
+                "y": -186.756
+            },
+            "id": "ocirc"
+        },
+        {
+            "type": "node",
+            "label": {
+                "value": "-",
+                "anchor": "default",
+                "position": "west",
+                "distance": "0.12cm"
+            },
+            "position": {
+                "x": 226.772,
+                "y": -186.75
+            },
+            "id": "ocirc"
+        },
+        {
+            "type": "path",
+            "points": [
+                {
+                    "x": 37.795,
+                    "y": -264.567
+                },
+                {
+                    "x": 113.386,
+                    "y": -264.567
+                }
+            ],
+            "label": {
+                "value": "R",
+                "otherSide": true,
+                "distance": "0.12cm"
+            },
+            "id": "european resistor",
+            "scale": {
+                "x": 0.6,
+                "y": 0.6
+            }
+        },
+        {
+            "type": "path",
+            "points": [
+                {
+                    "x": 89.764,
+                    "y": -264.567
+                },
+                {
+                    "x": 174.803,
+                    "y": -264.567
+                }
+            ],
+            "label": {
+                "value": "L-M",
+                "otherSide": true,
+                "distance": "0.26cm"
+            },
+            "id": "american inductor",
+            "scale": {
+                "x": 0.6,
+                "y": 0.6
+            }
+        },
+        {
+            "type": "path",
+            "points": [
+                {
+                    "x": 170.079,
+                    "y": -264.567
+                },
+                {
+                    "x": 217.323,
+                    "y": -264.567
+                }
+            ],
+            "label": {
+                "value": "e_U",
+                "otherSide": true,
+                "distance": "0.12cm"
+            },
+            "id": "european voltage source",
+            "scale": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "type": "wire",
+            "points": [
+                {
+                    "x": 207.874,
+                    "y": -264.567
+                },
+                {
+                    "x": 226.772,
+                    "y": -264.567
+                },
+                {
+                    "x": 226.772,
+                    "y": -188.976
+                }
+            ],
+            "stroke": {
+                "width": "0.4pt"
+            },
+            "directions": [
+                "-|",
+                "-|"
+            ]
+        },
+        {
+            "type": "wire",
+            "points": [
+                {
+                    "x": 37.795,
+                    "y": -188.976
+                },
+                {
+                    "x": 37.795,
+                    "y": -264.567
+                }
+            ],
+            "stroke": {
+                "width": "0.4pt"
+            },
+            "directions": [
+                "-|"
+            ]
+        },
+        {
+            "type": "rect",
+            "position": {
+                "x": 28.346,
+                "y": -245.669
+            },
+            "stroke": {
+                "opacity": 0
+            },
+            "size": {
+                "x": 37.795,
+                "y": 18.898
+            },
+            "text": {
+                "text": "$i_U$",
+                "fontSize": "small",
+                "color": "#e32400"
+            }
+        },
+        {
+            "type": "wire",
+            "points": [
+                {
+                    "x": 37.795,
+                    "y": -243.244
+                },
+                {
+                    "x": 37.795,
+                    "y": -245.669
+                }
+            ],
+            "stroke": {
+                "color": "rgb(227,36,0)"
+            },
+            "directions": [
+                "-|"
+            ],
+            "endArrow": "stealth"
+        },
+        {
+            "type": "rect",
+            "position": {
+                "x": 141.732,
+                "y": -198.425
+            },
+            "stroke": {
+                "width": "0pt"
+            },
+            "size": {
+                "x": 37.795,
+                "y": 18.898
+            },
+            "text": {
+                "text": "$u_U$",
+                "fontSize": "small",
+                "color": "#0061ff"
+            }
+        },
+        {
+            "type": "wire",
+            "points": [
+                {
+                    "x": 65.875,
+                    "y": -186.842
+                },
+                {
+                    "x": 198.158,
+                    "y": -186.842
+                }
+            ],
+            "stroke": {
+                "color": "rgb(0,97,255)"
+            },
+            "directions": [
+                null
+            ],
+            "endArrow": "stealth"
+        }
+    ]
+}

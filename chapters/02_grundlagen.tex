@@ -24,9 +24,27 @@ Der Rotor trägt die Permanentmagnete. Je nach Anordnung unterscheidet man zwisc
 
 Das Drehmoment entsteht durch die Lorentzkraft, die auf die bestromten Leiter im Magnetfeld wirkt. Damit eine kontinuierliche Rotation gewährleistet ist, muss das magnetische Feld des Stators dem des Rotors stets um $90^\circ$ vorauseilen.
 
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.7\textwidth]{BLDC_1.png}
+%     \caption{Querschnitt und prinzipieller Aufbau eines BLDC-Motors \cite{MPS_BLDC_AN}.}
+%     \label{fig:bldc_aufbau}
+% \end{figure}
+
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.7\textwidth]{BLDC_1.png}
+    \begin{tikzpicture}
+        % Bild
+        \node[inner sep=0] (img) {\includegraphics[width=0.7\textwidth]{BLDC_1.png}};
+        
+        % Entwurf-Banner (halbtransparent, diagonal)
+        \node at (img.center) [
+            rotate=0,
+            scale=5,
+            text opacity=0.35,  % macht es dezent
+            color=red
+        ] {DRAFT};
+    \end{tikzpicture}
     \caption{Querschnitt und prinzipieller Aufbau eines BLDC-Motors \cite{MPS_BLDC_AN}.}
     \label{fig:bldc_aufbau}
 \end{figure}
@@ -82,9 +100,27 @@ Dabei ist $k_e$ die spezifische BEMF-Konstante des Motors. Charakteristisch für
 
 Um ein konstantes Drehmoment zu erzeugen, sollte der Phasenstrom idealerweise rechteckförmig in die Phasen eingeprägt werden. So korrespondieren die Stromblöcke exakt mit dem flachen Dach der trapezförmigen BEMF, was in Abbildung \ref{fig:bemf_trapez} grafisch verdeutlicht wird.
 
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.7\textwidth]{BEMF.png}
+%     \caption{Verlauf der BEMF und der korrespondierenden Blockströme \cite{MPS_BLDC_AN}.}
+%     \label{fig:bemf_trapez}
+% \end{figure}
+
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.7\textwidth]{BEMF.png}
+    \begin{tikzpicture}
+        % Bild
+        \node[inner sep=0] (img) {\includegraphics[width=0.7\textwidth]{BEMF.png}};
+        
+        % Entwurf-Banner
+        \node at (img.center) [
+            rotate=0,
+            scale=5,
+            text opacity=0.35,
+            color=red
+        ] {DRAFT};
+    \end{tikzpicture}
     \caption{Verlauf der BEMF und der korrespondierenden Blockströme \cite{MPS_BLDC_AN}.}
     \label{fig:bemf_trapez}
 \end{figure}
@@ -204,9 +240,28 @@ Da jede der drei Halbbrücken exakt zwei Zustände annehmen kann (High oder Low)
 
 Die Lage der aktiven Vektoren sowie die Geometrie des resultierenden Hexagons sind in Abbildung \ref{fig:svpwm} grafisch dargestellt.
 
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.7\textwidth]{SVPWM.png}
+%     \caption{Raumzeigerdiagramm der SVPWM \cite{Nahin2022-ts}.}
+%     \label{fig:svpwm}
+% \end{figure}
+
+
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.7\textwidth]{SVPWM.png}
+    \begin{tikzpicture}
+        % Bild
+        \node[inner sep=0] (img) {\includegraphics[width=0.7\textwidth]{SVPWM.png}};
+        
+        % Entwurf-Banner
+        \node at (img.center) [
+            rotate=0,
+            scale=5,
+            text opacity=0.35,
+            color=red
+        ] {DRAFT};
+    \end{tikzpicture}
     \caption{Raumzeigerdiagramm der SVPWM \cite{Nahin2022-ts}.}
     \label{fig:svpwm}
 \end{figure}
@@ -216,7 +271,10 @@ Jeder beliebige Zielspannungszeiger $\vec{v}_{\mathrm{ref}}$, der sich innerhalb
 Befindet sich der Referenzzeiger beispielsweise im ersten Sektor zwischen $\vec{V}_1$ und $\vec{V}_2$, so muss die Integration über eine Periodendauer $T_{\mathrm{PWM}}$ gemäß Gleichung \ref{eq:svpwm_integral} erfüllt sein:
 
 \begin{equation}
-    \int_{0}^{T_{\mathrm{PWM}}} \vec{v}_{\mathrm{ref}} \, dt = \int_{0}^{T_1} \vec{V}_1 \, dt + \int_{T_1}^{T_1+T_2} \vec{V}_2 \, dt + \int_{T_1+T_2}^{T_{\mathrm{PWM}}} \vec{V}_0 \, dt
+\int\limits_{0}^{T_{\mathrm{PWM}}} \vec{v}_{\mathrm{ref}} \, dt 
+= \int\limits_{0}^{T_1} \vec{V}_1 \, dt 
+  + \int\limits_{T_1}^{T_1+T_2} \vec{V}_2 \, dt 
+  + \int\limits_{T_1+T_2}^{T_{\mathrm{PWM}}} \vec{V}_0 \, dt
     \label{eq:svpwm_integral}
 \end{equation}
 
@@ -241,7 +299,7 @@ Dies entspricht einem Spannungszugewinn von ca. 15,5 \%. Da in der vorliegenden 
 \section{Verlustmechanismen in MOSFETs}
 \label{sec:verluste}
 
-Ein idealer Halbleiterschalter würde verlustfrei arbeiten. Reale Leistungstransistoren weisen jedoch parasitäre Eigenschaften auf, die unvermeidlich zu einer Verlustleistung führen. Diese elektrische Leistung wird in Wärmeenergie umgewandelt und muss abgeführt werden, um die thermische Zerstörung des Bauteils zu verhindern. Die Gesamtverluste $P_{\mathrm{tot}}$ eines MOSFETs in einer Wechselrichteranwendung setzen sich primär aus Leit- und Schaltverlusten zusammen \cite{Infineon_MOSFET_Losses}.
+Ein idealer Halbleiter würde verlustfrei arbeiten. Reale Leistungstransistoren weisen jedoch parasitäre Eigenschaften auf, die unvermeidlich zu einer Verlustleistung führen. Diese elektrische Leistung wird in Wärmeenergie umgewandelt und muss abgeführt werden, um die thermische Zerstörung des Bauteils zu verhindern. Die Gesamtverluste $P_{\mathrm{tot}}$ eines MOSFETs setzen sich primär aus Leit- und Schaltverlusten zusammen \cite{Infineon_MOSFET_Losses}.
 
 \subsection{Leitverluste}
 Im statisch eingeschalteten Zustand verhält sich der Drain-Source-Kanal des MOSFETs näherungsweise wie ein ohmscher Widerstand $R_{\mathrm{DS(on)}}$. Die daraus resultierenden Leitverluste lassen sich in Abhängigkeit des Effektivstroms gemäß Gleichung \ref{eq:p_cond} berechnen:

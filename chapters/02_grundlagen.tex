@@ -365,3 +365,117 @@ Dieses thermische System kann analog zu einem elektrischen Netzwerk in einer the
 
 
 Die Aufstellung dieser Wärmekette verdeutlicht, dass eine rein elektrische Betrachtung für die Auslegung von Leistungselektronik nicht ausreichend ist. Erst die Verknüpfung des elektrischen Verlustmodells mit der thermischen Analyse validiert die ausgewählten Komponenten für den Nennbetrieb.
+
+% ============================================================
+% 2.6 Verluste
+% ============================================================
+\section{Verlustleistung in Dioden}
+Eine ideale Diode wirkt im eingeschalteten Zustand wie ein verlustfreier Kurzschluss und kann unbegrenzte Ströme leiten. Im ausgeschalteten Zustand verhält sie sich wie ein Leerlauf und sperrt die anliegende Spannung vollständig. Sie ermöglicht ein unendlich schnelles und vor allem verlustloses Umschalten. 
+
+In der Realität weicht das Verhalten jedoch stark ab. Während der Leitphase fällt eine Vorwärtsspannung ($u_D$) ab, die zu kontinuierlichen Durchlassverlusten führt. Beim Abschalten (Übergang in den Sperrzustand) kann die Diode den Stromfluss nicht sofort stoppen. Durch die im Halbleiter gespeicherte Ladung ($Q$) fließt für kurze Zeit ein negativer Sperrverzögerungsstrom. Da in diesem Moment gleichzeitig die Sperrspannung über der Diode ansteigt, entsteht eine signifikante Verlustleistungsspitze (Schaltverluste). Abbildung \ref{fig:id_diode} verdeutlicht diese parasitären Effekte anhand des Abschaltvorgangs in einem Schaltwandler.
+
+\begin{figure}[htbp]
+    \centering
+    
+    % ==========================================
+    % LINKE SEITE: Ideale Diode
+    % ==========================================
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=\textwidth, height=6.5cm,
+                axis lines=middle,
+                axis on top,
+                xmin=-1, xmax=10,
+                ymin=-4.5, ymax=6,
+                xlabel={$t$},
+                ylabel={$i_\mathrm{D}, u_\mathrm{D}$},
+                % Achsen-Pfeile und Positionierung anpassen
+                xtick={0, 4, 8},
+                xticklabels={0, $\delta T$, $T$},
+                ytick={-3, 2.5, 4.5},
+                yticklabels={$-u_\mathrm{i}$, $i_{L,0}$, $i_{L,\delta T}$},
+                ticklabel style={font=\normalsize},
+                xticklabel style={
+                    fill=white, 
+                    fill opacity=0.7, 
+                    text opacity=1, 
+                    inner sep=1pt,
+                    font=\normalsize
+                },
+                enlargelimits=false,
+                clip=false
+            ]
+                % Hilfslinien (gepunktet, wie im Bild)
+                \draw[densely dotted, thick] (axis cs:0,4.5) -- (axis cs:4,4.5);
+                \draw[densely dotted, thick] (axis cs:0,2.5) -- (axis cs:8,2.5);
+
+
+                % Strom i_D (rot, durchgezogen)
+                \addplot[color=red, very thick] coordinates {
+                    (0,2.5) (0,0) (4,0) (4,4.5) (8,2.5) (8,0) (9.5,0)
+                };
+
+                % Spannung u_D (blau, gestrichelt)
+                \addplot[color=blue, very thick, densely dashed] coordinates {
+                    (0,0) (0,-3) (4,-3) (4,0) (8,0) (8,-3) (9.5,-3)
+                };
+
+                
+            \end{axis}
+        \end{tikzpicture}
+    \end{minipage}\hfill
+    % ==========================================
+    % RECHTE SEITE: Reale Diode (mit Verlusten)
+    % ==========================================
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=\textwidth, height=6.5cm,
+                axis lines=middle,
+                axis on top,
+                xmin=-1, xmax=10,
+                ymin=-4.5, ymax=6,
+                xlabel={$t$},
+                ylabel={$i_\mathrm{D}, u_\mathrm{D}$},
+                % Achsen-Pfeile und Positionierung anpassen
+                xtick={0, 4, 8},
+                xticklabels={0, $\delta T$, $T$},
+                ytick={-3, 2.5, 4.5},
+                yticklabels={$-u_\mathrm{i}$, $i_{L,0}$, $i_{L,\delta T}$},
+                ticklabel style={font=\normalsize},
+                xticklabel style={
+                    fill=white, 
+                    fill opacity=0.7, 
+                    text opacity=1, 
+                    inner sep=1pt,
+                    font=\normalsize
+                },
+                enlargelimits=false,
+                clip=false
+            ]
+                % Hilfslinien (gepunktet)
+                \draw[densely dotted, thick] (axis cs:0,4.5) -- (axis cs:4,4.5);
+                \draw[densely dotted, thick] (axis cs:0,2.5) -- (axis cs:8,2.5);
+
+                \addplot[color=red, very thick] coordinates {
+                    (0,2.5) (0,-1) (0.15,-0.3) (0.3,0) (4,0) (4,4.5) (8,2.5) (8,-1) (8.15,-0.3) (8.3,0) (9.5,0)
+                };
+
+                \addplot[color=blue, very thick, densely dashed] coordinates {
+                    (0,0) (0,-3) (4,-3) (4.05,1) (4.15,0.6) (4.3,0.5) (8,0.2) (8,-3) (8.6,-3) (9.5,-3)
+                };
+
+            \end{axis}
+        \end{tikzpicture}
+    \end{minipage}
+    
+    \caption{Spannungs- und Stromverlauf im Abwärtswandler. Links: Ideale Diode Rechts: Reale Diode.}
+    \label{fig:id_diode}
+\end{figure}
+
+\subsection{Durchlassverluste}
+\subsection{Schaltverluste}
+\subsection{Sperrverluste}

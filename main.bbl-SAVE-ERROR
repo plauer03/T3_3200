@@ -33,8 +33,8 @@
       \strng{authornamehash}{4e8e970606abedd72af71dccbf0e9c85}
       \strng{authorfullhash}{4e8e970606abedd72af71dccbf0e9c85}
       \strng{authorfullhashraw}{4e8e970606abedd72af71dccbf0e9c85}
-      \field{sortinit}{1}
-      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{AN047, Rev. 1.0}
@@ -68,8 +68,8 @@
       \strng{authornamehash}{2d1a85c895ef162623839d340883ea91}
       \strng{authorfullhash}{2d1a85c895ef162623839d340883ea91}
       \strng{authorfullhashraw}{2d1a85c895ef162623839d340883ea91}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{IEEE Transactions on Industry Applications}
@@ -97,8 +97,8 @@
       \strng{authornamehash}{e53a96542e62222130baf6a1ffa923e2}
       \strng{authorfullhash}{e53a96542e62222130baf6a1ffa923e2}
       \strng{authorfullhashraw}{e53a96542e62222130baf6a1ffa923e2}
-      \field{sortinit}{7}
-      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{note}{Rev. 3}
@@ -130,8 +130,8 @@
       \strng{authornamehash}{f276505d309c4fef0996d04c994e2e12}
       \strng{authorfullhash}{f276505d309c4fef0996d04c994e2e12}
       \strng{authorfullhashraw}{f276505d309c4fef0996d04c994e2e12}
-      \field{sortinit}{8}
-      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{isbn}{978-1-118-18833-0}
@@ -173,8 +173,8 @@
       \strng{authornamehash}{b88e95be894bc672f473c63a65dde75f}
       \strng{authorfullhash}{9fabe42778bf1718cd1d820bcc35fedc}
       \strng{authorfullhashraw}{9fabe42778bf1718cd1d820bcc35fedc}
-      \field{sortinit}{8}
-      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Lecture Notes in Electrical Engineering}

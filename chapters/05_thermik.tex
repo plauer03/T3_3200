@@ -2,7 +2,45 @@
 \label{chap:thermik}
 
 \section{Wärmewiderstandsmodell}
-\todo[inline]{Definition der Wärmewiderstände: Junction-Case, Case-Sink, Sink-Ambient; Aufbau eines Wärmeflussmodells.}
+\label{sec:thermik}
+
+Um die Betriebssicherheit der Endstufe zu gewährleisten, muss sichergestellt werden, dass die maximal zulässige Sperrschichttemperatur $T_{\mathrm{J,max}}$ der Halbleiter unter keinen Umständen überschritten wird. Hierzu bedient man sich eines thermischen Modells. Dabei wird angenommen, dass der entstandene Wärmestrom ($P_{\mathrm{tot}}$) von der innersten Wärmequelle (Junction) über verschiedene thermische Widerstände ($R_{\mathrm{th}}$) bis zur Umgebungsluft (Ambient) abfließt.
+
+Im eingeschwungenen, stationären Zustand lässt sich die resultierende Sperrschichttemperatur nach Gleichung \ref{eq:thermik} berechnen:
+
+\begin{equation}
+    T_\mathrm{J} = T_\mathrm{A} + P_{\mathrm{tot}} \cdot (R_{\mathrm{th,JC}} + R_{\mathrm{th,CS}} + R_{\mathrm{th,SA}})
+    \label{eq:thermik}
+\end{equation}
+
+Die partiellen Wärmewiderstände beschreiben dabei folgende physikalische Übergänge:
+\begin{itemize}
+    \item $R_{\mathrm{th,JC}}$ (Junction-to-Case): Der innere Wärmewiderstand des MOSFET-Gehäuses, spezifiziert im Datenblatt.
+    \item $R_{\mathrm{th,CS}}$ (Case-to-Sink): Der thermische Übergangswiderstand des Montagematerials, beispielsweise einer Wärmeleitfolie oder Wärmeleitpaste.
+    \item $R_{\mathrm{th,SA}}$ (Sink-to-Ambient): Der thermische Widerstand des Kühlkörpers zur umgebenden Luft, abhängig von Oberfläche und Luftstrom.
+\end{itemize}
+
+Dieses thermische System kann analog zu einem elektrischen Netzwerk in einer thermischen Ersatzschaltung abgebildet werden, wie Abbildung \ref{fig:thermal_esb} verdeutlicht. Es ermöglicht die einfache Berechnung der Temperaturabfälle mittels der Kirchhoffschen Maschengleichungen.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        % Paths, nodes and wires:
+        \draw (6, -6) to[european current source, l={$P_\mathrm{tot}$}] (6, -9);
+        \draw (6, -6) to[european resistor, l={$R_\mathrm{th,JC}$}] (9, -6);
+        \draw (9, -6) to[european resistor, l={$R_\mathrm{th,CS}$}] (12, -6);
+        \draw (12, -9) to[european resistor, l={$R_\mathrm{th,SA}$}] (12, -6);
+        \draw (6, -9) -- (12, -9);
+        \node[ground] at (12, -9){};
+        \node[circ](N1) at (6, -6){} node[anchor=south] at (N1.north){$T_\mathrm{J}$};
+        \node[circ](N2) at (12, -9){} node[anchor=west] at (N2.east){$T_\mathrm{A}$};
+    \end{tikzpicture}
+    \caption{Stationäres thermisches ESB eines gekühlten MOSFETs.}
+    \label{fig:thermal_esb}
+\end{figure}
+
+
+Die Aufstellung dieser Wärmekette verdeutlicht, dass eine rein elektrische Betrachtung für die Auslegung von Leistungselektronik nicht ausreichend ist. Erst die Verknüpfung des elektrischen Verlustmodells mit der thermischen Analyse validiert die ausgewählten Komponenten für den Nennbetrieb.
 
 \section{Temperaturberechnung}
 \todo[inline]{Berechnung der MOSFET- und Treiber-Temperaturen unter Nennlast.}

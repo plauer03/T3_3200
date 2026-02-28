@@ -214,7 +214,7 @@ In modernen Niederspannungsanwendungen werden fast ausschließlich N-Kanal-MOSFE
 \end{figure}
 
 \subsection{Ansteuerung und Bootstrap-Prinzip}
-Die Verwendung von N-Kanal-MOSFETs im HS-Pfad erfordert zum vollständigen Durchsteuern eine Gate-Spannung, die deutlich über der Zwischenkreisspannung liegt. Diese benötigte Überspannung wird üblicherweise durch eine Bootstrap-Schaltung generiert. Dabei lädt sich ein Bootstrap-Kondensator über eine Diode auf die Treiber-Versorgungsspannung $V_{\mathrm{CC}}$ auf, solange der LS-MOSFET leitend ist. Schaltet die Halbbrücke um, „schwimmt“ das Potential des Kondensators mit der Source-Spannung des HS-MOSFETs nach oben und stellt dem Gate-Treiber so die nötige Spannung bereit \cite{AN6076}.
+Die Verwendung von N-Kanal-MOSFETs im HS-Pfad erfordert zum vollständigen Durchsteuern eine Gate-Spannung, die deutlich über der Zwischenkreisspannung liegt. Diese benötigte Überspannung wird üblicherweise durch eine Bootstrap-Schaltung generiert. Dabei lädt sich ein Bootstrap-Kondensator über eine Diode auf die Treiber-Versorgungsspannung $V_{\mathrm{CC}}$ auf, solange der LS-MOSFET leitend ist. Schaltet die Halbbrücke um, schwimmt das Potential des Kondensators mit der Source-Spannung des HS-MOSFETs nach oben und stellt dem Gate-Treiber so die nötige Spannung bereit \cite{AN6076}.
 
 \subsection{Pulsweitenmodulation (PWM)}
 Um nicht nur die Richtung, sondern auch die Amplitude des Stroms (und damit das Drehmoment) kontinuierlich zu steuern, werden die Schalter nicht rein statisch eingeschaltet, sondern hochfrequent getaktet. Durch die Variation des Tastverhältnisses $d$ (Duty Cycle) ergibt sich die am Motor anliegende effektive Phasenspannung proportional zur Zwischenkreisspannung als $\bar{v}_{\mathrm{ph}} = d \cdot V_{\mathrm{DC}}$.
@@ -278,7 +278,7 @@ Befindet sich der Referenzzeiger beispielsweise im ersten Sektor zwischen $\vec{
     \label{eq:svpwm_integral}
 \end{equation}
 
-Hierbei definieren $T_1$, $T_2$ und $T_0$ die jeweiligen Einschaltzeiten der Vektoren innerhalb einer PWM-Periode. Durch eine geschickte Anordnung der Schaltsequenzen, beispielsweise durch symmetrische Ausrichtung um die Periodenmitte (Center-Aligned PWM), lässt sich der Oberschwingungsgehalt im Ausgangsstrom maßgeblich minimieren.
+Hierbei definieren $T_1$, $T_2$ und $T_0$ die jeweiligen Einschaltzeiten der Vektoren innerhalb einer PWM-Periode. Durch eine geschickte Anordnung der Schaltsequenzen, beispielsweise durch symmetrische Ausrichtung um die Periodenmitte, lässt sich der Oberschwingungsanteil im Ausgangsstrom maßgeblich minimieren.
 
 \subsection{Vorteile gegenüber klassischer PWM}
 Der entscheidende elektrotechnische Vorteil der SVPWM gegenüber der sinusförmigen PWM liegt in der besseren Ausnutzung der zur Verfügung stehenden Zwischenkreisspannung.
@@ -294,197 +294,243 @@ Der maximale lineare Aussteuergrad erhöht sich dabei nach Gleichung \ref{eq:svp
 Dies entspricht einem Spannungszugewinn von ca. 15,5 \%. Da in der vorliegenden Applikation eine vergleichsweise niedrige Zwischenkreisspannung zur Verfügung steht, ist diese Spannungsreserve essenziell, um die volle Leistungsfähigkeit des Motors bei hohen Drehzahlen abzurufen \cite{Xia2012}.
 
 % ============================================================
-% 2.5 Verluste
+% 2.5 Verlustmechanismen
 % ============================================================
-\section{Verlustmechanismen in MOSFETs}
+\section{Verlustmechanismen in Leistungshalbleitern}
 \label{sec:verluste}
 
-Ein idealer Halbleiter würde verlustfrei arbeiten. Reale Leistungstransistoren weisen jedoch parasitäre Eigenschaften auf, die unvermeidlich zu einer Verlustleistung führen. Diese elektrische Leistung wird in Wärmeenergie umgewandelt und muss abgeführt werden, um die thermische Zerstörung des Bauteils zu verhindern. Die Gesamtverluste $P_{\mathrm{tot}}$ eines MOSFETs setzen sich primär aus Leit- und Schaltverlusten zusammen \cite{Infineon_MOSFET_Losses}.
+Ein idealer Halbleiterschalter würde verlustfrei arbeiten und Zustandswechsel in unendlich kurzer Zeit vollziehen. Reale Leistungstransistoren und Dioden weisen jedoch parasitäre Eigenschaften auf, die unvermeidlich zu einer Verlustleistung führen. Diese elektrische Leistung wird in Wärmeenergie umgewandelt und muss über das thermische Management abgeführt werden, um eine Zerstörung des Bauteils zu verhindern. 
 
-\subsection{Leitverluste}
-Im statisch eingeschalteten Zustand verhält sich der Drain-Source-Kanal des MOSFETs näherungsweise wie ein ohmscher Widerstand $R_{\mathrm{DS(on)}}$. Die daraus resultierenden Leitverluste lassen sich in Abhängigkeit des Effektivstroms gemäß Gleichung \ref{eq:p_cond} berechnen:
+Die Gesamtverluste in einer leistungselektronischen Halbbrücke setzen sich primär aus Leit- und Schaltverlusten der Schalter sowie der zugehörigen Freilaufdioden zusammen. Sperrverluste (Leakage Losses), die durch Leckströme im blockierenden Zustand entstehen, liegen bei Niederspannungsanwendungen typischerweise im Mikrowatt-Bereich und können für die thermische Dimensionierung vernachlässigt werden \cite{Infineon_MOSFET_Losses}.
+
+% ------------------------------------------------------------
+\subsection{Verluste im MOSFET}
+
+Die Verluste im MOSFET dominieren die thermische Belastung des Motorcontrollers. Abbildung \ref{fig:id_mosfet} verdeutlicht den Unterschied zwischen dem idealen und dem realen Schaltverhalten am Beispiel einer induktiv belasteten Halbbrücke, wie sie im Motorinverter vorliegt.
+
+\begin{figure}[htbp]
+    \centering
+    % --- Linker Subplot (a) ---
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=\textwidth, height=6cm,
+                axis lines=middle, axis on top,
+                xmin=-1, xmax=10, ymin=-1, ymax=5,
+                xlabel={$t$}, ylabel={$i_\mathrm{S}, u_\mathrm{S}$},
+                xtick={0, 4, 8}, xticklabels={0, $\delta T$, $T$},
+                ytick={3.5, 1.5, 2.5}, yticklabels={$u_\mathrm{i}$, $i_{L,0}$, $i_{L,\delta T}$},
+                ticklabel style={font=\small},
+                xticklabel style={fill=white, fill opacity=0.7, text opacity=1, inner sep=1pt},
+                enlargelimits=false, clip=false
+            ]
+                \draw[densely dotted, thick] (axis cs:0,3.5) -- (axis cs:4,3.5);                
+                \draw[densely dotted, thick] (axis cs:0,2.5) -- (axis cs:4,2.5);
+                \draw[densely dotted, thick] (axis cs:0,1.5) -- (axis cs:8,1.5);
+                \addplot[color=red, very thick] coordinates {(0,0) (0,1.5) (4,2.5) (4,0) (8,0) (8,1.5) (10,2)};
+                \addplot[color=blue, very thick, densely dashed] coordinates {(0,3.5) (0,0) (4,0) (4,3.5) (8,3.5) (8,0) (10,0)};
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Idealer Schalter}
+        \label{fig:ideal}
+    \end{subfigure}
+    \hfill
+    % --- Rechter Subplot (b) ---
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=\textwidth, height=6cm,
+                axis lines=middle, axis on top,
+                xmin=-1, xmax=10, ymin=-1, ymax=5,
+                xlabel={$t$}, ylabel={$i_\mathrm{S}, u_\mathrm{S}$},
+                xtick={0, 4, 8}, xticklabels={0, $\delta T$, $T$},
+                ytick={3.5, 1.5, 2.5}, yticklabels={$u_\mathrm{i}$, $i_{L,0}$, $i_{L,\delta T}$},
+                ticklabel style={font=\small},
+                xticklabel style={fill=white, fill opacity=0.7, text opacity=1, inner sep=1pt},
+                enlargelimits=false, clip=false
+            ]
+                \draw[densely dotted, thick] (axis cs:0,3.5) -- (axis cs:4.2,3.5);                
+                \draw[densely dotted, thick] (axis cs:0,2.5) -- (axis cs:4.2,2.5);
+                \draw[densely dotted, thick] (axis cs:0,1.5) -- (axis cs:8.2,1.5);
+                \addplot[color=blue, very thick, densely dashed] coordinates {(0,3.5) (0.2,0) (4,0.1) (4.2,3.5) (8,3.5) (8.2,0) (10,0.05)};
+                \addplot[color=red, very thick] coordinates {(0,0) (0.2,1.5) (4,2.5) (4.2,0) (8,0) (8.2,1.5) (10,2)};
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Realer Schalter}
+        \label{fig:real}
+    \end{subfigure}
+
+    \caption{Spannungs- und Stromverlauf in einer induktiv belasteten Halbbrücke.}
+    \label{fig:id_mosfet}
+\end{figure}
+
+\paragraph{Leitverluste ($P_{\mathrm{MOS,c}}$)}
+Im statisch eingeschalteten Zustand verhält sich der Drain-Source-Kanal des MOSFETs näherungsweise wie ein ohmscher Widerstand $R_{\mathrm{DS(on)}}$. Die daraus resultierenden Leitverluste lassen sich in Abhängigkeit des Effektivstroms $I_{\mathrm{rms}}$ berechnen:
 
 \begin{equation}
-    P_{\mathrm{cond}} = I_{\mathrm{rms}}^2 \cdot R_{\mathrm{DS(on)}}(T_\mathrm{J})
+    P_{\mathrm{MOS,c}} = I_{\mathrm{rms}}^2 \cdot R_{\mathrm{DS(on)}}(T_\mathrm{J})
     \label{eq:p_cond}
 \end{equation}
 
-Kritisch für die Systemstabilität ist hierbei die Temperaturabhängigkeit: Der Widerstandswert $R_{\mathrm{DS(on)}}$ steigt mit zunehmender Sperrschichttemperatur $T_\mathrm{J}$ signifikant an. Dies führt zu einem positiven thermischen Rückkopplungseffekt, der bei der Dimensionierung des Kühlkonzepts zwingend berücksichtigt werden muss.
+Kritisch für die Systemstabilität ist hierbei die Temperaturabhängigkeit: Der Kanalwiderstand steigt mit zunehmender Sperrschichttemperatur $T_\mathrm{J}$ signifikant an. Dies führt zu einem positiven thermischen Rückkopplungseffekt, der bei der Auslegung zwingend berücksichtigt werden muss.
 
-\subsection{Schaltverluste}
-Da MOSFETs bauartbedingt nicht unendlich schnell umschalten können, treten beim Übergang zwischen dem leitenden und sperrenden Zustand Transienten auf. In diesen kurzen Phasen liegen am Halbleiter zeitgleich hohe Spannungen und Ströme an.
-Unter Annahme einer induktiven Last lassen sich die Summe aus Einschalt- ($P_{\mathrm{on}}$) und Ausschaltverlusten ($P_{\mathrm{off}}$) näherungsweise als lineare Funktion der Schaltfrequenz $f_{\mathrm{SW}}$ nach Gleichung \ref{eq:p_sw} beschreiben:
+\paragraph{Schaltverluste ($P_{\mathrm{MOS,sw}}$)}
+Da MOSFETs bauartbedingt nicht unendlich schnell umschalten können, treten beim Übergang zwischen dem leitenden und sperrenden Zustand Transienten auf. In diesen Phasen überlappen sich Spannung und Strom (vgl. Abb. \ref{fig:id_mosfet} rechts), wodurch Momentanleistung in Wärme umgesetzt wird. 
 
-\begin{equation}
-    P_{\mathrm{sw}} \approx \frac{1}{2} V_{\mathrm{DC}} \cdot I_{\mathrm{D}} \cdot (t_\mathrm{r} + t_\mathrm{f}) \cdot f_{\mathrm{SW}}
-    \label{eq:p_sw}
-\end{equation}
+Maßgeblich für die Schaltdynamik sind die internen parasitären Kapazitäten des Halbleiters (siehe Abbildung \ref{fig:mosfet_cap}). Von besonderer Bedeutung ist die Gate-Drain-Kapazität $C_{\mathrm{GD}}$ (Miller-Kapazität). Während des Schaltvorgangs führt das Umladen dieser Kapazität zum sogenannten Miller-Plateau, einem Zustand, in dem die Gate-Spannung konstant verharrt, bis die Drain-Source-Spannung vollständig kommutiert ist.
 
-Hierbei repräsentieren $t_\mathrm{r}$ (Rise Time) und $t_\mathrm{f}$ (Fall Time) die realen Schaltzeiten, welche maßgeblich von der Treiberleistung und den gewählten Gate-Vorwiderständen definiert werden. Es wird ersichtlich, dass eine Erhöhung der PWM-Frequenz zur Reduktion von Stromrippeln unweigerlich zu proportional steigenden Schaltverlusten führt.
 
-% ============================================================
-% 2.6 Thermik
-% ============================================================
-\section{Thermisches Modell}
-\label{sec:thermik}
-
-Um die Betriebssicherheit der Endstufe zu gewährleisten, muss sichergestellt werden, dass die maximal zulässige Sperrschichttemperatur $T_{\mathrm{J,max}}$ der Halbleiter unter keinen Umständen überschritten wird. Hierzu bedient man sich eines thermischen Modells. Dabei wird angenommen, dass der entstandene Wärmestrom ($P_{\mathrm{tot}}$) von der innersten Wärmequelle (Junction) über verschiedene thermische Widerstände ($R_{\mathrm{th}}$) bis zur Umgebungsluft (Ambient) abfließt.
-
-Im eingeschwungenen, stationären Zustand lässt sich die resultierende Sperrschichttemperatur nach Gleichung \ref{eq:thermik} berechnen:
-
-\begin{equation}
-    T_\mathrm{J} = T_\mathrm{A} + P_{\mathrm{tot}} \cdot (R_{\mathrm{th,JC}} + R_{\mathrm{th,CS}} + R_{\mathrm{th,SA}})
-    \label{eq:thermik}
-\end{equation}
-
-Die partiellen Wärmewiderstände beschreiben dabei folgende physikalische Übergänge:
-\begin{itemize}
-    \item $R_{\mathrm{th,JC}}$ (Junction-to-Case): Der innere Wärmewiderstand des MOSFET-Gehäuses, spezifiziert im Datenblatt.
-    \item $R_{\mathrm{th,CS}}$ (Case-to-Sink): Der thermische Übergangswiderstand des Montagematerials, beispielsweise einer Wärmeleitfolie oder Wärmeleitpaste.
-    \item $R_{\mathrm{th,SA}}$ (Sink-to-Ambient): Der thermische Widerstand des Kühlkörpers zur umgebenden Luft, abhängig von Oberfläche und Luftstrom.
-\end{itemize}
-
-Dieses thermische System kann analog zu einem elektrischen Netzwerk in einer thermischen Ersatzschaltung abgebildet werden, wie Abbildung \ref{fig:thermal_esb} verdeutlicht. Es ermöglicht die einfache Berechnung der Temperaturabfälle mittels der Kirchhoffschen Maschengleichungen.
 
 \begin{figure}[htbp]
     \centering
     \begin{tikzpicture}
         % Paths, nodes and wires:
-        \draw (6, -6) to[european current source, l={$P_\mathrm{tot}$}] (6, -9);
-        \draw (6, -6) to[european resistor, l={$R_\mathrm{th,JC}$}] (9, -6);
-        \draw (9, -6) to[european resistor, l={$R_\mathrm{th,CS}$}] (12, -6);
-        \draw (12, -9) to[european resistor, l={$R_\mathrm{th,SA}$}] (12, -6);
-        \draw (6, -9) -- (12, -9);
-        \node[ground] at (12, -9){};
-        \node[circ](N1) at (6, -6){} node[anchor=south] at (N1.north){$T_\mathrm{J}$};
-        \node[circ](N2) at (12, -9){} node[anchor=west] at (N2.east){$T_\mathrm{A}$};
+        \node[vcc, xscale=0.7, yscale=0.7] at (5, 7.743){};
+        \draw (5, 7.04) -| (5, 8);
+        \draw (0, 6) to[european resistor, /tikz/circuitikz/bipoles/length=0.840cm, l_={$R_\mathrm{G}$}] (2, 6);
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.465cm] at (2.093, 6.397){} node[anchor=north west, align=left, text width=0.577cm, inner sep=6pt] at (1.593, 6.647){\textcolor{rgb,255:red,227;green,36;blue,0}{\small $i_G$}};
+        \path[draw={rgb,255:red,227;green,36;blue,0}, line width=0.6pt, -stealth] (1.936, 6) |- (2, 6);
+        \draw (0, 6) to[european voltage source, /tikz/circuitikz/bipoles/length=0.840cm, l_={\textcolor{rgb,255:red,0;green,97;blue,255}{$u_\mathrm{dr}$}}, label distance=0.32cm] (0, 4);
+        \draw (0, 4) -- (3, 4);
+        \node[nigfetd, bodydiode] at (5, 6.27){};
+        \draw (2, 6) -- (4.02, 6);
+        \draw (4, 6) to[capacitor, /tikz/circuitikz/bipoles/length=0.840cm, l={$C_\mathrm{GD}$}] (4, 7.421);
+        \draw (4, 5) to[capacitor, /tikz/circuitikz/bipoles/length=0.840cm, l={$C_\mathrm{GS}$}] (4, 6);
+        \draw (4, 5) -- (5, 5);
+        \draw (5, 5) -- (6, 5);
+        \draw (6, 5) to[capacitor, /tikz/circuitikz/bipoles/length=0.840cm, l_={$C_\mathrm{DS}$}] (6, 7.421);
+        \draw (4, 7.421) -- (6, 7.421);
+        \node[circ] at (4, 6){};
+        \node[circ] at (5, 5){};
+        \node[circ] at (4.997, 7.428){};
+        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.465cm] at (5.5, 7.832){} node[anchor=north west, align=left, text width=0.577cm, inner sep=6pt] at (5, 8.082){\textcolor{rgb,255:red,227;green,36;blue,0}{\small $i_D$}};
+        \path[draw={rgb,255:red,227;green,36;blue,0}, line width=0.6pt, -stealth] (5.007, 7.742) -- (5.007, 7.678);
+        \path[draw={rgb,255:red,0;green,97;blue,255}, -stealth] (-0.416, 5.339) -- (-0.416, 4.68);
+        \draw (5, 5.5) -- (5, 4) -- (3, 4);
     \end{tikzpicture}
-    \caption{Stationäres thermisches ESB eines gekühlten MOSFETs.}
-    \label{fig:thermal_esb}
+    \caption{Interne parasitäre Kapazitäten eines MOSFETs.}
+    \label{fig:mosfet_cap}
 \end{figure}
 
+Zur praxisnahen Approximation der Schaltverluste für eine induktive Last wird das vereinfachte lineare Modell der Infineon Application Note \cite{Infineon_MOSFET_Losses} herangezogen. Die Summe aus Einschalt- ($P_{\mathrm{MOS,on}}$) und Ausschaltverlusten ($P_{\mathrm{MOS,off}}$) ergibt sich zu:
 
-Die Aufstellung dieser Wärmekette verdeutlicht, dass eine rein elektrische Betrachtung für die Auslegung von Leistungselektronik nicht ausreichend ist. Erst die Verknüpfung des elektrischen Verlustmodells mit der thermischen Analyse validiert die ausgewählten Komponenten für den Nennbetrieb.
+\begin{equation}
+    P_{\mathrm{MOS,sw}} = P_\mathrm{MOS,on} + P_\mathrm{MOS,off} = \frac{1}{2} u_{\mathrm{i}} \cdot i_{\mathrm{D}} \cdot (t_\mathrm{r} + t_\mathrm{f}) \cdot f_{\mathrm{SW}}
+    \label{eq:p_sw}
+\end{equation}
 
-% ============================================================
-% 2.6 Verluste
-% ============================================================
-\section{Verlustleistung in Dioden}
-Eine ideale Diode wirkt im eingeschalteten Zustand wie ein verlustfreier Kurzschluss und kann unbegrenzte Ströme leiten. Im ausgeschalteten Zustand verhält sie sich wie ein Leerlauf und sperrt die anliegende Spannung vollständig. Sie ermöglicht ein unendlich schnelles und vor allem verlustloses Umschalten. 
+Hierbei repräsentieren $t_\mathrm{r}$ (Rise Time) und $t_\mathrm{f}$ (Fall Time) die realen Schaltzeiten, welche maßgeblich durch die Treiberleistung und den Gate-Vorwiderstand $R_\mathrm{G}$ definiert werden. Eine Erhöhung der PWM-Frequenz $f_{\mathrm{SW}}$ führt proportional zu steigenden Schaltverlusten.
 
-In der Realität weicht das Verhalten jedoch stark ab. Während der Leitphase fällt eine Vorwärtsspannung ($u_D$) ab, die zu kontinuierlichen Durchlassverlusten führt. Beim Abschalten (Übergang in den Sperrzustand) kann die Diode den Stromfluss nicht sofort stoppen. Durch die im Halbleiter gespeicherte Ladung ($Q$) fließt für kurze Zeit ein negativer Sperrverzögerungsstrom. Da in diesem Moment gleichzeitig die Sperrspannung über der Diode ansteigt, entsteht eine signifikante Verlustleistungsspitze (Schaltverluste). Abbildung \ref{fig:id_diode} verdeutlicht diese parasitären Effekte anhand des Abschaltvorgangs in einem Schaltwandler.
+% ------------------------------------------------------------
+\subsection{Verluste in der Freilaufdiode}
+
+In einer B6-Brückentopologie wird die Funktion der Freilaufdiode durch die intrinsische Body-Diode der MOSFETs übernommen (vgl Abb. \ref{fig:three_phase_bridge}). Da der Strom in der Totzeit des Gate-Treibers über diese Diode fließen muss, trägt sie signifikant zur Gesamterwärmung bei.
+
+Abbildung \ref{fig:id_diode} stellt das Schaltverhalten einer idealen Diode dem einer realen Body-Diode in einer induktiv belasteten Halbbrücke gegenüber und visualisiert die auftretenden parasitären Transienten.
 
 \begin{figure}[htbp]
     \centering
     
-    % ==========================================
-    % LINKE SEITE: Ideale Diode
-    % ==========================================
-    \begin{minipage}{0.48\textwidth}
+    % --- Subplot (a): Ideale Diode ---
+    \begin{subfigure}[b]{0.48\textwidth}
         \centering
         \begin{tikzpicture}
             \begin{axis}[
                 width=\textwidth, height=6.5cm,
-                axis lines=middle,
-                axis on top,
-                xmin=-1, xmax=10,
-                ymin=-4.5, ymax=6,
-                xlabel={$t$},
-                ylabel={$i_\mathrm{D}, u_\mathrm{D}$},
-                % Achsen-Pfeile und Positionierung anpassen
-                xtick={0, 4, 8},
-                xticklabels={0, $\delta T$, $T$},
-                ytick={-3, 2.5, 4.5},
-                yticklabels={$-u_\mathrm{i}$, $i_{L,0}$, $i_{L,\delta T}$},
-                ticklabel style={font=\normalsize},
-                xticklabel style={
-                    fill=white, 
-                    fill opacity=0.7, 
-                    text opacity=1, 
-                    inner sep=1pt,
-                    font=\normalsize
-                },
-                enlargelimits=false,
-                clip=false
+                axis lines=middle, axis on top,
+                xmin=-1, xmax=10, ymin=-4.5, ymax=6,
+                xlabel={$t$}, ylabel={$i_\mathrm{D}, u_\mathrm{D}$},
+                xtick={0, 4, 8}, xticklabels={0, $\delta T$, $T$},
+                ytick={-3, 2.5, 4.5}, yticklabels={$-u_\mathrm{i}$, $i_{L,0}$, $i_{L,\delta T}$},
+                ticklabel style={font=\small},
+                xticklabel style={fill=white, fill opacity=0.7, text opacity=1, inner sep=1pt},
+                enlargelimits=false, clip=false
             ]
-                % Hilfslinien (gepunktet, wie im Bild)
+                % Hilfslinien
                 \draw[densely dotted, thick] (axis cs:0,4.5) -- (axis cs:4,4.5);
                 \draw[densely dotted, thick] (axis cs:0,2.5) -- (axis cs:8,2.5);
 
-
-                % Strom i_D (rot, durchgezogen)
+                % Strom i_D (rot)
                 \addplot[color=red, very thick] coordinates {
                     (0,2.5) (0,0) (4,0) (4,4.5) (8,2.5) (8,0) (9.5,0)
                 };
-
-                % Spannung u_D (blau, gestrichelt)
+                % Spannung u_D (blau)
                 \addplot[color=blue, very thick, densely dashed] coordinates {
                     (0,0) (0,-3) (4,-3) (4,0) (8,0) (8,-3) (9.5,-3)
                 };
-
-                
             \end{axis}
         \end{tikzpicture}
-    \end{minipage}\hfill
-    % ==========================================
-    % RECHTE SEITE: Reale Diode (mit Verlusten)
-    % ==========================================
-    \begin{minipage}{0.48\textwidth}
+        \caption{Ideale Diode}
+        \label{fig:diode_ideal}
+    \end{subfigure}
+    \hfill
+    % --- Subplot (b): Reale Diode ---
+    \begin{subfigure}[b]{0.48\textwidth}
         \centering
         \begin{tikzpicture}
             \begin{axis}[
                 width=\textwidth, height=6.5cm,
-                axis lines=middle,
-                axis on top,
-                xmin=-1, xmax=10,
-                ymin=-4.5, ymax=6,
-                xlabel={$t$},
-                ylabel={$i_\mathrm{D}, u_\mathrm{D}$},
-                % Achsen-Pfeile und Positionierung anpassen
-                xtick={0, 4, 8},
-                xticklabels={0, $\delta T$, $T$},
-                ytick={-3, 2.5, 4.5},
-                yticklabels={$-u_\mathrm{i}$, $i_{L,0}$, $i_{L,\delta T}$},
-                ticklabel style={font=\normalsize},
-                xticklabel style={
-                    fill=white, 
-                    fill opacity=0.7, 
-                    text opacity=1, 
-                    inner sep=1pt,
-                    font=\normalsize
-                },
-                enlargelimits=false,
-                clip=false
+                axis lines=middle, axis on top,
+                xmin=-1, xmax=10, ymin=-4.5, ymax=6,
+                xlabel={$t$}, ylabel={$i_\mathrm{D}, u_\mathrm{D}$},
+                xtick={0, 4, 8}, xticklabels={0, $\delta T$, $T$},
+                ytick={-3, 2.5, 4.5}, yticklabels={$-u_\mathrm{i}$, $i_{L,0}$, $i_{L,\delta T}$},
+                ticklabel style={font=\small},
+                xticklabel style={fill=white, fill opacity=0.7, text opacity=1, inner sep=1pt},
+                enlargelimits=false, clip=false
             ]
-                % Hilfslinien (gepunktet)
+                % Hilfslinien
                 \draw[densely dotted, thick] (axis cs:0,4.5) -- (axis cs:4,4.5);
                 \draw[densely dotted, thick] (axis cs:0,2.5) -- (axis cs:8,2.5);
 
+                % Strom i_D (rot)
                 \addplot[color=red, very thick] coordinates {
                     (0,2.5) (0,-1) (0.15,-0.3) (0.3,0) (4,0) (4,4.5) (8,2.5) (8,-1) (8.15,-0.3) (8.3,0) (9.5,0)
                 };
-
+                % Spannung u_D (blau)
                 \addplot[color=blue, very thick, densely dashed] coordinates {
                     (0,0) (0,-3) (4,-3) (4.05,1) (4.15,0.6) (4.3,0.5) (8,0.2) (8,-3) (8.6,-3) (9.5,-3)
                 };
-
             \end{axis}
         \end{tikzpicture}
-    \end{minipage}
+        \caption{Reale Diode}
+        \label{fig:diode_real}
+    \end{subfigure}
     
-    \caption{Spannungs- und Stromverlauf im Abwärtswandler. Links: Ideale Diode Rechts: Reale Diode.}
+    \caption{Spannungs- und Stromverlauf in einer induktiv belasteten Halbbrücke.}
     \label{fig:id_diode}
 \end{figure}
 
-\subsection{Durchlassverluste}
-Durchlassverluste ergeben sich aus:
+\paragraph{Durchlassverluste ($P_{\mathrm{D,c}}$)}
+Während der Leitphase fällt an der Diode eine nichtlineare Durchlassspannung $u_\mathrm{D}$ ab. Die mittleren Leitverluste berechnen sich über das Integral der Momentanleistung:
 
 \begin{equation}
-    P_\mathrm{D,c}=\frac{1}{T}\int_{0}^{T}i_\mathrm{D}u_\mathrm{D}(i_\mathrm{D})\mathrm{d}t
+    P_{\mathrm{D,c}} = \frac{1}{T} \int_{0}^{T} i_\mathrm{D}(t) \cdot u_\mathrm{D}(t) \, \mathrm{d}t
     \label{eq:p_d_con}
 \end{equation}
 
-Wir ersetzen Diodenkennlinie durch Serienschaltung aus Spannungsquelle und Widerstand.
+Zur analytischen Berechnung wird die Diodenkennlinie häufig durch eine Reihenschaltung aus einer Schwellenspannung $u_{\mathrm{D,0}}$ und einem differentiellen Widerstand $r_\mathrm{D}$ approximiert. Durch diese Annäherung lassen sich die resultierenden Verluste in einen spannungs- und einen widerstandsabhängigen Anteil ($P_\mathrm{U}$ und $P_\mathrm{R}$) unterteilen. Mithilfe dieser Näherung ergibt sich:
 
-\subsection{Schaltverluste}
-\subsection{Sperrverluste}
+\begin{equation}
+    P_{\mathrm{D,c}} = P_\mathrm{U} + P_\mathrm{R} = u_{\mathrm{D,0}} \overline{i}_{\mathrm{D}} + r_\mathrm{D}i_{\mathrm{D,RMS}}^2
+    \label{eq:p_d_con_vereinfacht}
+\end{equation}
+
+
+
+
+\paragraph{Sperrverzögerungsverluste (Reverse Recovery)}
+Beim Übergang der Diode vom leitenden in den sperrenden Zustand (Abschalten) kann der Stromfluss nicht augenblicklich stoppen. Um die im pn-Übergang gespeicherte Ladung $Q_{\mathrm{rr}}$ abzubauen, fließt für kurze Zeit ein negativer Sperrverzögerungsstrom. 
+
+
+
+Da in diesem Moment die gegenüberliegende Halbbrücke bereits einschaltet und die volle Zwischenkreisspannung anliegt, entsteht eine ausgeprägte Verlustleistungsspitze. Diese Reverse-Recovery-Verluste ($P_{\mathrm{rr}}$) sind insbesondere bei den Body-Dioden von Silizium-MOSFETs beträchtlich und berechnen sich näherungsweise zu:
+
+\begin{equation}
+    P_{\mathrm{rr}} = \frac{1}{2}u_{\mathrm{i}} \cdot I_{\mathrm{RM}}\frac{1}{2}t_\mathrm{rr} \cdot f_{\mathrm{SW}}
+    \label{eq:p_rr}
+\end{equation}
+
+Sperrverluste durch Leckströme sowie Vorwärtsverzögerungsverluste (Forward Recovery) sind in Niederspannungsanwendungen technisch irrelevant und fließen nicht in die weitere Auslegung ein.

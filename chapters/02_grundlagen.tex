@@ -65,7 +65,7 @@ Für die steuerungstechnische Betrachtung und die Dimensionierung der Endstufe w
         \draw (1, 5) -| (1, 7);
         \node[shape=rectangle, minimum width=0.965cm, minimum height=0.465cm] at (0.75, 6.5){} node[anchor=north west, align=left, text width=0.577cm, inner sep=6pt] at (0.25, 6.75){\textcolor{rgb,255:red,227;green,36;blue,0}{\small $i_U$}};
         \path[draw={rgb,255:red,227;green,36;blue,0}, line width=1pt, -stealth] (1, 6.436) -| (1, 6.5);
-        \node[shape=rectangle, minimum width=1cm, minimum height=0.5cm] at (3.75, 5.25){} node[anchor=north west, align=left, text width=0.647cm, inner sep=5pt] at (3.25, 5.5){\textcolor{rgb,255:red,0;green,97;blue,255}{\small $u_U$}};
+        \node[shape=rectangle, minimum width=1cm, minimum height=0.5cm] at (3.75, 5.25){} node[anchor=north west, align=left, text width=0.647cm, inner sep=5pt] at (3.25, 5.5){\textcolor{rgb,255:red,0;green,97;blue,255}{\small $v_U$}};
         \path[draw={rgb,255:red,0;green,97;blue,255}, line width=1pt, -stealth] (1.743, 4.944) -- (5.243, 4.944);
     \end{tikzpicture}
     \caption{Einphasiges ESB des BLDC-Motors.}
@@ -318,9 +318,9 @@ Die Verluste im MOSFET dominieren die thermische Belastung des Motorcontrollers.
                 width=\textwidth, height=6cm,
                 axis lines=middle, axis on top,
                 xmin=-1, xmax=10, ymin=-1, ymax=5,
-                xlabel={$t$}, ylabel={$i_\mathrm{S}, u_\mathrm{S}$},
+                xlabel={$t$}, ylabel={$i_\mathrm{S}, v_\mathrm{S}$},
                 xtick={0, 4, 8}, xticklabels={0, $\delta T$, $T$},
-                ytick={3.5, 1.5, 2.5}, yticklabels={$u_\mathrm{i}$, $i_{L,0}$, $i_{L,\delta T}$},
+                ytick={3.5, 1.5, 2.5}, yticklabels={$v_\mathrm{i}$, $i_{L,0}$, $i_{L,\delta T}$},
                 ticklabel style={font=\small},
                 xticklabel style={fill=white, fill opacity=0.7, text opacity=1, inner sep=1pt},
                 enlargelimits=false, clip=false
@@ -344,9 +344,9 @@ Die Verluste im MOSFET dominieren die thermische Belastung des Motorcontrollers.
                 width=\textwidth, height=6cm,
                 axis lines=middle, axis on top,
                 xmin=-1, xmax=10, ymin=-1, ymax=5,
-                xlabel={$t$}, ylabel={$i_\mathrm{S}, u_\mathrm{S}$},
+                xlabel={$t$}, ylabel={$i_\mathrm{S}, v_\mathrm{S}$},
                 xtick={0, 4, 8}, xticklabels={0, $\delta T$, $T$},
-                ytick={3.5, 1.5, 2.5}, yticklabels={$u_\mathrm{i}$, $i_{L,0}$, $i_{L,\delta T}$},
+                ytick={3.5, 1.5, 2.5}, yticklabels={$v_\mathrm{i}$, $i_{L,0}$, $i_{L,\delta T}$},
                 ticklabel style={font=\small},
                 xticklabel style={fill=white, fill opacity=0.7, text opacity=1, inner sep=1pt},
                 enlargelimits=false, clip=false
@@ -392,7 +392,7 @@ Maßgeblich für die Schaltdynamik sind die internen parasitären Kapazitäten d
         \draw (0, 6) to[european resistor, /tikz/circuitikz/bipoles/length=0.840cm, l_={$R_\mathrm{G}$}] (2, 6);
         \node[shape=rectangle, minimum width=0.965cm, minimum height=0.465cm] at (2.093, 6.397){} node[anchor=north west, align=left, text width=0.577cm, inner sep=6pt] at (1.593, 6.647){\textcolor{rgb,255:red,227;green,36;blue,0}{\small $i_G$}};
         \path[draw={rgb,255:red,227;green,36;blue,0}, line width=0.6pt, -stealth] (1.936, 6) |- (2, 6);
-        \draw (0, 6) to[european voltage source, /tikz/circuitikz/bipoles/length=0.840cm, l_={\textcolor{rgb,255:red,0;green,97;blue,255}{$u_\mathrm{dr}$}}, label distance=0.32cm] (0, 4);
+        \draw (0, 6) to[european voltage source, /tikz/circuitikz/bipoles/length=0.840cm, l_={\textcolor{rgb,255:red,0;green,97;blue,255}{$v_\mathrm{dr}$}}, label distance=0.32cm] (0, 4);
         \draw (0, 4) -- (3, 4);
         \node[nigfetd, bodydiode] at (5, 6.27){};
         \draw (2, 6) -- (4.02, 6);
@@ -414,10 +414,10 @@ Maßgeblich für die Schaltdynamik sind die internen parasitären Kapazitäten d
     \label{fig:mosfet_cap}
 \end{figure}
 
-Zur praxisnahen Approximation der Schaltverluste für eine induktive Last wird das vereinfachte lineare Modell der Infineon Application Note \cite{Infineon_MOSFET_Losses} herangezogen. Die Summe aus Einschalt- ($P_{\mathrm{MOS,on}}$) und Ausschaltverlusten ($P_{\mathrm{MOS,off}}$) ergibt sich zu:
+Zur praxisnahen Approximation der Schaltverluste für eine induktive Last wird das vereinfachte lineare Modell herangezogen \cite{Infineon_MOSFET_Losses}. Die Summe aus Einschalt- ($P_{\mathrm{MOS,on}}$) und Ausschaltverlusten ($P_{\mathrm{MOS,off}}$) ergibt sich zu:
 
 \begin{equation}
-    P_{\mathrm{MOS,sw}} = P_\mathrm{MOS,on} + P_\mathrm{MOS,off} = \frac{1}{2} u_{\mathrm{i}} \cdot i_{\mathrm{D}} \cdot (t_\mathrm{r} + t_\mathrm{f}) \cdot f_{\mathrm{SW}}
+    P_{\mathrm{MOS,sw}} = P_\mathrm{MOS,on} + P_\mathrm{MOS,off} = \frac{1}{2} v_{\mathrm{i}} \cdot i_{\mathrm{D}} \cdot (t_\mathrm{r} + t_\mathrm{f}) \cdot f_{\mathrm{SW}}
     \label{eq:p_sw}
 \end{equation}
 
@@ -441,9 +441,9 @@ Abbildung \ref{fig:id_diode} stellt das Schaltverhalten einer idealen Diode dem 
                 width=\textwidth, height=6.5cm,
                 axis lines=middle, axis on top,
                 xmin=-1, xmax=10, ymin=-4.5, ymax=6,
-                xlabel={$t$}, ylabel={$i_\mathrm{D}, u_\mathrm{D}$},
+                xlabel={$t$}, ylabel={$i_\mathrm{D}, v_\mathrm{D}$},
                 xtick={0, 4, 8}, xticklabels={0, $\delta T$, $T$},
-                ytick={-3, 2.5, 4.5}, yticklabels={$-u_\mathrm{i}$, $i_{L,0}$, $i_{L,\delta T}$},
+                ytick={-3, 2.5, 4.5}, yticklabels={$-v_\mathrm{i}$, $i_{L,0}$, $i_{L,\delta T}$},
                 ticklabel style={font=\small},
                 xticklabel style={fill=white, fill opacity=0.7, text opacity=1, inner sep=1pt},
                 enlargelimits=false, clip=false
@@ -456,7 +456,7 @@ Abbildung \ref{fig:id_diode} stellt das Schaltverhalten einer idealen Diode dem 
                 \addplot[color=red, very thick] coordinates {
                     (0,2.5) (0,0) (4,0) (4,4.5) (8,2.5) (8,0) (9.5,0)
                 };
-                % Spannung u_D (blau)
+                % Spannung v_D (blau)
                 \addplot[color=blue, very thick, densely dashed] coordinates {
                     (0,0) (0,-3) (4,-3) (4,0) (8,0) (8,-3) (9.5,-3)
                 };
@@ -474,9 +474,9 @@ Abbildung \ref{fig:id_diode} stellt das Schaltverhalten einer idealen Diode dem 
                 width=\textwidth, height=6.5cm,
                 axis lines=middle, axis on top,
                 xmin=-1, xmax=10, ymin=-4.5, ymax=6,
-                xlabel={$t$}, ylabel={$i_\mathrm{D}, u_\mathrm{D}$},
+                xlabel={$t$}, ylabel={$i_\mathrm{D}, v_\mathrm{D}$},
                 xtick={0, 4, 8}, xticklabels={0, $\delta T$, $T$},
-                ytick={-3, 2.5, 4.5}, yticklabels={$-u_\mathrm{i}$, $i_{L,0}$, $i_{L,\delta T}$},
+                ytick={-3, 2.5, 4.5}, yticklabels={$-v_\mathrm{i}$, $i_{L,0}$, $i_{L,\delta T}$},
                 ticklabel style={font=\small},
                 xticklabel style={fill=white, fill opacity=0.7, text opacity=1, inner sep=1pt},
                 enlargelimits=false, clip=false
@@ -489,7 +489,7 @@ Abbildung \ref{fig:id_diode} stellt das Schaltverhalten einer idealen Diode dem 
                 \addplot[color=red, very thick] coordinates {
                     (0,2.5) (0,-1) (0.15,-0.3) (0.3,0) (4,0) (4,4.5) (8,2.5) (8,-1) (8.15,-0.3) (8.3,0) (9.5,0)
                 };
-                % Spannung u_D (blau)
+                % Spannung v_D (blau)
                 \addplot[color=blue, very thick, densely dashed] coordinates {
                     (0,0) (0,-3) (4,-3) (4.05,1) (4.15,0.6) (4.3,0.5) (8,0.2) (8,-3) (8.6,-3) (9.5,-3)
                 };
@@ -504,17 +504,17 @@ Abbildung \ref{fig:id_diode} stellt das Schaltverhalten einer idealen Diode dem 
 \end{figure}
 
 \paragraph{Durchlassverluste ($P_{\mathrm{D,c}}$)}
-Während der Leitphase fällt an der Diode eine nichtlineare Durchlassspannung $u_\mathrm{D}$ ab. Die mittleren Leitverluste berechnen sich über das Integral der Momentanleistung:
+Während der Leitphase fällt an der Diode eine nichtlineare Durchlassspannung $v_\mathrm{D}$ ab. Die mittleren Leitverluste berechnen sich über das Integral der Momentanleistung:
 
 \begin{equation}
-    P_{\mathrm{D,c}} = \frac{1}{T} \int_{0}^{T} i_\mathrm{D}(t) \cdot u_\mathrm{D}(t) \, \mathrm{d}t
+    P_{\mathrm{D,c}} = \frac{1}{T} \int_{0}^{T} i_\mathrm{D}(t) \cdot v_\mathrm{D}(t) \, \mathrm{d}t
     \label{eq:p_d_con}
 \end{equation}
 
-Zur analytischen Berechnung wird die Diodenkennlinie häufig durch eine Reihenschaltung aus einer Schwellenspannung $u_{\mathrm{D,0}}$ und einem differentiellen Widerstand $r_\mathrm{D}$ approximiert. Durch diese Annäherung lassen sich die resultierenden Verluste in einen spannungs- und einen widerstandsabhängigen Anteil ($P_\mathrm{U}$ und $P_\mathrm{R}$) unterteilen. Mithilfe dieser Näherung ergibt sich:
+Zur analytischen Berechnung wird die Diodenkennlinie häufig durch eine Reihenschaltung aus einer Schwellenspannung $v_{\mathrm{D,0}}$ und einem differentiellen Widerstand $r_\mathrm{D}$ approximiert. Durch diese Annäherung lassen sich die resultierenden Verluste in einen spannungs- und einen widerstandsabhängigen Anteil ($P_\mathrm{U}$ und $P_\mathrm{R}$) unterteilen. Mithilfe dieser Näherung ergibt sich:
 
 \begin{equation}
-    P_{\mathrm{D,c}} = P_\mathrm{U} + P_\mathrm{R} = u_{\mathrm{D,0}} \overline{i}_{\mathrm{D}} + r_\mathrm{D}i_{\mathrm{D,RMS}}^2
+    P_{\mathrm{D,c}} = P_\mathrm{U} + P_\mathrm{R} = v_{\mathrm{D,0}} \overline{i}_{\mathrm{D}} + r_\mathrm{D}i_{\mathrm{D,RMS}}^2
     \label{eq:p_d_con_vereinfacht}
 \end{equation}
 
@@ -529,7 +529,7 @@ Beim Übergang der Diode vom leitenden in den sperrenden Zustand (Abschalten) ka
 Da in diesem Moment die gegenüberliegende Halbbrücke bereits einschaltet und die volle Zwischenkreisspannung anliegt, entsteht eine ausgeprägte Verlustleistungsspitze. Diese Reverse-Recovery-Verluste ($P_{\mathrm{rr}}$) sind insbesondere bei den Body-Dioden von Silizium-MOSFETs beträchtlich und berechnen sich näherungsweise zu:
 
 \begin{equation}
-    P_{\mathrm{rr}} = \frac{1}{2}u_{\mathrm{i}} \cdot I_{\mathrm{RM}}\frac{1}{2}t_\mathrm{rr} \cdot f_{\mathrm{SW}}
+    P_{\mathrm{rr}} = \frac{1}{2}v_{\mathrm{i}} \cdot I_{\mathrm{RM}}\frac{1}{2}t_\mathrm{rr} \cdot f_{\mathrm{SW}}
     \label{eq:p_rr}
 \end{equation}
 

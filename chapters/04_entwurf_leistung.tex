@@ -4,11 +4,139 @@
 Basierend auf den in Kapitel \ref{chap:anforderungen} definierten Systemanforderungen erfolgt in diesem Kapitel die konkrete Dimensionierung der leistungselektronischen Komponenten. Der Fokus liegt dabei auf der Auswahl der Leistungshalbleiter, der Berechnung der zugehörigen Verlustleistungen sowie der Auslegung der Treiber- und Zwischenkreisstrukturen.
 
 
-\section{MOSFET-Auswahl}
-\todo[inline]{Hier wird die Auswahl der MOSFETs begründet: Sperrspannung, R$_{DS(on)}$, Gateladung, Gehäusewahl usw.}
+\section{Auswahl der Leistungshalbleiter}
+\label{sec:mosfet_auswahl}
 
+Die Auswahl der Leistungshalbleiter stellt einen zentralen Entwurfsschritt im Motorcontroller dar, da diese Bauelemente den Wirkungsgrad, das Schaltverhalten sowie die thermische Zuverlässigkeit des Gesamtsystems bestimmen. Für die Realisierung der dreiphasigen B6-Brückentopologie wurde der N-Kanal-Leistungs-MOSFET IPP034N08N5 aus der OptiMOS\textsuperscript{\texttrademark}-5-Serie von Infineon Technologies ausgewählt \cite{DS_IPP034N08N5}. Die nachfolgend diskutierten elektrischen und thermischen Kennwerte basieren auf den im Datenblatt spezifizierten Parametern.
+
+Ein wesentliches Auswahlkriterium ist die Spannungsfestigkeit des Transistors. Bei einer maximalen Ladeschlussspannung des verwendeten Akkumulators von $42\,\mathrm{V}$ muss der MOSFET sowohl diese Gleichspannung sicher sperren als auch transiente Überspannungen tolerieren, die infolge schneller Schaltvorgänge an den induktiven Motorwicklungen sowie durch parasitäre Streuinduktivitäten des Leiterplattenlayouts entstehen. Der gewählte MOSFET besitzt eine Drain-Source-Durchbruchspannung von $V_{\mathrm{DS}} = 80\,\mathrm{V}$, wodurch sich gegenüber der maximalen Zwischenkreisspannung eine Sicherheitsreserve von nahezu $100\,\%$ ergibt.
+
+Neben der Spannungsfestigkeit stellt die Stromtragfähigkeit ein weiteres wesentliches Auswahlkriterium dar. Der Motorcontroller ist für einen Phasenstrom von $30\,\mathrm{A_{RMS}}$ ausgelegt, was einem Spitzenstrom von etwa $42{,}4\,\mathrm{A}$ entspricht. Der ausgewählte MOSFET ist für einen maximalen kontinuierlichen Drainstrom von $I_{\mathrm{D}} = 120\,\mathrm{A}$ bei einer Gehäusetemperatur von $25^\circ\mathrm{C}$ spezifiziert und erlaubt Pulsströme bis zu $480\,\mathrm{A}$. Damit liegt der geplante Betriebspunkt deutlich innerhalb der spezifizierten Betriebsgrenzen des Bauelements.
+Zur Minimierung der Leitverluste ist ein möglichst geringer Drain-Source-Widerstand im eingeschalteten Zustand erforderlich. Der IPP034N08N5 weist einen maximalen Einschaltwiderstand von $R_{\mathrm{DS(on),max}} = 3{,}4\,\mathrm{m\Omega}$ bei einer Gate-Source-Spannung von $V_{\mathrm{GS}} = 10\,\mathrm{V}$ auf. Der niedrige Durchlasswiderstand reduziert die ohmschen Verluste im Nennbetrieb und erleichtert die thermische Beherrschung der Leistungselektronik.
+
+Für den dynamischen Betrieb mit einer PWM-Schaltfrequenz von $20\,\mathrm{kHz}$ sind zusätzlich die parasitären Kapazitäten des MOSFETs relevant. Eine Reduktion des $R_{\mathrm{DS(on)}}$ geht konstruktionsbedingt häufig mit einer Vergrößerung der Chipfläche und damit mit erhöhten Kapazitäten einher. Der ausgewählte MOSFET bietet hierbei ein günstiges Verhältnis zwischen statischen und dynamischen Eigenschaften. Die typische Gesamtgateladung beträgt $Q_{\mathrm{G}} = 69\,\mathrm{nC}$ bei $V_{\mathrm{GS}} = 10\,\mathrm{V}$, wodurch eine schnelle Umladung der Gatekapazität ermöglicht und die Schaltverluste begrenzt werden können.
+Ein weiterer relevanter Parameter im Inverterbetrieb ist die Reverse-Recovery-Ladung der integrierten Body-Diode. Diese beträgt typischerweise $Q_{\mathrm{rr}} = 166\,\mathrm{nC}$ und beeinflusst insbesondere die Kommutierungsvorgänge während der Totzeiten zwischen HS und LS. Niedrige Reverse-Recovery-Ladungen tragen zur Reduzierung zusätzlicher Schaltverluste und elektromagnetischer Störungen bei.
+
+Hinsichtlich der mechanischen Integration wird der MOSFET im standardisierten TO-220-3-Gehäuse eingesetzt. Dieses Gehäuse verfügt über eine metallische Kühlfahne mit einem thermischen Übergangswiderstand von maximal $R_{\mathrm{thJC}} = 0{,}9\,\mathrm{K/W}$ zwischen Halbleitersperrschicht und Gehäuse. Dadurch kann die im Silizium entstehende Verlustleistung effizient an einen externen Kühlkörper abgeführt werden. Die maximal zulässige Sperrschichttemperatur beträgt $T_{\mathrm{J,max}} = 175^\circ\mathrm{C}$.
+Konstruktiv ist zu berücksichtigen, dass die Kühlfahne des Gehäuses elektrisch mit dem Drain-Anschluss verbunden ist. Da in der Halbbrückentopologie bei den sechs Schaltern unterschiedliche Drain-Potenziale auftreten, muss eine elektrische Isolation der Bauelemente gegenüber einem gemeinsamen Kühlkörper realisiert werden. In der vorliegenden Konstruktion erfolgt dies durch thermisch leitfähige Silikonpads.
+
+Zur besseren Übersicht sind die wesentlichen Datenblattparameter des ausgewählten MOSFETs in Tabelle~\ref{tab:mosfet_specs} zusammengefasst.
+
+\begin{table}[htbp]
+\centering
+\caption{Datenblattparameter des gewählten MOSFETs \cite{DS_IPP034N08N5}}
+\label{tab:mosfet_specs}
+\begin{tabular}{llcc}
+\toprule
+\textbf{Parameter} & \textbf{Symbol} & \textbf{Wert} & \textbf{Einheit} \\
+\midrule
+Drain-Source-Durchbruchspannung & $V_{\mathrm{DS}}$ & 80 & $\mathrm{V}$ \\
+Maximaler Dauerstrom ($T_{\mathrm{C}}=25^\circ\mathrm{C}$) & $I_{\mathrm{D}}$ & 120 & $\mathrm{A}$ \\
+Maximaler Einschaltwiderstand ($V_{\mathrm{GS}}=10\,\mathrm{V}$) & $R_{\mathrm{DS(on),max}}$ & 3{,}4 & $\mathrm{m\Omega}$ \\
+Typische Gesamtgateladung & $Q_{\mathrm{G}}$ & 69 & $\mathrm{nC}$ \\
+Typische Reverse-Recovery-Ladung & $Q_{\mathrm{rr}}$ & 166 & $\mathrm{nC}$ \\
+Thermischer Widerstand (Junction-to-Case) & $R_{\mathrm{thJC,max}}$ & 0{,}9 & $\mathrm{K/W}$ \\
+Maximale Sperrschichttemperatur & $T_{\mathrm{J,max}}$ & 175 & $^\circ\mathrm{C}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%============================================================================
 \section{Verlustanalyse}
-\todo[inline]{Berechnung und Abschätzung der statischen und dynamischen Verluste pro MOSFET/Phase.}
+\label{sec:verlustanalyse}
+
+Die Dimensionierung des thermischen Managements erfordert eine detaillierte und betriebspunktspezifische Quantifizierung der auftretenden Halbleiterverluste. Die nachfolgenden Berechnungen basieren auf einem konservativ gewählten Worst-Case-Betriebspunkt: Ein kontinuierlicher Phasenstrom von $I_{\mathrm{phase,RMS}} = 30\,\mathrm{A}$, eine maximale Zwischenkreisspannung von $V_{\mathrm{DC}} = 42\,\mathrm{V}$ sowie eine PWM-Schaltfrequenz von $f_{\mathrm{SW}} = 20\,\mathrm{kHz}$.
+
+\subsection{Statische Leitverluste}
+\label{subsec:leitverluste}
+
+In einer B6-Brückentopologie mit dem verwendeten Halbbrückentreiber IR2104 wird die Freilaufphase (Kommutierung) nicht primär durch die integrierte Body-Diode, sondern durch das aktive Einschalten des LS-MOSFETs übernommen (Synchronous Rectification). Dadurch fließt der Phasenstrom für nahezu die gesamte elektrische Periode durch den niederohmigen Drain-Source-Kanal der Transistoren.
+
+Unter der Annahme eines eingeschwungenen SVPWM-Betriebs variiert das Tastverhältnis $d(t)$ kontinuierlich. Zur analytischen Berechnung der Stromaufteilung werden die Modelle für dreiphasige Wechselrichter nach Infineon Application Note herangezogen \cite[S.~16\,f.]{Infineon_MOSFET_Losses}. In einer klassischen Topologie mit passiver Freilaufdiode hängen die quadratischen Effektivströme für den aktiven Schalter und das Freilaufelement signifikant vom Modulationsindex $m$ und dem Leistungsfaktor $\cos(\phi)$ ab \cite[S.~17]{Infineon_MOSFET_Losses}. 
+Da durch die angewandte Synchrongleichrichtung jedoch beide Stromanteile über die MOSFET-Kanäle fließen, lassen sich die Gleichungen für Schalter und Diode addieren. Hierbei lässt sich mathematisch zeigen, dass sich die lastabhängigen Terme ($m$ und $\cos(\phi)$) über eine vollständige elektrische Periode exakt herauskürzen. Es ergibt sich im Mittel eine gleichmäßige Aufteilung des Effektivstroms auf den HS- und LS-Transistor der jeweiligen Halbbrücke. Der resultierende Effektivstrom pro Einzelschalter ergibt sich damit zu:
+
+\begin{equation}
+    I_{\mathrm{MOS,RMS}} =
+    \frac{I_{\mathrm{phase,RMS}}}{\sqrt{2}}
+    =
+    \frac{30\,\mathrm{A}}{\sqrt{2}}
+    \approx 21{,}21\,\mathrm{A}.
+    \label{eq:i_mos_rms}
+\end{equation}
+
+Gemäß der in den Grundlagen eingeführten Gleichung \ref{eq:p_cond} skalieren die Leitverluste quadratisch mit diesem Strom und linear mit dem Einschaltwiderstand $R_{\mathrm{DS(on)}}$. Die im Datenblatt spezifizierten $3{,}4\,\mathrm{m\Omega}$ gelten jedoch ausschließlich für eine Sperrschichttemperatur von $T_{\mathrm{J}} = 25^\circ\mathrm{C}$. Mit steigender Temperatur nimmt die Ladungsträgerbeweglichkeit im Silizium ab, wodurch der Drain-Source-Widerstand eine ausgeprägte positive Temperaturabhängigkeit aufweist.
+
+Für eine konservative Worst-Case-Betrachtung des thermisch eingeschwungenen Dauerbetriebs wird daher eine Sperrschichttemperatur von $T_{\mathrm{J}} = 100^\circ\mathrm{C}$ angenommen. Anhand der digitalisierten Herstellerkennlinie (siehe Abbildung \ref{fig:rdson_temp}) lässt sich der zu erwartende Einschaltwiderstand für diesen Arbeitspunkt auf etwa $R_{\mathrm{DS(on)}}(100^\circ\mathrm{C}) \approx 4{,}8\,\mathrm{m\Omega}$ bestimmen.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            width=0.8\textwidth,
+            height=6cm,
+            grid=major,
+            grid style={dashed, gray!30},
+            xlabel={Sperrschichttemperatur $T_{\mathrm{J}}$ [$^\circ\mathrm{C}$]},
+            ylabel={$R_{\mathrm{DS(on),max}}$ [m$\Omega$]},
+            xmin=-60, xmax=180,
+            ymin=2, ymax=7,
+            xtick={-60, -20, 20, 60, 100, 140, 180},
+            ytick={2, 3, 4, 5, 6, 7},
+            legend pos=north west,
+            thick
+        ]
+        \addplot[domain=-60:175, samples=100, color=red!80!black, very thick] 
+            {3.02 + 0.0135*x + 0.000043*x^2};
+        \addlegendentry{$f({T_J})$ bei $I_{\mathrm{D}}=100\,\mathrm{A}, V_{\mathrm{GS}}=10\,\mathrm{V}$}
+        
+        \draw[dashed, color=blue, thick] (axis cs:100,2) -- (axis cs:100,4.8) -- (axis cs:-60,4.8);
+        \node[color=blue, anchor=south east] at (axis cs:100,4.8) {$4{,}8\,\mathrm{m\Omega}$};
+        \addplot[mark=*, color=blue] coordinates {(100,4.8)};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Temperaturabhängigkeit des maximalen Einschaltwiderstands. Digitalisiert nach \cite[Diagramm~9]{DS_IPP034N08N5}.}
+    \label{fig:rdson_temp}
+\end{figure}
+
+Ein weiterer Einflussfaktor ist die Höhe der Gate-Source-Spannung. Der verwendete Gate-Treiber IR2104 liefert eine Treiberspannung im Bereich von etwa $12\,\mathrm{V}$ bis $15\,\mathrm{V}$. Aus dem Ausgangskennlinienfeld \cite[Diagramm~5]{DS_IPP034N08N5} geht hervor, dass der MOSFET bei diesen Spannungen bereits vollständig im niederohmigen Durchlassbereich betrieben wird. Eine weitere signifikante Reduktion des Drain-Source-Widerstands gegenüber dem spezifizierten Datenblattwert bei $V_{\mathrm{GS}} = 10\,\mathrm{V}$ ist daher nicht zu erwarten. Die konservative Berechnung mit den abgelesenen $4{,}8\,\mathrm{m\Omega}$ ist somit gerechtfertigt.
+
+Auf Basis von Gleichung \ref{eq:p_cond} und \ref{eq:i_mos_rms} ergeben sich die maximalen statischen Leitverluste pro MOSFET im thermisch eingeschwungenen Dauerbetrieb zu
+
+\begin{equation}
+    P_{\mathrm{MOS,c}} =
+    I_{\mathrm{MOS,RMS}}^2
+    \cdot
+    R_{\mathrm{DS(on)}}(100^\circ\mathrm{C})
+    =
+    (21{,}21\,\mathrm{A})^2
+    \cdot
+    0{,}0048\,\Omega
+    \approx
+    2{,}16\,\mathrm{W}.
+    \label{eq:p_cond_result}
+\end{equation}
+
+Für die gesamte B6-Brücke mit sechs Leistungstransistoren ergibt sich damit im stationären Nennlastfall eine Gesamt-Leitverlustleistung von
+$P_{\mathrm{MOS,c,total}}
+\approx
+6 \cdot 2{,}16\,\mathrm{W}
+\approx
+12{,}96\,\mathrm{W}.$
+
+\paragraph{Leitverluste der Body-Diode (Totzeitverluste)}
+Aufgrund der Synchrongleichrichtung leitet die intrinsische Body-Diode des MOSFETs den Phasenstrom ausschließlich während der vom Gate-Treiber erzwungenen Totzeit $t_{\mathrm{dt}}$, um einen Brückenkurzschluss zu verhindern. Der verwendete IR2104 besitzt eine fixierte interne Totzeit von typisch $t_{\mathrm{dt}} = 520\,\mathrm{ns}$ \cite{DS_IR2104}. 
+
+Da dieser Kommutierungsvorgang zweimal pro PWM-Periode auftritt, berechnen sich die mittleren Diodenverluste unter Annahme eines arithmetischen Phasenmittelstroms zu:
+\begin{equation}
+    P_{\mathrm{D,dt}} = 2 \cdot V_{\mathrm{SD}} \cdot \frac{2}{\pi} \cdot  I_{\mathrm{phase,RMS}} \cdot \sqrt{2} \cdot t_{\mathrm{dt}} \cdot f_{\mathrm{SW}}
+    \label{eq:p_diode_dt}
+\end{equation}
+Mit einer Dioden-Vorwärtsspannung von $V_{\mathrm{SD}} \approx 0{,}9\,\mathrm{V}$ \cite[S.~6]{DS_IPP034N08N5} resultieren Dioden-Durchlassverluste von:
+\begin{equation}
+    P_{\mathrm{D,dt}} = 2 \cdot 0{,}9\,\mathrm{V} \cdot 27{,}0\,\mathrm{A} \cdot 520 \cdot 10^{-9}\,\mathrm{s} \cdot 20\,\mathrm{kHz} \approx 0{,}51\,\mathrm{W} \text{ pro Halbbrücke}.
+\end{equation}
+Dies belegt rechnerisch transparent, dass die Durchlassverluste der Diode durch den Einsatz des Synchrongleichrichter-Prinzips von untergeordneter thermischer Relevanz sind und das System von den MOSFET-Kanälen dominiert wird.
+%============================================================================
 
 \section{Gate-Treiber}
 \todo[inline]{Beschreibung des gewählten Treibers, Totzeiten, Schutzfunktionen, Ansteuerlogik.}

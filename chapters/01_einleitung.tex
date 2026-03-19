@@ -1,6 +1,8 @@
 \chapter{Einleitung}
 \label{chap:einleitung}
 
+\todo[inline]{KAPITEL NOCH NICHT FERTIG! AM ENDE ANPASSEN SONST UNÜBERSICHTLICH}
+
 Die vorliegende Studienarbeit behandelt die Entwicklung eines leistungselektronischen Motorcontrollers zur Ansteuerung eines bürstenlosen Gleichstrommotors (BLDC) im Niederspannungsbereich. Ziel ist die hardwareseitige Realisierung einer dreiphasigen Leistungsendstufe für eine Betriebsspannung von 36\,V und Ströme bis 30\,A. Im Mittelpunkt stehen die Auslegung der Leistungshalbleiter, die Dimensionierung der Treiberstufen sowie die Analyse elektrischer Verlustmechanismen und thermischer Randbedingungen. Darüber hinaus werden Aspekte der elektromagnetischen Verträglichkeit und des leiterplattentechnischen Designs berücksichtigt, da diese maßgeblich die Zuverlässigkeit und Funktion des Gesamtsystems beeinflussen.
 
 Die Entwicklung eines diskreten Motorcontrollers erfordert ein fundiertes Verständnis der maschinen- und leistungselektronischen Zusammenhänge. Hohe Stromanstiege, schnelle Schaltvorgänge und dynamische Lastwechsel führen zu elektrischen und thermischen Belastungen, die bei der Auslegung aller Komponenten berücksichtigt werden müssen. Neben der rein elektrischen Dimensionierung spielen parasitäre Effekte, Layoutführung und Wärmeabfuhr eine zentrale Rolle. Ziel ist die Realisierung eines robusten und reproduzierbaren Prototyps, der unter realistischen Betriebsbedingungen zuverlässig arbeitet.
@@ -21,19 +23,17 @@ Im Rahmen der Entwicklung werden geeignete Leistungshalbleiter ausgewählt und d
 
 \section{Abgrenzung}
 
-Der Schwerpunkt dieser Studienarbeit liegt auf der hardwareseitigen Auslegung des Motorcontrollers. Die Ansteuerung des BLDC-Motors erfolgt im Open-Loop-Betrieb unter Verwendung der Space Vector Pulse Width Modulation (SVPWM). Eine feldorientierte Regelung (FOC) ist nicht Bestandteil dieser Arbeit.
+Der Schwerpunkt dieser Studienarbeit liegt vollumfänglich auf der hardwareseitigen Auslegung und der thermischen Beherrschung des Motorcontrollers. Die Ansteuerung des BLDC-Motors erfolgt im Open-Loop-Betrieb auf Basis einer robusten, sensorbasierten Blockkommutierung (Six-Step-Commutation). Auf algorithmisch komplexe Modulationsverfahren wie die Raumzeigermodulation (SVPWM) oder eine geschlossene feldorientierte Regelung (FOC) wird bewusst verzichtet, da bei der Verwendung diskreter $60^\circ$-Hall-Sensoren die Aufrechterhaltung der Systemstabilität bei hochdynamischen Lastwechseln im Vordergrund steht.
 
-Komplexe geschlossene Regelkreise zur Drehmoment- oder Drehzahlregelung werden nur insoweit betrachtet, wie sie für das grundlegende Systemverständnis erforderlich sind. Der Fokus liegt auf der leistungselektronischen Struktur, der sicheren Ansteuerung der Halbleiter, der Dimensionierung der Verlustleistung sowie der thermischen und elektromagnetischen Auslegung des Gesamtsystems.
+Softwareseitige Implementierungen und komplexe Regelkreise zur Drehmoment- oder Drehzahlregelung werden dementsprechend nur insoweit behandelt, wie sie für das grundlegende elektrotechnische Systemverständnis zwingend erforderlich sind. Der wissenschaftliche Fokus ruht stattdessen auf der leistungselektronischen Netzwerktopologie, der physikalischen Auslegung der Halbleiterschalter, der analytischen Verlustleistungsbilanzierung sowie der elektromagnetisch verträglichen (EMV) und thermischen Konzeption des Leiterplattendesigns.
 
 \section{Aufbau der Arbeit}
 
-Nach der Einleitung werden zunächst die theoretischen Grundlagen zu BLDC-Motoren, Leistungshalbleitern und Modulationsverfahren dargestellt. Darauf aufbauend erfolgt die systematische Auslegung des Motorcontrollers, beginnend mit der Auswahl der Topologie über die Dimensionierung der Leistungskomponenten bis hin zur thermischen Bewertung.
-
-Im weiteren Verlauf wird das Leiterplattendesign erläutert, wobei insbesondere Stromtragfähigkeit, Minimierung parasitärer Effekte und EMV-gerechte Layoutführung betrachtet werden. Abschließend werden der Aufbau des Prototyps, die Inbetriebnahme sowie Messergebnisse präsentiert und bewertet. Die Arbeit schließt mit einer Zusammenfassung der wesentlichen Ergebnisse und einem Ausblick auf mögliche Weiterentwicklungen.
+\todo{HIER FEHLT NOCH ALLES!}
 
 \begin{figure}[htbp]
     \centering
     %\includegraphics[width=1\textwidth]{Studienarbeit II.png}
-    \caption{Zeitplan Studienarbeit.}
+    \caption{Zeitplan der Studienarbeit.}
     \label{fig:gantt}
 \end{figure}

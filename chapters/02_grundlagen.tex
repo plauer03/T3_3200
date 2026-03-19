@@ -9,27 +9,18 @@ Dieses Kapitel legt das theoretische Fundament für die Dimensionierung des Moto
 \section{Der BLDC-Motor}
 \label{sec:bldc_motor}
 
-Der BLDC-Motor stellt eine technologische Weiterentwicklung der konventionellen Gleichstrommaschine dar, bei der die mechanische Kommutierung durch eine elektronische Steuerung ersetzt wird. Im Gegensatz zu bürstenbehafteten Motoren, bei denen Kohlebürsten und ein Kollektor für die Stromwendung sorgen, erfolgt die Ansteuerung der Statorwicklungen hier in Abhängigkeit von der Rotorlage. Dies eliminiert den mechanischen Verschleiß und die Funkenbildung, was zu einer höheren Zuverlässigkeit, geringerem Wartungsaufwand und einer verbesserten thermischen Charakteristik führt, da die Verlustwärme primär im außenliegenden Stator entsteht und effektiv abgeführt werden kann \cite{MPS_BLDC_AN}.
-
-Technisch betrachtet handelt es sich bei einem BLDC-Motor um eine permanentmagneterregte Synchronmaschine (PMSM). Der Begriff DC bezieht sich hierbei nicht auf das interne elektromagnetische Wirkprinzip, sondern auf die externe Speisung aus einer Gleichspannungsquelle, die durch den Inverter in die benötigten Phasenströme umgewandelt wird.
+Der BLDC-Motor stellt eine technologische Weiterentwicklung der konventionellen Gleichstrommaschine dar, bei der die mechanische Kommutierung durch eine elektronische Steuerung ersetzt wird. Im Gegensatz zu bürstenbehafteten Motoren, bei denen Kohlebürsten und ein Kollektor für die Stromwendung sorgen, erfolgt die Ansteuerung der Statorwicklungen hier in Abhängigkeit von der Rotorlage. Dies eliminiert den mechanischen Verschleiß und die Funkenbildung, was zu einer höheren Zuverlässigkeit, geringerem Wartungsaufwand und einer verbesserten thermischen Charakteristik führt, da die Verlustwärme primär im außenliegenden Stator entsteht und effektiv abgeführt werden kann \cite[S.~9]{MPS_BLDC_AN}.
 
 \subsection{Aufbau und physikalisches Wirkprinzip}
 Der mechanische Aufbau gliedert sich primär in den feststehenden Stator und den rotierenden Rotor, wie der Querschnitt in Abbildung \ref{fig:bldc_aufbau} schematisch veranschaulicht.
 
-\paragraph{Stator}
+\subsubsection{Stator}
 Der Stator besteht aus geschichteten Stahlblechen (Lamellen), um Wirbelstromverluste zu minimieren. In den Nuten des Stators sind die Wicklungen untergebracht, die meist in drei Phasen ($U, V, W$) angeordnet sind. Diese Wicklungen sind im Stern verschaltet, wobei der Sternpunkt im Motor isoliert ist und nicht nach außen herausgeführt wird.
 
-\paragraph{Rotor}
+\subsubsection{Rotor}
 Der Rotor trägt die Permanentmagnete. Je nach Anordnung unterscheidet man zwischen Innenläufern, bei denen der Rotor innerhalb des Stators dreht, und Außenläufern. Die Anzahl der magnetischen Pole ($N$ und $S$) variiert je nach Applikation, ist jedoch stets geradzahlig. Eine höhere Polpaarzahl führt bei gleicher elektrischer Frequenz zu einer geringeren mechanischen Drehzahl, erhöht jedoch gleichzeitig das verfügbare Drehmoment.
 
 Das Drehmoment entsteht durch die Lorentzkraft, die auf die bestromten Leiter im Magnetfeld wirkt. Damit eine kontinuierliche Rotation gewährleistet ist, muss das magnetische Feld des Stators dem des Rotors stets um $90^\circ$ vorauseilen.
-
-% \begin{figure}[htbp]
-%     \centering
-%     \includegraphics[width=0.7\textwidth]{BLDC_1.png}
-%     \caption{Querschnitt und prinzipieller Aufbau eines BLDC-Motors \cite{MPS_BLDC_AN}.}
-%     \label{fig:bldc_aufbau}
-% \end{figure}
 
 \begin{figure}[htbp]
     \centering
@@ -41,11 +32,11 @@ Das Drehmoment entsteht durch die Lorentzkraft, die auf die bestromten Leiter im
         \node at (img.center) [
             rotate=0,
             scale=5,
-            text opacity=0.35,  % macht es dezent
+            text opacity=0.35,
             color=red
         ] {DRAFT};
     \end{tikzpicture}
-    \caption{Querschnitt und prinzipieller Aufbau eines BLDC-Motors \cite{MPS_BLDC_AN}.}
+    \caption{Querschnitt und prinzipieller Aufbau eines BLDC-Motors. Nach \cite[Abb.~5b]{MPS_BLDC_AN}.}
     \label{fig:bldc_aufbau}
 \end{figure}
 
@@ -79,33 +70,16 @@ Unter Anwendung des Maschensatzes ergibt sich die Spannungsgleichung für eine e
     \label{eq:phase_voltage}
 \end{equation}
 
-Hierbei ist $v_U$ die anliegende Klemmenspannung, $i_U$ der Phasenstrom und $e_U$ die induzierte Gegenspannung. 
+Hierbei ist $v_U$ die anliegende Klemmenspannung, $i_U$ der Phasenstrom und $e_U$ die induzierte Gegenspannung. Die motor-spezifischen Parameter definieren dabei maßgeblich das elektrische Verhalten: Der Wicklungswiderstand $R$ determiniert die ohmschen Verluste, während die Induktivität $L$ die Stromanstiegsgeschwindigkeit begrenzt und den hochfrequenten PWM-Ripple glättet. Die BEMF $e_U$ begrenzt hingegen die erreichbare Maximaldrehzahl, da bei einem Erreichen der Versorgungsspannung kein Strom mehr in den Motor eingeprägt werden kann.
 
-
-\paragraph{Bedeutung der Parameter für die Auslegung:}
-\begin{itemize}
-    \item \textbf{Widerstand $R$:} Bestimmt die statischen Kupferverluste ($P = I^2R$) und damit die Erwärmung des Motors.
-    \item \textbf{Induktivität $L$:} Glättet den Stromverlauf bei PWM-Ansteuerung. Eine zu kleine Induktivität führt zu hohem Stromrippel, was die Kondensatoren im Zwischenkreis belastet. Die elektrische Zeitkonstante $\tau_{\mathrm{el}} = L/R$ ist ein Maß für die Stromanstiegsgeschwindigkeit.
-    \item \textbf{BEMF $e_U$:} Begrenzt die maximale Drehzahl. Wenn die BEMF die Versorgungsspannung erreicht, kann kein Strom mehr in den Motor getrieben werden.
-\end{itemize}
-
-Die BEMF entsteht durch die Rotation des magnetischen Rotorfeldes relativ zu den Statorwicklungen (Induktionsgesetz). Nach \cite{Pillay1991} lässt sich die Amplitude der BEMF direkt proportional zur Winkelgeschwindigkeit $\omega_m$ des Rotors gemäß Gleichung \ref{eq:bemf} beschreiben:
+Die BEMF entsteht durch die Rotation des magnetischen Rotorfeldes relativ zu den Statorwicklungen (Induktionsgesetz). In Anlehnung an \cite{Pillay1991} kann die Gegenspannung allgemein beschrieben werden durch:
 
 \begin{equation}
-    e(t) = k_e \cdot \omega_m \cdot f(\theta_e)
+    e_U(t) = k_e \cdot \omega_m \cdot f(\theta_e)
     \label{eq:bemf}
 \end{equation}
 
-Dabei ist $k_e$ die spezifische BEMF-Konstante des Motors. Charakteristisch für BLDC-Motoren ist der trapezförmige Verlauf der Funktion $f(\theta_e)$, resultierend aus der rechteckigen Verteilung des magnetischen Flusses im Luftspalt. Dies unterscheidet den BLDC-Motor von der gewöhnlichen PMSM, welche eine sinusförmige BEMF aufweist. 
-
-Um ein konstantes Drehmoment zu erzeugen, sollte der Phasenstrom idealerweise rechteckförmig in die Phasen eingeprägt werden. So korrespondieren die Stromblöcke exakt mit dem flachen Dach der trapezförmigen BEMF, was in Abbildung \ref{fig:bemf_trapez} grafisch verdeutlicht wird.
-
-% \begin{figure}[htbp]
-%     \centering
-%     \includegraphics[width=0.7\textwidth]{BEMF.png}
-%     \caption{Verlauf der BEMF und der korrespondierenden Blockströme \cite{MPS_BLDC_AN}.}
-%     \label{fig:bemf_trapez}
-% \end{figure}
+Dabei ist $k_e$ die spezifische BEMF-Konstante des Motors. Charakteristisch für BLDC-Motoren ist der trapezförmige Verlauf der Funktion $f(\theta_e)$, resultierend aus der Form des magnetischen Flusses im Luftspalt. Um ein konstantes Drehmoment zu erzeugen, sollte der Phasenstrom idealerweise als $120^\circ$-Block eingeprägt werden, sodass er exakt mit dem flachen Dach der trapezförmigen BEMF korrespondiert (vgl. Abbildung \ref{fig:bemf_trapez}).
 
 \begin{figure}[htbp]
     \centering
@@ -121,62 +95,21 @@ Um ein konstantes Drehmoment zu erzeugen, sollte der Phasenstrom idealerweise re
             color=red
         ] {DRAFT};
     \end{tikzpicture}
-    \caption{Verlauf der BEMF und der korrespondierenden Blockströme \cite{MPS_BLDC_AN}.}
+    \caption{Verlauf der BEMF und der korrespondierenden Blockströme \cite[Abb.~15]{MPS_BLDC_AN}.}
     \label{fig:bemf_trapez}
 \end{figure}
 
 % ============================================================
 % 2.2 Kommutierung
 % ============================================================
-\section{Kommutierung und Rotorlageerfassung}
+\section{Kommutierung und Ansteuerung}
 \label{sec:kommutierung}
 
 Damit der Motor ein kontinuierliches Drehmoment erzeugt, müssen die Statorwicklungen synchron zur aktuellen Rotorposition bestromt werden. Ziel der Kommutierung ist es, den Winkel zwischen dem Erregerfeld des Rotors und dem Statorfeld im Bereich von $90^\circ$ elektrisch zu halten, da hierbei die maximale Lorentzkraft wirkt.
 
-\subsection{Hall-Sensorik}
-Im vorliegenden Projekt wird zur Detektion der Rotorlage ein sensorbasiertes Verfahren eingesetzt. Dazu befinden sich im Stator drei Hall-Effekt-Sensoren ($H_1, H_2, H_3$), die das Magnetfeld der vorbeidrehenden Rotorpole erfassen. Üblicherweise sind diese Sensoren räumlich um $120^\circ$ elektrisch versetzt angeordnet. Dieser Versatz führt dazu, dass pro elektrischer Umdrehung ($360^\circ$) sechs diskrete Zustände (Sektoren) eindeutig unterscheidbar sind.
-
-\subsection{Blockkommutierung}
-Das gängigste Ansteuerverfahren für BLDC-Motoren ist die Blockkommutierung. Basierend auf den digitalen Signalen der Hall-Sensoren ordnet die Steuerelektronik jedem erfassten Sektor ein festes Bestromungsmuster zu.
-Charakteristisch ist hierbei, dass zu jedem Zeitpunkt immer nur zwei der drei Motorphasen aktiv bestromt werden: Eine Phase wird auf das Potential der Zwischenkreisspannung $V_{\mathrm{DC}}$ gezogen, eine auf das Massepotential (GND), während die dritte Phase unbeschaltet (floating) bleibt. Die sich daraus ergebende Kommutierungslogik ist für alle sechs Sektoren in Tabelle \ref{tab:kommutierung} übersichtlich zusammengefasst.
-
-\begin{table}[htbp]
-    \centering
-    \caption{Zustandstabelle der Blockkommutierungslogik in Abhängigkeit der Hall-Sensoren}
-    \label{tab:kommutierung}
-    \begin{tabular}{ccc ccc c}
-        \toprule
-        \multicolumn{3}{c}{Hall-Sensoren} & 
-        \multicolumn{3}{c}{Phasenzustand} & 
-        Sektor \\
-        \cmidrule(lr){1-3} \cmidrule(lr){4-6}
-        $H_1$ & $H_2$ & $H_3$ & $U$ & $V$ & $W$ & \\
-        \midrule
-        1 & 0 & 1 & $\mathrm{V_{DC}}$ & GND & NC & I \\
-        1 & 0 & 0 & $\mathrm{V_{DC}}$ & NC & GND & II \\
-        1 & 1 & 0 & NC & $\mathrm{V_{DC}}$ & GND & III \\
-        0 & 1 & 0 & GND & $\mathrm{V_{DC}}$ & NC & IV \\
-        0 & 1 & 1 & GND & NC & $\mathrm{V_{DC}}$ & V \\
-        0 & 0 & 1 & NC & GND & $\mathrm{V_{DC}}$ & VI \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-% ============================================================
-% 2.3 Brückentopologie
-% ============================================================
-\section{Leistungselektronische Ansteuerung}
-\label{sec:topologie}
-
-Die physikalische Umsetzung der in Tabelle \ref{tab:kommutierung} definierten Schaltzustände erfolgt über eine dreiphasige Wechselrichterbrücke, oft auch als B6-Brücke bezeichnet.
-
-\subsection{Brückentopologie}
-Das Prinzipschaltbild dieser Leistungsendstufe ist in Abbildung \ref{fig:three_phase_bridge} dargestellt. Die Schaltung besteht aus drei parallel am Gleichspannungszwischenkreis ($V_{\mathrm{DC}}$) liegenden Halbbrücken. Jede dieser Halbbrücken verfügt über zwei Leistungsschalter (MOSFETs):
-\begin{itemize}
-    \item \textbf{High-Side-MOSFET (HS):} Verbindet den Phasenausgang mit der Versorgungsspannung $V_{\mathrm{DC}}$.
-    \item \textbf{Low-Side-MOSFET (LS):} Verbindet den Phasenausgang mit dem Bezugspotential GND.
-\end{itemize}
-In modernen Niederspannungsanwendungen werden fast ausschließlich N-Kanal-MOSFETs eingesetzt, da diese bei gleicher Chipfläche einen geringeren Einschaltwiderstand $R_{\mathrm{DS(on)}}$ aufweisen als vergleichbare P-Kanal-Typen.
+\subsection{Brückentopologie und Bootstrap-Prinzip}
+\label{subsec:topologie}
+Die leistungselektronische Umsetzung der Kommutierung erfolgt über eine dreiphasige Wechselrichterbrücke (B6-Brücke). Das Prinzipschaltbild ist in Abbildung \ref{fig:three_phase_bridge} dargestellt. Die Schaltung besteht aus drei parallel am Gleichspannungszwischenkreis ($V_{\mathrm{DC}}$) liegenden Halbbrücken, welche die Phasen an die Versorgungsspannung (High-Side) oder an das Bezugspotential (Low-Side) schalten können.
 
 \begin{figure}[htbp]
     \centering
@@ -213,85 +146,54 @@ In modernen Niederspannungsanwendungen werden fast ausschließlich N-Kanal-MOSFE
     \label{fig:three_phase_bridge}
 \end{figure}
 
-\subsection{Ansteuerung und Bootstrap-Prinzip}
-Die Verwendung von N-Kanal-MOSFETs im HS-Pfad erfordert zum vollständigen Durchsteuern eine Gate-Spannung, die deutlich über der Zwischenkreisspannung liegt. Diese benötigte Überspannung wird üblicherweise durch eine Bootstrap-Schaltung generiert. Dabei lädt sich ein Bootstrap-Kondensator über eine Diode auf die Treiber-Versorgungsspannung $V_{\mathrm{CC}}$ auf, solange der LS-MOSFET leitend ist. Schaltet die Halbbrücke um, schwimmt das Potential des Kondensators mit der Source-Spannung des HS-MOSFETs nach oben und stellt dem Gate-Treiber so die nötige Spannung bereit \cite{AN6076}.
+In der vorliegenden Niederspannungsanwendung werden aus Effizienzgründen ausschließlich N-Kanal-MOSFETs eingesetzt. Da der High-Side-Transistor zum vollständigen Durchsteuern jedoch eine Gate-Spannung oberhalb der Zwischenkreisspannung benötigt, wird eine Bootstrap-Schaltung implementiert. Ein Kondensator lädt sich dabei während der Leitphase des Low-Side-Schalters auf. Schaltet die Halbbrücke um, „schwimmt“ das Potential des Kondensators mit der Source-Spannung nach oben und stellt dem Treiber die notwendige Überspannung bereit \cite[S.~1]{AN6076}.
 
-\subsection{Pulsweitenmodulation (PWM)}
-Um nicht nur die Richtung, sondern auch die Amplitude des Stroms (und damit das Drehmoment) kontinuierlich zu steuern, werden die Schalter nicht rein statisch eingeschaltet, sondern hochfrequent getaktet. Durch die Variation des Tastverhältnisses $d$ (Duty Cycle) ergibt sich die am Motor anliegende effektive Phasenspannung proportional zur Zwischenkreisspannung als $\bar{v}_{\mathrm{ph}} = d \cdot V_{\mathrm{DC}}$.
+\subsection{Sensorbasierte Blockkommutierung}
+Zur Erfassung der absoluten Rotorlage verfügt der Motor über drei im Stator integrierte Hall-Sensoren, welche räumlich um $120^\circ$ elektrisch versetzt angeordnet sind. Dieser Versatz teilt eine elektrische Umdrehung in sechs eindeutig identifizierbare, $60^\circ$ breite Sektoren.
 
-% ============================================================
-% 2.4 Modulationsverfahren (SVPWM)
-% ============================================================
-\section{Modulationsverfahren}
-\label{sec:modulation}
+Die hardwarenahe und robusteste Methode zur Ansteuerung ist die sogenannte Blockkommutierung (Six-Step-Commutation). Hierbei werden dem jeweiligen Hall-Zustand feste Schaltmuster zugeordnet. Zu jedem Zeitpunkt sind exakt zwei Phasen aktiv bestromt, während die dritte Phase hochohmig verbleibt. Die Zustandslogik für das Invertersystem ist in Tabelle \ref{tab:kommutierung} zusammengefasst.
 
-
-
-Während die Blockkommutierung (Kapitel \ref{sec:kommutierung}) lediglich festlegt, welche Phasen prinzipiell bestromt werden, bestimmt das Modulationsverfahren die präzise zeitliche Verteilung der Schaltzustände zur Generierung der gewünschten Ausgangsspannung. Neben der einfachen Sinus-Pulsweitenmodulation (SPWM) hat sich die Raumzeigermodulation (Space Vector PWM, SVPWM) als Industriestandard für dreiphasige Antriebe etabliert.
-
-\subsection{Grundlagen der Raumzeigermodulation}
-Im Gegensatz zur SPWM, welche die drei Halbbrücken isoliert betrachtet, modelliert die SVPWM den dreiphasigen Wechselrichter als ein Gesamtsystem, das einen rotierenden Spannungsraumzeiger $\vec{v}_\mathrm{ref}$ in der komplexen Ebene erzeugt \cite{Xia2012,Nahin2022-ts}.
-
-Da jede der drei Halbbrücken exakt zwei Zustände annehmen kann (High oder Low), ergeben sich für die B6-Brücke insgesamt $2^3 = 8$ mögliche diskrete Schaltzustände. Diese lassen sich in zwei Kategorien unterteilen:
-\begin{itemize}
-    \item \textbf{Sechs aktive Vektoren ($\vec{V}_1$ bis $\vec{V}_6$):} Diese Vektoren spannen in der komplexen Ebene ein regelmäßiges Sechseck (Hexagon) auf und besitzen eine konstante Amplitude von $\frac{2}{3} V_{\mathrm{DC}}$.
-    \item \textbf{Zwei Nullvektoren ($\vec{V}_0$ und $\vec{V}_7$):} Bei $\vec{V}_0$ (000) sind alle drei unteren Schalter leitend, bei $\vec{V}_7$ (111) alle drei oberen. In beiden Fällen liegt an den Motorphasen keine Potentialdifferenz an, weshalb die verkettete Ausgangsspannung null beträgt.
-\end{itemize}
-
-Die Lage der aktiven Vektoren sowie die Geometrie des resultierenden Hexagons sind in Abbildung \ref{fig:svpwm} grafisch dargestellt.
-
-% \begin{figure}[htbp]
-%     \centering
-%     \includegraphics[width=0.7\textwidth]{SVPWM.png}
-%     \caption{Raumzeigerdiagramm der SVPWM \cite{Nahin2022-ts}.}
-%     \label{fig:svpwm}
-% \end{figure}
-
-
-\begin{figure}[htbp]
+\begin{table}[htbp]
     \centering
-    \begin{tikzpicture}
-        % Bild
-        \node[inner sep=0] (img) {\includegraphics[width=0.7\textwidth]{SVPWM.png}};
-        
-        % Entwurf-Banner
-        \node at (img.center) [
-            rotate=0,
-            scale=5,
-            text opacity=0.35,
-            color=red
-        ] {DRAFT};
-    \end{tikzpicture}
-    \caption{Raumzeigerdiagramm der SVPWM \cite{Nahin2022-ts}.}
-    \label{fig:svpwm}
-\end{figure}
+    \caption{Zustandstabelle der Blockkommutierungslogik in Abhängigkeit der Hall-Sensoren}
+    \label{tab:kommutierung}
+    \begin{tabular}{ccc ccc c}
+        \toprule
+        \multicolumn{3}{c}{\textbf{Hall-Sensoren}} & 
+        \multicolumn{3}{c}{\textbf{Phasenzustand}} & 
+        \textbf{Sektor} \\
+        \cmidrule(lr){1-3} \cmidrule(lr){4-6}
+        $\mathbf{H_1}$ & $\mathbf{H_2}$ & $\mathbf{H_3}$ & $\mathbf{U}$ & $\mathbf{V}$ & $\mathbf{W}$ & \\
+        \midrule
+        1 & 0 & 1 & $\mathrm{V_{DC}}$ & GND & NC & I \\
+        1 & 0 & 0 & $\mathrm{V_{DC}}$ & NC & GND & II \\
+        1 & 1 & 0 & NC & $\mathrm{V_{DC}}$ & GND & III \\
+        0 & 1 & 0 & GND & $\mathrm{V_{DC}}$ & NC & IV \\
+        0 & 1 & 1 & GND & NC & $\mathrm{V_{DC}}$ & V \\
+        0 & 0 & 1 & NC & GND & $\mathrm{V_{DC}}$ & VI \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
-\subsection{Synthese des Referenzspannungszeigers}
-Jeder beliebige Zielspannungszeiger $\vec{v}_{\mathrm{ref}}$, der sich innerhalb des Hexagons befindet, kann durch eine zeitliche Mittelung (Pulsweitenmodulation) der beiden benachbarten aktiven Vektoren sowie der Nullvektoren gebildet werden.
-Befindet sich der Referenzzeiger beispielsweise im ersten Sektor zwischen $\vec{V}_1$ und $\vec{V}_2$, so muss die Integration über eine Periodendauer $T_{\mathrm{PWM}}$ gemäß Gleichung \ref{eq:svpwm_integral} erfüllt sein:
+Um das erzeugte Drehmoment regeln zu können, werden die MOSFETs der aktiven Phasen mit einem pulsweitenmodulierten Signal (PWM) hochfrequent getaktet. Das sich ergebende Tastverhältnis $d$ moduliert die anliegende effektive Phasenspannung gemäß der Relation $\bar{v}_{\mathrm{ph}} = d \cdot V_{\mathrm{DC}}$ und bestimmt somit den mittleren Motorstrom.
 
-\begin{equation}
-\int\limits_{0}^{T_{\mathrm{PWM}}} \vec{v}_{\mathrm{ref}} \, dt 
-= \int\limits_{0}^{T_1} \vec{V}_1 \, dt 
-  + \int\limits_{T_1}^{T_1+T_2} \vec{V}_2 \, dt 
-  + \int\limits_{T_1+T_2}^{T_{\mathrm{PWM}}} \vec{V}_0 \, dt
-    \label{eq:svpwm_integral}
-\end{equation}
+\subsection{Begründung der Verfahrenswahl}
+\label{subsec:verfahrenswahl}
+In der modernen Antriebstechnik hat sich neben der Blockkommutierung die Raumzeigermodulation (SVPWM) als Standard etabliert. Dabei wird ein kontinuierlich rotierender Spannungsraumzeiger durch eine präzise Überlagerung aller drei Halbbrücken generiert. Theoretisch bietet die SVPWM eine um den Faktor $2/\sqrt{3} \approx 1{,}15$ bessere Ausnutzung der Zwischenkreisspannung sowie eine Reduktion der Drehmomentwelligkeit wie in \cite{Xia2012} beschrieben.
 
-Hierbei definieren $T_1$, $T_2$ und $T_0$ die jeweiligen Einschaltzeiten der Vektoren innerhalb einer PWM-Periode. Durch eine geschickte Anordnung der Schaltsequenzen, beispielsweise durch symmetrische Ausrichtung um die Periodenmitte, lässt sich der Oberschwingungsanteil im Ausgangsstrom maßgeblich minimieren.
+Für den im Rahmen dieser Arbeit konzipierten Motorcontroller wird jedoch bewusst auf eine SVPWM zugunsten der robusten Blockkommutierung verzichtet. Die Ursache liegt in den systembedingten Einschränkungen der Rotorlageerfassung. Die SVPWM erfordert zur exakten Vektorsynthese einen kontinuierlichen und hochaufgelösten Rotorwinkel. Da die vorhandenen Hall-Sensoren jedoch lediglich eine diskrete Auflösung von $60^\circ$ aufweisen, müsste der Winkel zwischen zwei Schaltflanken vom Mikrocontroller zeitbasiert interpoliert werden. 
 
-\subsection{Vorteile gegenüber klassischer PWM}
-Der entscheidende elektrotechnische Vorteil der SVPWM gegenüber der sinusförmigen PWM liegt in der besseren Ausnutzung der zur Verfügung stehenden Zwischenkreisspannung.
-Während bei der SPWM die maximale Ausgangsspannung durch die Phasenspannung starr limitiert ist, erlaubt die SVPWM durch die Überlagerung einer Nullsystemkomponente (welche im Phasenspannungsverlauf als Sattelform bzw. 3. Harmonische sichtbar wird) eine höhere Amplitude der tatsächlichen, verketteten Motorspannung.
+Während diese lineare Interpolation bei stationären Drehzahlen zufriedenstellend funktioniert, führt sie bei hochdynamischen Lastwechseln unweigerlich zu massiven Schätzfehlern. Die fehlerhaft interpolierte Rotorlage erzwingt das Anlegen falscher Raumzeigervektoren, was im Verlust der Synchronität oder sogar in der Zerstörung der Leistungsendstufe durch parasitäre Fehlströme resultieren kann. Da kein hochauflösender optischer oder magnetischer Encoder vorgesehen ist, stellt die strikt zustandsbasierte Blockkommutierung die deutlich betriebssicherere und technisch überlegene Lösung für dynamische Traktionsantriebe dar.
 
-Der maximale lineare Aussteuergrad erhöht sich dabei nach Gleichung \ref{eq:svpwm_gain} um den Faktor:
+\subsection{Vierquadrantenbetrieb und Rekuperation}
+\label{subsec:rekuperation}
+Ein Traktionsantrieb muss neben dem motorischen Betrieb auch das aktive Bremsen beherrschen. Da der BLDC-Motor bei Rotation eine Spannung in den Statorwicklungen induziert, kann er kinetische Energie in elektrische Energie umwandeln. 
+Da die induzierte Gegenspannung bei niedrigen Drehzahlen oft geringer ist als die Zwischenkreisspannung, wird die B6-Brücke in diesem Zustand leistungselektronisch als aktiver Aufwärtswandler betrieben. Durch geeignetes Takten der Low-Side-Transistoren wird magnetische Energie in den Motorinduktivitäten zwischengespeichert und anschließend auf das höhere Spannungsniveau des Zwischenkreises gepumpt. Qualitativ vertauschen sich beim Übergang vom motorischen in den generatorischen Betrieb lediglich die Rollen der taktenden und freilaufenden Schalter.
 
-\begin{equation}
-    \frac{V_{\mathrm{SVPWM,max}}}{V_{\mathrm{SPWM,max}}} = \frac{1}{\cos(30^\circ)} = \frac{2}{\sqrt{3}} \approx 1,155
-    \label{eq:svpwm_gain}
-\end{equation}
-
-Dies entspricht einem Spannungszugewinn von ca. 15,5 \%. Da in der vorliegenden Applikation eine vergleichsweise niedrige Zwischenkreisspannung zur Verfügung steht, ist diese Spannungsreserve essenziell, um die volle Leistungsfähigkeit des Motors bei hohen Drehzahlen abzurufen \cite{Xia2012}.
+\subsection{Prinzip der Phasenstromerfassung}
+\label{subsec:stromerfassung}
+Für einen sicheren Betrieb ist die Kenntnis des Phasenstroms unerlässlich. Bei hochdynamischen Lastwechseln oder einer mechanischen Blockade des Rotors verschwindet die induzierte Gegenspannung ($e_U \approx 0$). Gemäß der Spannungsgleichung \ref{eq:phase_voltage} würde die anliegende Spannung in diesem Moment nur durch den sehr geringen ohmschen Wicklungswiderstand begrenzt werden, was physikalisch zu zerstörerischen Kurzschlussströmen führt. 
+Um diesen Strom in einer B6-Brücke mit Blockkommutierung messtechnisch zu erfassen, hat sich die Single-Shunt-Topologie etabliert. Hierbei wird ein einzelner, niederohmiger Messwiderstand (Shunt) in den gemeinsamen Rückleiterpfad (GND) der drei Low-Side-Halbbrücken platziert. Da bei der Blockkommutierung stets exakt eine Phase den Hin- und eine Phase den Rückstrom führt, entspricht der im Gleichspannungszwischenkreis gemessene Stromwert betragsmäßig dem aktuell fließenden Phasenstrom.
 
 % ============================================================
 % 2.5 Verlustmechanismen
@@ -299,12 +201,12 @@ Dies entspricht einem Spannungszugewinn von ca. 15,5 \%. Da in der vorliegenden 
 \section{Verlustmechanismen in Leistungshalbleitern}
 \label{sec:verluste}
 
-Ein idealer Halbleiterschalter würde verlustfrei arbeiten und Zustandswechsel in unendlich kurzer Zeit vollziehen. Reale Leistungstransistoren und Dioden weisen jedoch parasitäre Eigenschaften auf, die unvermeidlich zu einer Verlustleistung führen. Diese elektrische Leistung wird in Wärmeenergie umgewandelt und muss über das thermische Management abgeführt werden, um eine Zerstörung des Bauteils zu verhindern. 
-
-Die Gesamtverluste in einer leistungselektronischen Halbbrücke setzen sich primär aus Leit- und Schaltverlusten der Schalter sowie der zugehörigen Freilaufdioden zusammen. Sperrverluste (Leakage Losses), die durch Leckströme im blockierenden Zustand entstehen, liegen bei Niederspannungsanwendungen typischerweise im Mikrowatt-Bereich und können für die thermische Dimensionierung vernachlässigt werden \cite{Infineon_MOSFET_Losses}.
+Ein idealer Halbleiter würde verlustfrei arbeiten und Zustandswechsel in unendlich kurzer Zeit vollziehen. Reale Transistoren und Dioden weisen jedoch parasitäre Eigenschaften auf, die unvermeidlich zu einer Verlustleistung führen. Diese elektrische Leistung wird in Wärmeenergie umgewandelt und muss über das thermische Management abgeführt werden, um eine Zerstörung des Bauteils zu verhindern. 
+Die Gesamtverluste in einer leistungselektronischen Halbbrücke setzen sich primär aus Leit- und Schaltverlusten der Schalter sowie der zugehörigen Freilaufdioden zusammen. Sperrverluste (Leakage Losses), die durch Leckströme im blockierenden Zustand entstehen, liegen bei Niederspannungsanwendungen im Mikrowatt-Bereich und können für die thermische Dimensionierung vernachlässigt werden \cite[S.~3]{Infineon_MOSFET_Losses}.
 
 % ------------------------------------------------------------
 \subsection{Verluste im MOSFET}
+\label{subsec:mosfet_verluste}
 
 Die Verluste im MOSFET dominieren die thermische Belastung des Motorcontrollers. Abbildung \ref{fig:id_mosfet} verdeutlicht den Unterschied zwischen dem idealen und dem realen Schaltverhalten am Beispiel einer induktiv belasteten Halbbrücke, wie sie im Motorinverter vorliegt.
 
@@ -366,7 +268,7 @@ Die Verluste im MOSFET dominieren die thermische Belastung des Motorcontrollers.
     \label{fig:id_mosfet}
 \end{figure}
 
-\paragraph{Leitverluste ($P_{\mathrm{MOS,c}}$)}
+\subsubsection{Leitverluste}
 Im statisch eingeschalteten Zustand verhält sich der Drain-Source-Kanal des MOSFETs näherungsweise wie ein ohmscher Widerstand $R_{\mathrm{DS(on)}}$. Die daraus resultierenden Leitverluste lassen sich in Abhängigkeit des Effektivstroms $I_{\mathrm{RMS}}$ berechnen:
 
 \begin{equation}
@@ -374,61 +276,225 @@ Im statisch eingeschalteten Zustand verhält sich der Drain-Source-Kanal des MOS
     \label{eq:p_cond}
 \end{equation}
 
-Kritisch für die Systemstabilität ist hierbei die Temperaturabhängigkeit: Der Kanalwiderstand steigt mit zunehmender Sperrschichttemperatur $T_\mathrm{J}$ signifikant an. Dies führt zu einem positiven thermischen Rückkopplungseffekt, der bei der Auslegung zwingend berücksichtigt werden muss.
+Kritisch für die Systemstabilität ist hierbei die Temperaturabhängigkeit. Der Kanalwiderstand steigt mit zunehmender Sperrschichttemperatur $T_\mathrm{J}$ signifikant an. Dies führt zu einem positiven thermischen Rückkopplungseffekt, der bei der Auslegung zwingend berücksichtigt werden muss. Der entsprechende Wert für $R_\mathrm{DS(on)}$ kann aus der Datenblattkennlinie des Herstellers bestimmt werden.
 
-\paragraph{Schaltverluste ($P_{\mathrm{MOS,sw}}$)}
-Da MOSFETs bauartbedingt nicht unendlich schnell umschalten können, treten beim Übergang zwischen dem leitenden und sperrenden Zustand Transienten auf. In diesen Phasen überlappen sich Spannung und Strom (vgl. Abb. \ref{fig:id_mosfet} rechts), wodurch Momentanleistung in Wärme umgesetzt wird. 
+\subsubsection{Schaltverluste}
+Da MOSFETs bauartbedingt nicht unendlich schnell umschalten können, treten beim Übergang zwischen dem leitenden und sperrenden Zustand Transienten auf. In diesen Phasen überlappen sich Spannung und Strom (vgl. Abb. \ref{fig:id_mosfet} rechts), wodurch Momentanleistung in Wärme umgesetzt wird.
+
+Für die Berechnung der Schaltverluste ist es dabei ausreichend, den Schaltvorgang näherungsweise linear zu betrachten, was zugleich eine konservative Worst-Case-Abschätzung darstellt \cite[S.~6]{Infineon_MOSFET_Losses}. Der idealisierte Verlauf umfasst insbesondere den zeitlichen Anstieg der Gate-Spannung, die Stromübernahme durch den MOSFET sowie die Umladevorgänge der parasitären Kapazitäten und die Effekte der Diodenrückwärtserholung (Reverse Recovery).
 
 Maßgeblich für die Schaltdynamik sind die internen parasitären Kapazitäten des Halbleiters (siehe Abbildung \ref{fig:mosfet_cap}). Von besonderer Bedeutung ist die Gate-Drain-Kapazität $C_{\mathrm{GD}}$ (Miller-Kapazität). Während des Schaltvorgangs führt das Umladen dieser Kapazität zum sogenannten Miller-Plateau, einem Zustand, in dem die Gate-Spannung konstant verharrt, bis die Drain-Source-Spannung vollständig kommutiert ist.
 
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+% Paths, nodes and wires:
+\node[vcc, xscale=0.7, yscale=0.7] at (5, 7.743){};
+\draw (5, 7.04) -| (5, 8);
+\draw (0, 6) to[european resistor, /tikz/circuitikz/bipoles/length=0.840cm, l_={$R_\mathrm{G}$}] (2, 6);
+\node[shape=rectangle, minimum width=0.965cm, minimum height=0.465cm] at (2.093, 6.397){} node[anchor=north west, align=left, text width=0.577cm, inner sep=6pt] at (1.593, 6.647){\textcolor{rgb,255:red,227;green,36;blue,0}{\small $i_G$}};
+\path[draw={rgb,255:red,227;green,36;blue,0}, line width=0.6pt, -stealth] (1.936, 6) |- (2, 6);
+\draw (0, 6) to[european voltage source, /tikz/circuitikz/bipoles/length=0.840cm, l_={\textcolor{rgb,255:red,0;green,97;blue,255}{$v_\mathrm{dr}$}}, label distance=0.32cm] (0, 4);
+\draw (0, 4) -- (3, 4);
+\node[nigfetd, bodydiode] at (5, 6.27){};
+\draw (2, 6) -- (4.02, 6);
+\draw (4, 6) to[capacitor, l={$C_\mathrm{GD}$}] (4, 7.421);
+\draw (4, 5) to[capacitor, l={$C_\mathrm{GS}$}] (4, 6);
+\draw (4, 5) -- (5, 5);
+\draw (5, 5) -- (6, 5);
+\draw (6, 5) to[capacitor, l_={$C_\mathrm{DS}$}] (6, 7.421);
+\draw (4, 7.421) -- (6, 7.421);
+\node[circ] at (4, 6){};
+\node[circ] at (5, 5){};
+\node[circ] at (4.997, 7.428){};
+\node[shape=rectangle, minimum width=0.965cm, minimum height=0.465cm] at (5.5, 7.832){} node[anchor=north west, align=left, text width=0.577cm, inner sep=6pt] at (5, 8.082){\textcolor{rgb,255:red,227;green,36;blue,0}{\small $i_D$}};
+\path[draw={rgb,255:red,227;green,36;blue,0}, line width=0.6pt, -stealth] (5.007, 7.742) -- (5.007, 7.678);
+\path[draw={rgb,255:red,0;green,97;blue,255}, -stealth] (-0.416, 5.339) -- (-0.416, 4.68);
+\draw (5, 5.5) -- (5, 4) -- (3, 4);
+\end{tikzpicture}
+\caption{Interne parasitäre Kapazitäten eines MOSFETs.}
+\label{fig:mosfet_cap}
+\end{figure}
 
+Die Schaltverluste setzen sich maßgeblich aus der Summe der Einschalt- ($P_{\mathrm{MOS,on}}$) und Ausschaltverluste ($P_{\mathrm{MOS,off}}$) zusammen, die im Folgenden hergeleitet werden.
+
+\subsubsection*{Einschaltvorgang ($P_{\mathrm{MOS,on}}$)}
+Beim Einschalten wird der MOSFET durch die Treiberstufe von $0\,\mathrm{V}$ auf die Treiberspannung $v_\mathrm{dr}$ angesteuert. Zunächst steigt die Gate-Source-Spannung mit einer durch $R_\mathrm{G}$ und die Eingangskapazität $C_{\mathrm{iss}}$ bestimmten Zeitkonstante an, ohne dass sich der Laststrom ändert. Erst beim Erreichen der Schwellspannung $v_{\mathrm{GS,th}}$ beginnt der Drainstrom anzusteigen und übernimmt den Laststrom.
+Während dieser Stromanstiegsphase liegt weiterhin nahezu die volle Drain-Source-Spannung an, sodass eine Überlappung von Strom und Spannung entsteht. Zusätzlich muss beim Einschalten die Rückwärtserholung der Freilaufdiode berücksichtigt werden. Die im Halbleiter gespeicherten Ladungsträger führen zu einem zusätzlichen Stromanteil (Reverse-Recovery-Strom), der vom MOSFET aufgenommen werden muss und die Einschaltverluste erhöht \cite[S.~6]{Infineon_MOSFET_Losses}. Die entsprechenden Werte können wiederum aus dem Datenblatt des MOSFETs bestimmt werden. Der Einschaltvorgang ist in Abbildung \ref{fig:mosfet_einschaltvorgang} dargestellt.
 
 \begin{figure}[htbp]
     \centering
     \begin{tikzpicture}
-        % Paths, nodes and wires:
-        \node[vcc, xscale=0.7, yscale=0.7] at (5, 7.743){};
-        \draw (5, 7.04) -| (5, 8);
-        \draw (0, 6) to[european resistor, /tikz/circuitikz/bipoles/length=0.840cm, l_={$R_\mathrm{G}$}] (2, 6);
-        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.465cm] at (2.093, 6.397){} node[anchor=north west, align=left, text width=0.577cm, inner sep=6pt] at (1.593, 6.647){\textcolor{rgb,255:red,227;green,36;blue,0}{\small $i_G$}};
-        \path[draw={rgb,255:red,227;green,36;blue,0}, line width=0.6pt, -stealth] (1.936, 6) |- (2, 6);
-        \draw (0, 6) to[european voltage source, /tikz/circuitikz/bipoles/length=0.840cm, l_={\textcolor{rgb,255:red,0;green,97;blue,255}{$v_\mathrm{dr}$}}, label distance=0.32cm] (0, 4);
-        \draw (0, 4) -- (3, 4);
-        \node[nigfetd, bodydiode] at (5, 6.27){};
-        \draw (2, 6) -- (4.02, 6);
-        \draw (4, 6) to[capacitor, /tikz/circuitikz/bipoles/length=0.840cm, l={$C_\mathrm{GD}$}] (4, 7.421);
-        \draw (4, 5) to[capacitor, /tikz/circuitikz/bipoles/length=0.840cm, l={$C_\mathrm{GS}$}] (4, 6);
-        \draw (4, 5) -- (5, 5);
-        \draw (5, 5) -- (6, 5);
-        \draw (6, 5) to[capacitor, /tikz/circuitikz/bipoles/length=0.840cm, l_={$C_\mathrm{DS}$}] (6, 7.421);
-        \draw (4, 7.421) -- (6, 7.421);
-        \node[circ] at (4, 6){};
-        \node[circ] at (5, 5){};
-        \node[circ] at (4.997, 7.428){};
-        \node[shape=rectangle, minimum width=0.965cm, minimum height=0.465cm] at (5.5, 7.832){} node[anchor=north west, align=left, text width=0.577cm, inner sep=6pt] at (5, 8.082){\textcolor{rgb,255:red,227;green,36;blue,0}{\small $i_D$}};
-        \path[draw={rgb,255:red,227;green,36;blue,0}, line width=0.6pt, -stealth] (5.007, 7.742) -- (5.007, 7.678);
-        \path[draw={rgb,255:red,0;green,97;blue,255}, -stealth] (-0.416, 5.339) -- (-0.416, 4.68);
-        \draw (5, 5.5) -- (5, 4) -- (3, 4);
+        \begin{axis}[
+            width=0.75\textwidth, height=7cm,
+            axis lines=middle, axis on top,
+            xmin=0, xmax=12.5, ymin=0, ymax=10.5,
+            xlabel={$t$}, ylabel={$v, i$},
+            every axis x label/.style={at={(current axis.right of origin)},anchor=west, font=\large},
+            every axis y label/.style={at={(current axis.above origin)},anchor=west, font=\large},
+            xtick={1, 2, 4, 8, 11},
+            xticklabels={$t_0$, $t_1$, $t_2$, $t_3$, $t_4$},
+            ytick={1, 3, 5, 7, 9},
+            yticklabels={$v_\mathrm{GS,th}$, $v_\mathrm{GS,Mi}$, $v_\mathrm{dr}$, $i_\mathrm{L,0}$, $v_\mathrm{i}$},
+            ticklabel style={font=\normalsize},
+            xticklabel style={fill=white, fill opacity=0.7, text opacity=1, inner sep=1pt},
+            legend style={
+                at={(1.1,1.1)}, anchor=north east, 
+                legend columns=4, 
+                column sep=1ex,
+                nodes={scale=0.9, transform shape}
+            },
+            enlargelimits=false, clip=false
+        ]
+            \draw[densely dotted, thick] (axis cs:0,7) -- (axis cs:4,7);
+            \draw[densely dotted, thick] (axis cs:0,3) -- (axis cs:4,3);
+            \draw[densely dotted, thick] (axis cs:0,1) -- (axis cs:2,1) -- (axis cs:2,0);
+
+            \addplot[color=blue, line width=2pt, dashed, dash pattern=on 6pt off 4pt] coordinates {
+                (0,9) (4,9) (8,0.15) (12.2,0.05)
+            };
+            \addlegendentry{$v_\mathrm{DS}$}
+
+            \addplot[color=red, line width=2pt] coordinates {
+                (0,0) (2,0) (4,7) (12.2,7)
+            };
+            \addlegendentry{$i_\mathrm{D}$}
+
+            \addplot[color=orange, line width=2pt] coordinates {
+                (0,0) (1,0) (1,5) (12.2,5)
+            };
+            \addlegendentry{$v_\mathrm{dr}$}
+
+            \addplot[color=green!80!black, line width=2pt, dashed, dash pattern=on 6pt off 4pt] coordinates {
+                (0,0) (1,0) (2,1) (4,3) (8,3) 
+                (8.5, 3.8) (9.0, 4.3) (9.5, 4.6) (10.0, 4.8) (10.5, 4.9) (11.0, 4.95) (12.2, 5.0)
+            };
+            \addlegendentry{$v_\mathrm{GS}$}
+        \end{axis}
     \end{tikzpicture}
-    \caption{Interne parasitäre Kapazitäten eines MOSFETs.}
-    \label{fig:mosfet_cap}
+    \caption{Einschaltvorgang eines MOSFETs in einer induktiv belasteten Halbbrücke.}
+    \label{fig:mosfet_einschaltvorgang}
 \end{figure}
 
-Zur praxisnahen Approximation der Schaltverluste für eine induktive Last wird das vereinfachte lineare Modell herangezogen \cite{Infineon_MOSFET_Losses}. Die Summe aus Einschalt- ($P_{\mathrm{MOS,on}}$) und Ausschaltverlusten ($P_{\mathrm{MOS,off}}$) ergibt sich zu:
+Der $v_\mathrm{GS}$-Verlauf zwischen $t_2 \le t \le t_3$ wird als Millerplateau bezeichnet. Aus dem Datenblatt lässt sich anhand von $v_\mathrm{GS,th}$ und der Miller-Spannung $v_\mathrm{GS,Mi}$ die benötigte Umschaltladung $Q_\mathrm{sw}$ ablesen. Diese charakterisiert das für die verlustbehaftete Strom-Spannungs-Überlappung relevante Zeitintervall $t_1 \le t \le t_3$. Der sich in dieser Phase einstellende Gatestrom $i_\mathrm{G}$ lässt sich mittels der Maschenregel ermitteln:
 
 \begin{equation}
-    P_{\mathrm{MOS,sw}} = P_\mathrm{MOS,on} + P_\mathrm{MOS,off} = \frac{1}{2} v_{\mathrm{i}} \cdot i_{\mathrm{D}} \cdot (t_\mathrm{r} + t_\mathrm{f}) \cdot f_{\mathrm{SW}}
-    \label{eq:p_sw}
+    i_\mathrm{G} = \frac{v_\mathrm{dr} - v_\mathrm{GS,Mi}}{R_\mathrm{G}}
+    \label{eq:ig_einschaltvorgang}
 \end{equation}
 
-Hierbei repräsentieren $t_\mathrm{r}$ (Rise Time) und $t_\mathrm{f}$ (Fall Time) die realen Schaltzeiten, welche maßgeblich durch die Treiberleistung und den Gate-Vorwiderstand $R_\mathrm{G}$ definiert werden. Eine Erhöhung der PWM-Frequenz $f_{\mathrm{SW}}$ führt proportional zu steigenden Schaltverlusten.
+Unter Anwendung des physikalischen Zusammenhangs von Ladung und Strom ($Q = I \cdot \Delta t$) kann die Dauer der relevanten Einschaltflanke $(t_3 - t_1)$ berechnet werden. Durch Einsetzen von Gleichung \ref{eq:ig_einschaltvorgang} in diese Beziehung ergibt sich:
+
+\begin{equation}
+    (t_3 - t_1) = \frac{Q_\mathrm{sw} \cdot R_\mathrm{G}}{v_\mathrm{dr} - v_\mathrm{GS,Mi}}
+    \label{eq:t3t1_einschaltvorgang}
+\end{equation}
+
+Mit Kenntnis dieses kritischen Zeitintervalls lässt sich die während eines einzelnen Einschaltvorgangs im MOSFET dissipierte Gesamtenergie berechnen:
+
+\begin{equation}
+    E_\mathrm{MOS,on} = \frac{1}{2} i_\mathrm{L,0} \cdot v_\mathrm{i} \cdot (t_3 - t_1) + E_{\mathrm{MOS,on,rr}}
+    \label{eq:energie_einschaltvorgang}
+\end{equation}
+
+Der zusätzliche Energieanteil $E_{\mathrm{MOS,on,rr}}$ resultiert aus der im pn-Übergang der gegenüberliegenden Freilaufdiode gespeicherten Sperrverzögerungsladung $Q_{\mathrm{rr}}$. Da der Halbleiterschalter diesen transienten Strompuls bei nahezu voller Zwischenkreisspannung $v_\mathrm{i}$ aufnehmen muss, berechnet sich der entsprechende Verlustanteil im MOSFET gemäß \cite[S.~10]{Infineon_MOSFET_Losses} zu:
+
+\begin{equation}
+    E_{\mathrm{MOS,on,rr}} = Q_{\mathrm{rr}} \cdot v_\mathrm{i}
+    \label{eq:energie_einschaltvorgang_rr}
+\end{equation}
+
+\subsubsection*{Ausschaltvorgang ($P_{\mathrm{MOS,off}}$)}
+
+Der Ausschaltvorgang verhält sich prinzipiell invers zum Einschaltvorgang. Abbildung \ref{fig:mosfet_ausschaltvorgang} visualisiert den idealisierten zeitlichen Verlauf der maßgeblichen Größen.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            width=0.75\textwidth, height=7cm,
+            axis lines=middle, axis on top,
+            xmin=0, xmax=12.5, ymin=0, ymax=10.5,
+            xlabel={$t$}, ylabel={$v, i$},
+            every axis x label/.style={at={(current axis.right of origin)},anchor=west, font=\large},
+            every axis y label/.style={at={(current axis.above origin)},anchor=west, font=\large},
+            xtick={1, 2, 8, 9.5, 11},
+            xticklabels={$t_0$, $t_1$, $t_2$, $t_3$, $t_4$},
+            ytick={1, 3, 5, 7, 9},
+            yticklabels={$v_\mathrm{GS,th}$, $v_\mathrm{GS,Mi}$, $v_\mathrm{dr}$, $i_\mathrm{L,\delta T}$, $v_\mathrm{i}$},
+            ticklabel style={font=\normalsize},
+            xticklabel style={fill=white, fill opacity=0.7, text opacity=1, inner sep=1pt},
+            legend style={
+                at={(1.1,1.1)}, anchor=north east, 
+                legend columns=4, 
+                column sep=1ex,
+                nodes={scale=0.9, transform shape}
+            },
+            enlargelimits=false, clip=false
+        ]
+            \draw[densely dotted, thick] (axis cs:0,9) -- (axis cs:8,9);
+            \draw[densely dotted, thick] (axis cs:0,3) -- (axis cs:2,3);
+            \draw[densely dotted, thick] (axis cs:0,1) -- (axis cs:9.5,1) -- (axis cs:9.5,0);
+
+            \addplot[color=blue, line width=2pt, dashed, dash pattern=on 6pt off 4pt] coordinates {
+                (0,0.05) (2,0.15) (8,9) (12.2,9)
+            };
+            \addlegendentry{$v_\mathrm{DS}$}
+
+            \addplot[color=red, line width=2pt] coordinates {
+                (0,7) (8,7) (9.5,0) (12.2,0)
+            };
+            \addlegendentry{$i_\mathrm{D}$}
+
+            \addplot[color=orange, line width=2pt] coordinates {
+                (0,5) (1,5) (1,0) (12.5,0)
+            };
+            \addlegendentry{$v_\mathrm{dr}$}
+
+            \addplot[color=green!80!black, line width=2pt, dashed, dash pattern=on 6pt off 4pt] coordinates {
+                (0,5) (1,5) (2,3) (8,3) 
+                (8.5, 2.4) (9.0, 1.7) (9.5, 1.0) (10.0, .4) (10.5, 0.1) (11, 0) (12.2, 0)
+            };
+            \addlegendentry{$v_\mathrm{GS}$}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Ausschaltvorgang eines MOSFETs in einer induktiv belasteten Halbbrücke.}
+    \label{fig:mosfet_ausschaltvorgang}
+\end{figure}
+
+Analog zum Einschaltvorgang bestimmt sich der Gatestrom während der Entladung der Miller-Kapazität. Bei einer treiberseitigen Abschaltschwellenspannung von $v_\mathrm{dr,off}$ lautet die entsprechende Maschengleichung:
+
+\begin{equation}
+    i_\mathrm{G} = \frac{v_\mathrm{GS,Mi} - v_\mathrm{dr,off}}{R_\mathrm{G}}
+    \label{eq:ig_ausschaltvorgang}
+\end{equation}
+
+Mithilfe der Umschaltladung $Q_\mathrm{sw}$ lässt sich die Gleichung nach dem zeitlichen Ausräumintervall der Ladungsträger $(t_3 - t_1)$ umstellen. Eingesetzt ergibt sich die Dauer der Schaltflanke zu:
+
+\begin{equation}
+    (t_3 - t_1) = \frac{Q_\mathrm{sw} \cdot R_\mathrm{G}}{v_\mathrm{GS,Mi} - v_\mathrm{dr,off}}
+    \label{eq:t3t1_ausschaltvorgang}
+\end{equation}
+
+Die während dieser Zeitspanne im MOSFET dissipierte Energie $E_\mathrm{MOS,off}$ berechnet sich zu:
+
+\begin{equation}
+    E_\mathrm{MOS,off} = \frac{1}{2} i_\mathrm{L,\delta T} \cdot v_\mathrm{i} \cdot (t_3 - t_1)
+    \label{eq:energie_ausschaltvorgang}
+\end{equation}
+
+Die dynamischen Umschaltverluste des Transistors hängen folglich maßgeblich von der gewählten Umschaltfrequenz $f_\mathrm{sw}$ ab. Die Gesamtschaltverlustleistung resultiert aus den berechneten Schaltenergien $E_\mathrm{MOS,on}$ und $E_\mathrm{MOS,off}$:
+
+\begin{equation}
+    P_\mathrm{MOS,sw} = P_\mathrm{MOS,on} + P_\mathrm{MOS,off} = f_\mathrm{sw} \cdot (E_\mathrm{MOS,on} + E_\mathrm{MOS,off})
+    \label{eq:umschaltverluste_mos}
+\end{equation}
+
 
 % ------------------------------------------------------------
 \subsection{Verluste in der Freilaufdiode}
 
-In einer B6-Brückentopologie wird die Funktion der Freilaufdiode durch die intrinsische Body-Diode der MOSFETs übernommen (vgl Abb. \ref{fig:three_phase_bridge}). Da der Strom in der Totzeit des Gate-Treibers über diese Diode fließen muss, trägt sie signifikant zur Gesamterwärmung bei.
-
-Abbildung \ref{fig:id_diode} stellt das Schaltverhalten einer idealen Diode dem einer realen Body-Diode in einer induktiv belasteten Halbbrücke gegenüber und visualisiert die auftretenden parasitären Transienten.
+In einer B6-Brückentopologie wird die Funktion der Freilaufdiode durch die intrinsische Body-Diode der MOSFETs übernommen (vgl. Abb. \ref{fig:three_phase_bridge}). Da der Strom in der Totzeit des Gate-Treibers über diese Diode fließen muss, trägt sie zur Erwärmung bei. Abbildung \ref{fig:id_diode} stellt das Schaltverhalten einer idealen Diode dem einer realen Body-Diode in einer induktiv belasteten Halbbrücke gegenüber.
 
 \begin{figure}[htbp]
     \centering
@@ -502,8 +568,7 @@ Abbildung \ref{fig:id_diode} stellt das Schaltverhalten einer idealen Diode dem 
     \caption{Spannungs- und Stromverlauf in einer induktiv belasteten Halbbrücke.}
     \label{fig:id_diode}
 \end{figure}
-
-\paragraph{Durchlassverluste ($P_{\mathrm{D,c}}$)}
+\subsubsection{Durchlassverluste ($P_{\mathrm{D,c}}$)}
 Während der Leitphase fällt an der Diode eine nichtlineare Durchlassspannung $v_\mathrm{D}$ ab. Die mittleren Leitverluste berechnen sich über das Integral der Momentanleistung:
 
 \begin{equation}
@@ -511,26 +576,22 @@ Während der Leitphase fällt an der Diode eine nichtlineare Durchlassspannung $
     \label{eq:p_d_con}
 \end{equation}
 
-Zur analytischen Berechnung wird die Diodenkennlinie häufig durch eine Reihenschaltung aus einer Schwellenspannung $v_{\mathrm{D,0}}$ und einem differentiellen Widerstand $r_\mathrm{D}$ approximiert. Durch diese Annäherung lassen sich die resultierenden Verluste in einen spannungs- und einen widerstandsabhängigen Anteil ($P_\mathrm{U}$ und $P_\mathrm{R}$) unterteilen. Mithilfe dieser Näherung ergibt sich:
+Zur analytischen Berechnung wird die Diodenkennlinie durch eine Reihenschaltung aus einer Schwellenspannung $v_{\mathrm{D,0}}$ und einem differentiellen Widerstand $r_\mathrm{D}$ approximiert (vgl. \cite[Abb.~2]{Infineon_MOSFET_Losses}). Durch diese Annäherung lassen sich die resultierenden Verluste in einen spannungs- und einen widerstandsabhängigen Anteil ($P_\mathrm{U}$ und $P_\mathrm{R}$) unterteilen. Mithilfe dieser Näherung ergibt sich:
 
 \begin{equation}
     P_{\mathrm{D,c}} = P_\mathrm{U} + P_\mathrm{R} = v_{\mathrm{D,0}} \overline{i}_{\mathrm{D}} + r_\mathrm{D}i_{\mathrm{D,RMS}}^2
     \label{eq:p_d_con_vereinfacht}
 \end{equation}
 
-
-
-
-\paragraph{Sperrverzögerungsverluste (Reverse Recovery)}
+\subsubsection{Sperrverzögerungsverluste (Reverse Recovery)}
 Beim Übergang der Diode vom leitenden in den sperrenden Zustand (Abschalten) kann der Stromfluss nicht augenblicklich stoppen. Um die im pn-Übergang gespeicherte Ladung $Q_{\mathrm{rr}}$ abzubauen, fließt für kurze Zeit ein negativer Sperrverzögerungsstrom. 
 
-
-
-Da in diesem Moment die gegenüberliegende Halbbrücke bereits einschaltet und die volle Zwischenkreisspannung anliegt, entsteht eine ausgeprägte Verlustleistungsspitze. Diese Reverse-Recovery-Verluste ($P_{\mathrm{rr}}$) sind insbesondere bei den Body-Dioden von Silizium-MOSFETs beträchtlich und berechnen sich näherungsweise zu:
+Da in diesem Moment die gegenüberliegende Halbbrücke bereits einschaltet und die volle Zwischenkreisspannung $v_\mathrm{i}$ anliegt, entsteht eine ausgeprägte Verlustleistungsspitze. Theoretisch berechnen sich diese Reverse-Recovery-Verluste ($P_{\mathrm{rr}}$) der Diode näherungsweise zu:
 
 \begin{equation}
-    P_{\mathrm{rr}} = \frac{1}{2}v_{\mathrm{i}} \cdot I_{\mathrm{RM}}\frac{1}{2}t_\mathrm{rr} \cdot f_{\mathrm{SW}}
+    P_{\mathrm{rr}} = \frac{1}{2} v_{\mathrm{i}} \cdot  I_{\mathrm{RM}} \cdot \frac{1}{2}\cdot t_\mathrm{rr} \cdot f_{\mathrm{SW}}
     \label{eq:p_rr}
 \end{equation}
 
+In der praktischen Anwendung von Niederspannungsumrichtern wird diese Gleichung jedoch selten angewandt. Obwohl die Ladung $Q_{\mathrm{rr}}$ maßgeblich von der Diode verursacht wird, dissipiert die resultierende Verlustleistung nahezu vollständig in Form der bereits erwähnten Einschaltenergie $E_{\mathrm{MOS,on,rr}}$ im gegenüberliegenden, aktiven MOSFET. Die eigenen, internen Schaltverluste der Diode können daher für die thermische Dimensionierung vernachlässigt werden \cite[S.~10]{Infineon_MOSFET_Losses}.
 Sperrverluste durch Leckströme sowie Vorwärtsverzögerungsverluste (Forward Recovery) sind in Niederspannungsanwendungen technisch irrelevant und fließen nicht in die weitere Auslegung ein.

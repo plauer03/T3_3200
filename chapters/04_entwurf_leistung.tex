@@ -7,24 +7,19 @@ Basierend auf den in Kapitel \ref{chap:anforderungen} definierten Systemanforder
 \section{Auswahl der Leistungshalbleiter}
 \label{sec:mosfet_auswahl}
 
-Die Auswahl der Leistungshalbleiter stellt einen zentralen Entwurfsschritt im Motorcontroller dar, da diese Bauelemente den Wirkungsgrad, das Schaltverhalten sowie die thermische Zuverlässigkeit des Gesamtsystems bestimmen. Für die Realisierung der dreiphasigen B6-Brückentopologie wurde der N-Kanal-Leistungs-MOSFET IPP034N08N5 aus der OptiMOS\textsuperscript{\texttrademark}-5-Serie von Infineon Technologies ausgewählt \cite{DS_IPP034N08N5}. Die nachfolgend diskutierten elektrischen und thermischen Kennwerte basieren auf den im Datenblatt spezifizierten Parametern.
-
-Ein wesentliches Auswahlkriterium ist die Spannungsfestigkeit des Transistors. Bei einer maximalen Ladeschlussspannung des verwendeten Akkumulators von $42\,\mathrm{V}$ muss der MOSFET sowohl diese Gleichspannung sicher sperren als auch transiente Überspannungen tolerieren, die infolge schneller Schaltvorgänge an den induktiven Motorwicklungen sowie durch parasitäre Streuinduktivitäten des Leiterplattenlayouts entstehen. Der gewählte MOSFET besitzt eine Drain-Source-Durchbruchspannung von $V_{\mathrm{DS}} = 80\,\mathrm{V}$, wodurch sich gegenüber der maximalen Zwischenkreisspannung eine Sicherheitsreserve von nahezu $100\,\%$ ergibt.
-
-Neben der Spannungsfestigkeit stellt die Stromtragfähigkeit ein weiteres wesentliches Auswahlkriterium dar. Der Motorcontroller ist für einen Phasenstrom von $30\,\mathrm{A_{RMS}}$ ausgelegt, was einem Spitzenstrom von etwa $42{,}4\,\mathrm{A}$ entspricht. Der ausgewählte MOSFET ist für einen maximalen kontinuierlichen Drainstrom von $I_{\mathrm{D}} = 120\,\mathrm{A}$ bei einer Gehäusetemperatur von $25^\circ\mathrm{C}$ spezifiziert und erlaubt Pulsströme bis zu $480\,\mathrm{A}$. Damit liegt der geplante Betriebspunkt deutlich innerhalb der spezifizierten Betriebsgrenzen des Bauelements.
-Zur Minimierung der Leitverluste ist ein möglichst geringer Drain-Source-Widerstand im eingeschalteten Zustand erforderlich. Der IPP034N08N5 weist einen maximalen Einschaltwiderstand von $R_{\mathrm{DS(on),max}} = 3{,}4\,\mathrm{m\Omega}$ bei einer Gate-Source-Spannung von $V_{\mathrm{GS}} = 10\,\mathrm{V}$ auf. Der niedrige Durchlasswiderstand reduziert die ohmschen Verluste im Nennbetrieb und erleichtert die thermische Beherrschung der Leistungselektronik.
-
-Für den dynamischen Betrieb mit einer PWM-Schaltfrequenz von $20\,\mathrm{kHz}$ sind zusätzlich die parasitären Kapazitäten des MOSFETs relevant. Eine Reduktion des $R_{\mathrm{DS(on)}}$ geht konstruktionsbedingt häufig mit einer Vergrößerung der Chipfläche und damit mit erhöhten Kapazitäten einher. Der ausgewählte MOSFET bietet hierbei ein günstiges Verhältnis zwischen statischen und dynamischen Eigenschaften. Die typische Gesamtgateladung beträgt $Q_{\mathrm{G}} = 69\,\mathrm{nC}$ bei $V_{\mathrm{GS}} = 10\,\mathrm{V}$, wodurch eine schnelle Umladung der Gatekapazität ermöglicht und die Schaltverluste begrenzt werden können.
-Ein weiterer relevanter Parameter im Inverterbetrieb ist die Reverse-Recovery-Ladung der integrierten Body-Diode. Diese beträgt typischerweise $Q_{\mathrm{rr}} = 166\,\mathrm{nC}$ und beeinflusst insbesondere die Kommutierungsvorgänge während der Totzeiten zwischen HS und LS. Niedrige Reverse-Recovery-Ladungen tragen zur Reduzierung zusätzlicher Schaltverluste und elektromagnetischer Störungen bei.
-
-Hinsichtlich der mechanischen Integration wird der MOSFET im standardisierten TO-220-3-Gehäuse eingesetzt. Dieses Gehäuse verfügt über eine metallische Kühlfahne mit einem thermischen Übergangswiderstand von maximal $R_{\mathrm{thJC}} = 0{,}9\,\mathrm{K/W}$ zwischen Halbleitersperrschicht und Gehäuse. Dadurch kann die im Silizium entstehende Verlustleistung effizient an einen externen Kühlkörper abgeführt werden. Die maximal zulässige Sperrschichttemperatur beträgt $T_{\mathrm{J,max}} = 175^\circ\mathrm{C}$.
-Konstruktiv ist zu berücksichtigen, dass die Kühlfahne des Gehäuses elektrisch mit dem Drain-Anschluss verbunden ist. Da in der Halbbrückentopologie bei den sechs Schaltern unterschiedliche Drain-Potenziale auftreten, muss eine elektrische Isolation der Bauelemente gegenüber einem gemeinsamen Kühlkörper realisiert werden. In der vorliegenden Konstruktion erfolgt dies durch thermisch leitfähige Silikonpads.
-
-Zur besseren Übersicht sind die wesentlichen Datenblattparameter des ausgewählten MOSFETs in Tabelle~\ref{tab:mosfet_specs} zusammengefasst.
+Die Auswahl der Leistungshalbleiter stellt einen zentralen Entwurfsschritt im Motorcontroller dar, da diese Bauelemente den Wirkungsgrad, das Schaltverhalten sowie die thermische Zuverlässigkeit des Gesamtsystems maßgeblich bestimmen. Für die Realisierung der dreiphasigen B6-Brückentopologie wurde der N-Kanal-Leistungs-MOSFET IPP034N08N5 aus der OptiMOS\textsuperscript{\texttrademark}-5-Serie von Infineon Technologies ausgewählt \cite{DS_IPP034N08N5}. Die nachfolgend diskutierten elektrischen und thermischen Kennwerte basieren auf den im Datenblatt spezifizierten Parametern.
+Ein wesentliches Auswahlkriterium ist die Spannungsfestigkeit des Transistors. Bei einer maximalen Ladeschlussspannung des verwendeten Akkumulators von $42\,\mathrm{V}$ muss der MOSFET sowohl diese Gleichspannung sicher sperren als auch transiente Überspannungen tolerieren, die infolge schneller Schaltvorgänge an den induktiven Motorwicklungen sowie durch parasitäre Streuinduktivitäten entstehen. Der gewählte MOSFET besitzt eine spezifizierte Drain-Source-Durchbruchspannung von $V_{\mathrm{DS}} = 80\,\mathrm{V}$. Gegenüber der maximalen Zwischenkreisspannung ergibt sich somit eine großzügige Sicherheitsreserve von nahezu $100\,\%$.
+Neben der Spannungsfestigkeit stellt die Stromtragfähigkeit ein weiteres kritisches Kriterium dar. Der Motorcontroller ist für einen Phasenstrom von $30\,\mathrm{A_{RMS}}$ ausgelegt, was in der verwendeten Blockkommutierung einem periodischen Spitzenstrom von $I_{\mathrm{Block}} \approx 42{,}4\,\mathrm{A}$ entspricht. Der ausgewählte MOSFET ist für einen maximalen kontinuierlichen Drainstrom von $I_{\mathrm{D}} = 120\,\mathrm{A}$ (bei einer Gehäusetemperatur von $T_{\mathrm{C}} = 25^\circ\mathrm{C}$) spezifiziert und erlaubt Pulsströme bis zu $480\,\mathrm{A}$. Damit liegt der anvisierte Worst-Case-Betriebspunkt thermisch und elektrisch sicher innerhalb der Betriebsgrenzen (Safe Operating Area) des Bauelements.
+Zur Minimierung der statischen Leitverluste ist ein möglichst geringer Durchlasswiderstand erforderlich. Der IPP034N08N5 weist bei einer Gate-Source-Spannung von $V_{\mathrm{GS}} = 10\,\mathrm{V}$ einen maximalen Einschaltwiderstand von $R_{\mathrm{DS(on),max}} = 3{,}4\,\mathrm{m\Omega}$ auf. Dieser niedrige ohmsche Widerstand reduziert die im Silizium dissipierte Verlustleistung signifikant.
+Für den dynamischen Betrieb mit einer PWM-Schaltfrequenz von $f_{\mathrm{sw}} = 20\,\mathrm{kHz}$ sind zusätzlich die parasitären Kapazitäten relevant. Eine Reduktion des $R_{\mathrm{DS(on)}}$ geht physikalisch bedingt häufig mit einer Vergrößerung der Chipfläche und folglich mit erhöhten Kapazitäten einher. Der gewählte MOSFET bietet hier ein sehr günstiges Verhältnis. Die typische Gesamtgateladung beträgt $Q_{\mathrm{G}} = 69\,\mathrm{nC}$ (max. $87\,\mathrm{nC}$), und die für die Schaltverluste maßgebliche Umschaltladung liegt bei lediglich $Q_{\mathrm{sw}} = 26\,\mathrm{nC}$. Dies ermöglicht eine schnelle Umladung durch den Gate-Treiber. 
+Ein weiterer relevanter Parameter für die Brückentopologie ist die Reverse-Recovery-Ladung der integrierten Body-Diode, welche beim Umschalten der Halbbrücke abgebaut werden muss. Diese ist mit $Q_{\mathrm{rr}} = 166\,\mathrm{nC}$ (typisch) bzw. $332\,\mathrm{nC}$ (maximal) spezifiziert.
+Hinsichtlich der mechanischen Integration wird der MOSFET im standardisierten TO-220-3-Gehäuse eingesetzt. Dieses verfügt über eine metallische Kühlfahne mit einem geringen thermischen Übergangswiderstand von maximal $R_{\mathrm{thJC}} = 0{,}9\,\mathrm{K/W}$ zwischen Sperrschicht (Junction) und Gehäuse (Case). Die maximal zulässige Sperrschichttemperatur beträgt $T_{\mathrm{J,max}} = 175^\circ\mathrm{C}$. 
+Da die Kühlfahne des Gehäuses elektrisch mit dem Drain-Anschluss verbunden ist, im Inverterbetrieb jedoch unterschiedliche Drain-Potenziale auftreten, muss eine elektrische Isolation der Bauelemente gegenüber einem gemeinsamen Kühlkörper durch wärmeleitfähige Silikonpads sichergestellt werden.
+Tabelle \ref{tab:mosfet_specs} fasst die wesentlichen Datenblattparameter zusammen.
 
 \begin{table}[htbp]
 \centering
-\caption{Datenblattparameter des gewählten MOSFETs \cite{DS_IPP034N08N5}}
+\caption{Datenblattparameter des ausgewählten Leistungs-MOSFETs \cite{DS_IPP034N08N5}}
 \label{tab:mosfet_specs}
 \begin{tabular}{llcc}
 \toprule
@@ -33,8 +28,9 @@ Zur besseren Übersicht sind die wesentlichen Datenblattparameter des ausgewähl
 Drain-Source-Durchbruchspannung & $V_{\mathrm{DS}}$ & 80 & $\mathrm{V}$ \\
 Maximaler Dauerstrom ($T_{\mathrm{C}}=25^\circ\mathrm{C}$) & $I_{\mathrm{D}}$ & 120 & $\mathrm{A}$ \\
 Maximaler Einschaltwiderstand ($V_{\mathrm{GS}}=10\,\mathrm{V}$) & $R_{\mathrm{DS(on),max}}$ & 3{,}4 & $\mathrm{m\Omega}$ \\
-Typische Gesamtgateladung & $Q_{\mathrm{G}}$ & 69 & $\mathrm{nC}$ \\
-Typische Reverse-Recovery-Ladung & $Q_{\mathrm{rr}}$ & 166 & $\mathrm{nC}$ \\
+Typische Umschaltladung & $Q_{\mathrm{sw}}$ & 26 & $\mathrm{nC}$ \\
+Maximale Gesamtgateladung & $Q_{\mathrm{G,max}}$ & 87 & $\mathrm{nC}$ \\
+Maximale Reverse-Recovery-Ladung & $Q_{\mathrm{rr,max}}$ & 332 & $\mathrm{nC}$ \\
 Thermischer Widerstand (Junction-to-Case) & $R_{\mathrm{thJC,max}}$ & 0{,}9 & $\mathrm{K/W}$ \\
 Maximale Sperrschichttemperatur & $T_{\mathrm{J,max}}$ & 175 & $^\circ\mathrm{C}$ \\
 \bottomrule
@@ -42,31 +38,59 @@ Maximale Sperrschichttemperatur & $T_{\mathrm{J,max}}$ & 175 & $^\circ\mathrm{C}
 \end{table}
 
 %============================================================================
+%============================================================================
+
+\section{Phasenstromerfassung und Signalaufbereitung}
+\label{sec:stromerfassung_hardware}
+
+Wie in den theoretischen Grundlagen (vgl. Kapitel \ref{subsec:stromerfassung}) hergeleitet, ist für die Implementierung einer aktiven Strombegrenzung eine hochauflösende Erfassung des Stroms erforderlich. Diese Messung wird topologisch als Low-Side-Single-Shunt-Messung ausgeführt. Hierbei wird ein niederohmiger Messwiderstand zwischen die zusammengeführten Source-Anschlüsse der drei Low-Side-MOSFETs und das Massepotenzial (GND) geschaltet.
+
+\subsection{Dimensionierung des Shunt-Widerstands}
+Die Dimensionierung des Shunts erfordert einen Kompromiss. Ein hoher Widerstandswert maximiert das zu messende Spannungssignal und verbessert das Signal-Rausch-Verhältnis (SNR), führt jedoch quadratisch zu höheren ohmschen Verlustleistungen ($P = I^2 \cdot R$), die abgeführt werden müssen. 
+Für den vorliegenden Motorcontroller wurde der WSLP25121L000FEA von Vishay ausgewählt. Dieser besitzt einen Widerstandswert von $R_{\mathrm{shunt}} = 1\,\mathrm{m\Omega}$ bei einer Toleranz von $1\,\%$. Die WSLP-Serie zeichnet sich durch eine sehr geringe Induktivität und einen niedrigen Temperaturkoeffizienten aus, was parasitäre Spannungsspitzen bei den steilen PWM-Schaltflanken minimiert. Bei dem definierten Worst-Case-Blockstrom von $I_{\mathrm{Block}} = 42{,}4\,\mathrm{A}$ fällt über dem Widerstand eine proportionale Messspannung ab:
+\begin{equation}
+    V_{\mathrm{shunt}} = I_{\mathrm{Block}} \cdot R_{\mathrm{shunt}} = 42{,}4\,\mathrm{A} \cdot 0{,}001\,\Omega = 42{,}4\,\mathrm{mV}
+\end{equation}
+
+Die dabei im Bauteil dissipierte Verlustleistung berechnet sich zu:
+\begin{equation}
+    P_{\mathrm{shunt}} = I_{\mathrm{Block}}^2 \cdot R_{\mathrm{shunt}} = (42{,}4\,\mathrm{A})^2 \cdot 0{,}001\,\Omega \approx 1{,}80\,\mathrm{W}
+\end{equation}
+Da der ausgewählte Widerstand in der Bauform 2512 für eine maximale Dauerleistung von $3{,}0\,\mathrm{W}$ spezifiziert ist, wird das thermische Derating auch im Volllastbetrieb zuverlässig eingehalten.
+
+\subsection{Signalverstärkung für den Mikrocontroller}
+Die anliegende Messspannung von maximal $42{,}4\,\mathrm{mV}$ ist zu gering, um vom Analog-Digital-Wandler (ADC) des STM32-Mikrocontrollers mit ausreichender Auflösung quantisiert zu werden. Eine Vorverstärkung des Signals ist daher zwingend erforderlich.
+
+Hierfür wird der dedizierte Current-Sense-Amplifier INA181A2IDBVR von Texas Instruments eingesetzt. Im Gegensatz zu standardmäßigen Operationsverstärkern verfügt diese Baureihe über ein werksseitig integriertes und hochpräzise gelasertes Widerstandsnetzwerk, welches eine exakte Verstärkung (Gain) garantiert und externe Bauteiltoleranzen eliminiert. Die Variante liefert einen festen Verstärkungsfaktor von $G = 50\,\mathrm{V/V}$.
+Die aufbereitete Ausgangsspannung $V_{\mathrm{ADC}}$, welche direkt an den Mikrocontroller geleitet wird, berechnet sich folglich als:
+\begin{equation}
+    V_{\mathrm{ADC}} = V_{\mathrm{shunt}} \cdot G = 42{,}4\,\mathrm{mV} \cdot 50 = 2{,}12\,\mathrm{V}
+\end{equation}
+
+Der STM32-Mikrocontroller arbeitet mit einer Logik- und Referenzspannung von $3{,}3\,\mathrm{V}$. Die maximale Messspannung von $2{,}12\,\mathrm{V}$ liegt somit ideal im linearen Erfassungsbereich des 12-Bit-ADCs. Es verbleibt eine dynamische Messreserve von rund $1{,}18\,\mathrm{V}$, wodurch auch transiente Überschwinger des Stroms (bis ca. $66\,\mathrm{A}$) vom Mikrocontroller sicher detektiert werden können, bevor die Schutzmechanismen das Tastverhältnis abregeln. 
+Dies ermöglicht der Software eine hochauflösende Auswertung des Motorstroms, welche die zwingende Voraussetzung für das in Kapitel \ref{sec:verlustanalyse} vorausgesetzte Cycle-by-Cycle Current Limiting bildet.
+
 \section{Verlustanalyse}
 \label{sec:verlustanalyse}
 
-Die Dimensionierung des thermischen Managements erfordert eine detaillierte und betriebspunktspezifische Quantifizierung der auftretenden Halbleiterverluste. Die nachfolgenden Berechnungen basieren auf einem konservativ gewählten Worst-Case-Betriebspunkt: Ein kontinuierlicher Phasenstrom von $I_{\mathrm{phase,RMS}} = 30\,\mathrm{A}$, eine maximale Zwischenkreisspannung von $V_{\mathrm{DC}} = 42\,\mathrm{V}$ sowie eine PWM-Schaltfrequenz von $f_{\mathrm{SW}} = 20\,\mathrm{kHz}$.
+Die Dimensionierung des thermischen Managements erfordert eine präzise Quantifizierung der Halbleiterverluste. Die nachfolgenden Berechnungen basieren auf dem geforderten Phasen-Effektivstrom von $I_{\mathrm{phase,RMS}} = 30\,\mathrm{A}$, was einem Block-Spitzenstrom von $I_{\mathrm{Block}} \approx 42{,}4\,\mathrm{A}$ entspricht. Die Zwischenkreisspannung wird mit $v_{\mathrm{i}} = 42\,\mathrm{V}$ angesetzt, die Schaltfrequenz beträgt $f_{\mathrm{sw}} = 20\,\mathrm{kHz}$. 
+Wie in der Systemarchitektur (vgl. Kapitel \ref{sec:anforderungen_spezifikationen}) definiert, greift bei höheren transienten Strömen die aktive Cycle-by-Cycle-Strombegrenzung ein. Eine thermische Überdimensionierung für theoretische Kurzschluss- oder Blockierfälle ist daher nicht erforderlich, da der gemessene Motorstrom von der Firmware exakt auf diese $42{,}4\,\mathrm{A}$ limitiert wird. Da diese Begrenzung symmetrisch für den motorischen und den rekuperativen Betrieb gilt, stellt dieser Arbeitspunkt den globalen thermischen Worst-Case für das Gesamtsystem dar.
+Die analytische Herleitung folgt einem strukturierten Vorgehen. Zunächst wird die physikalische Stromaufteilung in der Topologie analysiert, woraufhin die in Kapitel \ref{chap:grundlagen} definierten Verlustmodelle mit den Spezifikationen der ausgewählten Bauteile verknüpft werden. Alle ausführlichen mathematischen Zwischenschritte sind in Anhang \ref{app:verlustrechnung} hinterlegt.
 
-\subsection{Statische Leitverluste}
+\subsection{Statische Leitverluste der MOSFETs}
 \label{subsec:leitverluste}
 
-In einer B6-Brückentopologie mit dem verwendeten Halbbrückentreiber IR2104 wird die Freilaufphase (Kommutierung) nicht primär durch die integrierte Body-Diode, sondern durch das aktive Einschalten des LS-MOSFETs übernommen (Synchronous Rectification). Dadurch fließt der Phasenstrom für nahezu die gesamte elektrische Periode durch den niederohmigen Drain-Source-Kanal der Transistoren.
+Bei der sensorbasierten Blockkommutierung durchläuft jede Motorphase pro elektrischer $360^\circ$-Periode kontinuierlich drei Zustände: Sie leitet für $120^\circ$ einen positiven Strom, ist für $120^\circ$ hochohmig und dient für weitere $120^\circ$ als Rückleiter für den negativen Strom. In der vorliegenden Brückentopologie wird der Freilaufstrom während der PWM-Ausschaltphasen jedoch nicht passiv der verlustbehafteten Body-Diode überlassen. Der gewählte Gate-Treiber IR2104 verfügt über eine komplementäre Ansteuerlogik. Wird der High-Side-Schalter (HS) in der PWM-Logik abgeschaltet, steuert der Treiber nach einer kurzen Totzeit automatisch den korrespondierenden Low-Side-MOSFET (LS) durch. Diese aktive Synchrongleichrichtung führt zusammen mit der Blockkommutierung zu stark asymmetrischen Belastungsprofilen der Transistoren.
+Im positiven $120^\circ$-Sektor taktet der HS-MOSFET mit dem Tastverhältnis $d$ und treibt die Energie in den Motor, während der komplementäre LS-MOSFET in der Ausschaltphase für die Zeit $(1-d)$ den Freilaufstrom übernimmt. Im negativen $120^\circ$-Sektor ist der HS-Schalter hingegen permanent gesperrt, während der LS-Schalter statisch zu $100\,\%$ durchgeschaltet bleibt und den vollen Blockstrom als Rückleiter führt. 
 
-Unter der Annahme eines eingeschwungenen SVPWM-Betriebs variiert das Tastverhältnis $d(t)$ kontinuierlich. Zur analytischen Berechnung der Stromaufteilung werden die Modelle für dreiphasige Wechselrichter nach Infineon Application Note herangezogen \cite[S.~16\,f.]{Infineon_MOSFET_Losses}. In einer klassischen Topologie mit passiver Freilaufdiode hängen die quadratischen Effektivströme für den aktiven Schalter und das Freilaufelement signifikant vom Modulationsindex $m$ und dem Leistungsfaktor $\cos(\phi)$ ab \cite[S.~17]{Infineon_MOSFET_Losses}. 
-Da durch die angewandte Synchrongleichrichtung jedoch beide Stromanteile über die MOSFET-Kanäle fließen, lassen sich die Gleichungen für Schalter und Diode addieren. Hierbei lässt sich mathematisch zeigen, dass sich die lastabhängigen Terme ($m$ und $\cos(\phi)$) über eine vollständige elektrische Periode exakt herauskürzen. Es ergibt sich im Mittel eine gleichmäßige Aufteilung des Effektivstroms auf den HS- und LS-Transistor der jeweiligen Halbbrücke. Der resultierende Effektivstrom pro Einzelschalter ergibt sich damit zu:
+Daraus lassen sich die effektiven Quadratströme für den Dauerbetrieb ableiten:
+\begin{align}
+    I_{\mathrm{HS,RMS}}^2 &= I_{\mathrm{Block}}^2 \cdot \frac{1}{3} \cdot d \label{eq:i_hs_rms} \\
+    I_{\mathrm{LS,RMS}}^2 &= I_{\mathrm{Block}}^2 \cdot \frac{1}{3} \cdot (1 - d) + I_{\mathrm{Block}}^2 \cdot \frac{1}{3} \cdot 1 = I_{\mathrm{Block}}^2 \cdot \frac{1}{3} \cdot (2 - d) \label{eq:i_ls_rms}
+\end{align}
 
-\begin{equation}
-    I_{\mathrm{MOS,RMS}} =
-    \frac{I_{\mathrm{phase,RMS}}}{\sqrt{2}}
-    =
-    \frac{30\,\mathrm{A}}{\sqrt{2}}
-    \approx 21{,}21\,\mathrm{A}.
-    \label{eq:i_mos_rms}
-\end{equation}
-
-Gemäß der in den Grundlagen eingeführten Gleichung \ref{eq:p_cond} skalieren die Leitverluste quadratisch mit diesem Strom und linear mit dem Einschaltwiderstand $R_{\mathrm{DS(on)}}$. Die im Datenblatt spezifizierten $3{,}4\,\mathrm{m\Omega}$ gelten jedoch ausschließlich für eine Sperrschichttemperatur von $T_{\mathrm{J}} = 25^\circ\mathrm{C}$. Mit steigender Temperatur nimmt die Ladungsträgerbeweglichkeit im Silizium ab, wodurch der Drain-Source-Widerstand eine ausgeprägte positive Temperaturabhängigkeit aufweist.
-
-Für eine konservative Worst-Case-Betrachtung des thermisch eingeschwungenen Dauerbetriebs wird daher eine Sperrschichttemperatur von $T_{\mathrm{J}} = 100^\circ\mathrm{C}$ angenommen. Anhand der digitalisierten Herstellerkennlinie (siehe Abbildung \ref{fig:rdson_temp}) lässt sich der zu erwartende Einschaltwiderstand für diesen Arbeitspunkt auf etwa $R_{\mathrm{DS(on)}}(100^\circ\mathrm{C}) \approx 4{,}8\,\mathrm{m\Omega}$ bestimmen.
+Es wird ersichtlich, dass der LS-MOSFET thermisch deutlich stärker belastet wird als der HS-MOSFET, da er sowohl Rückleiter- als auch Freilauffunktionen übernimmt. Dies gilt insbesondere bei minimalen Tastverhältnissen unter Hochlast, beispielsweise bei einem schweren Motoranlauf. 
+Zur Bestimmung der Verlustleistung gemäß Gleichung \ref{eq:p_cond} muss der temperaturabhängige Einschaltwiderstand $R_{\mathrm{DS(on)}}$ ermittelt werden. Für eine konservative Auslegung wird eine Worst-Case-Sperrschichttemperatur von $T_{\mathrm{J}} = 100^\circ\mathrm{C}$ angenommen. Da der Gate-Treiber eine Steuerspannung von $v_{\mathrm{dr}} = 12\,\mathrm{V}$ bereitstellt, operieren die Transistoren sicher im tiefen Sättigungsbereich. Zur Ermittlung des exakten Widerstandswertes wurde die Datenblattkennlinie grafisch ausgewertet.
 
 \begin{figure}[htbp]
     \centering
@@ -94,88 +118,200 @@ Für eine konservative Worst-Case-Betrachtung des thermisch eingeschwungenen Dau
         \addplot[mark=*, color=blue] coordinates {(100,4.8)};
         \end{axis}
     \end{tikzpicture}
-    \caption{Temperaturabhängigkeit des maximalen Einschaltwiderstands. Digitalisiert nach \cite[Diagramm~9]{DS_IPP034N08N5}.}
+    \caption{Temperaturabhängigkeit des maximalen Einschaltwiderstands. Grafisch ermittelter Arbeitspunkt bei $100^\circ\mathrm{C}$. Eigene Digitalisierung nach \cite[Diagramm~9]{DS_IPP034N08N5}.}
     \label{fig:rdson_temp}
 \end{figure}
 
-Ein weiterer Einflussfaktor ist die Höhe der Gate-Source-Spannung. Der verwendete Gate-Treiber IR2104 liefert eine Treiberspannung im Bereich von etwa $12\,\mathrm{V}$ bis $15\,\mathrm{V}$. Aus dem Ausgangskennlinienfeld \cite[Diagramm~5]{DS_IPP034N08N5} geht hervor, dass der MOSFET bei diesen Spannungen bereits vollständig im niederohmigen Durchlassbereich betrieben wird. Eine weitere signifikante Reduktion des Drain-Source-Widerstands gegenüber dem spezifizierten Datenblattwert bei $V_{\mathrm{GS}} = 10\,\mathrm{V}$ ist daher nicht zu erwarten. Die konservative Berechnung mit den abgelesenen $4{,}8\,\mathrm{m\Omega}$ ist somit gerechtfertigt.
+Wie in Abbildung \ref{fig:rdson_temp} ersichtlich, beläuft sich der Widerstand bei der Zieltemperatur auf $R_{\mathrm{DS(on)}}(100^\circ\mathrm{C}) \approx 4{,}8\,\mathrm{m\Omega}$. Werden diese Werte in die Verlustgleichung eingesetzt, ergibt sich für den HS-MOSFET bei maximaler Aussteuerung ($d=1$) eine statische Verlustleistung von $P_{\mathrm{HS,c}} \approx 2{,}88\,\mathrm{W}$. Der thermische Worst-Case des LS-MOSFETs tritt hingegen bei geringer Aussteuerung ($d=0{,}1$) und gleichzeitigem Anlauf-Blockstrom auf, was zu einer Verlustleistung von $P_{\mathrm{LS,c}} \approx 5{,}47\,\mathrm{W}$ führt. Diese Analyse belegt analytisch, dass das thermische Design zwingend auf die signifikant höhere Abwärme der Low-Side-Transistoren dimensioniert werden muss.
 
-Auf Basis von Gleichung \ref{eq:p_cond} und \ref{eq:i_mos_rms} ergeben sich die maximalen statischen Leitverluste pro MOSFET im thermisch eingeschwungenen Dauerbetrieb zu
+\subsection{Dynamische Schaltverluste der MOSFETs}
+\label{subsec:schaltverluste}
 
+Infolge der implementierten Kommutierungslogik entstehen signifikante Umschaltverluste ausschließlich im HS-MOSFET. Der LS-MOSFET schaltet den Phasenstrom lediglich mit der sehr niedrigen elektrischen Grundfrequenz des Motors, weshalb seine dynamischen Verluste energetisch zu vernachlässigen sind. Der HS-Transistor taktet hingegen mit der PWM-Frequenz von $f_{\mathrm{sw}} = 20\,\mathrm{kHz}$, dies jedoch periodisch nur während seines aktiven $120^\circ$-Sektors. Im zeitlichen Mittel fallen folglich effektiv $\frac{1}{3} \cdot f_{\mathrm{sw}}$ harte Schaltvorgänge an.
+Die Berechnung der Schaltverluste erfolgt über das in den theoretischen Grundlagen hergeleitete ladungsbasierte Modell. Die Parameter zur Ermittlung der Schaltzeiten können dem Datenblatt entnommen werden: Die Millerspannung beträgt $v_{\mathrm{GS,Mi}} = 5{,}0\,\mathrm{V}$ und die für die Schaltflanke maßgebliche Umschaltladung liegt bei $Q_{\mathrm{sw}} = 26\,\mathrm{nC}$. Bei einer Treiberspannung von $v_{\mathrm{dr}} = 12\,\mathrm{V}$ und einem gewählten Gate-Vorwiderstand von $R_{\mathrm{G}} = 10\,\Omega$ resultieren aus den Gleichungen \ref{eq:energie_einschaltvorgang} und \ref{eq:energie_ausschaltvorgang} eine reine Einschaltenergie des MOSFETs von $E_{\mathrm{MOS,on}} \approx 33{,}1\,\mu\mathrm{J}$ sowie eine Ausschaltenergie von $E_{\mathrm{MOS,off}} \approx 46{,}3\,\mu\mathrm{J}$.
+Zusätzlich muss die Sperrverzögerungsladung der gegenüberliegenden Body-Diode berücksichtigt werden. Die in der LS-Diode gespeicherte Ladung verursacht beim Einschalten der Halbbrücke einen transienten Strompuls, der physikalisch im aktiven HS-MOSFET dissipiert wird. Mit der maximalen Reverse-Recovery-Ladung von $Q_{\mathrm{rr,max}} = 332\,\mathrm{nC}$ addiert sich gemäß Gleichung \ref{eq:energie_einschaltvorgang_rr} eine zusätzliche Einschaltenergie von $E_{\mathrm{on,rr}} \approx 13{,}9\,\mu\mathrm{J}$. 
+Die gesamte transiente Einschaltenergie summiert sich somit auf $E_{\mathrm{on,total}} \approx 47{,}0\,\mu\mathrm{J}$. Die gemittelten dynamischen Schaltverluste pro High-Side-MOSFET berechnen sich folglich zu:
 \begin{equation}
-    P_{\mathrm{MOS,c}} =
-    I_{\mathrm{MOS,RMS}}^2
-    \cdot
-    R_{\mathrm{DS(on)}}(100^\circ\mathrm{C})
-    =
-    (21{,}21\,\mathrm{A})^2
-    \cdot
-    0{,}0048\,\Omega
-    \approx
-    2{,}16\,\mathrm{W}.
-    \label{eq:p_cond_result}
+    P_{\mathrm{MOS,sw}} = (E_{\mathrm{on,total}} + E_{\mathrm{MOS,off}}) \cdot f_{\mathrm{sw}} \cdot \frac{1}{3} \approx 0{,}62\,\mathrm{W}
+\end{equation}
+Es ist anzumerken, dass die eigenen, internen Abschaltverluste der Diode ($P_{\mathrm{rr}}$), die häufig auf $\frac{1}{4} \cdot Q_{\mathrm{rr}} \cdot v_{\mathrm{i}} \cdot f_{\mathrm{sw}}$ geschätzt werden \cite[S.~10]{Infineon_MOSFET_Losses}, in dieser Auslegung im zeitlichen Mittel bei lediglich rund $23\,\mathrm{mW}$ liegen. Verglichen mit den Leitverlusten fällt dieser Wert nicht ins Gewicht und wird in der thermischen Dimensionierung vernachlässigt.
+
+\subsection{Leitverluste der Freilaufdiode}
+\label{subsec:leitverluste_diode}
+
+Dank der hardwareseitigen Synchrongleichrichtung übernimmt der niederohmige Kanal des LS-MOSFETs nahezu den gesamten Freilaufstrom. Die intrinsische Body-Diode wird ausschließlich während der vom Gate-Treiber zwingend vorgegebenen Totzeit $t_{\mathrm{dt}}$ leitend. Dieser Mechanismus ist essenziell, um einen gleichzeitigen Leitzustand beider Transistoren und damit einen Brückenkurzschluss (Shoot-Through) zu verhindern.
+Der Treiber IR2104 spezifiziert eine interne Totzeit von $t_{\mathrm{dt}} = 520\,\mathrm{ns}$. Da dieser transiente Dioden-Stromfluss bei jedem PWM-Umschaltvorgang auftritt, durchläuft die Diode exakt zwei Totzeit-Intervalle pro PWM-Periode. Das effektive Tastverhältnis $d_{\mathrm{D}}$ der Diode beträgt folglich lediglich $d_{\mathrm{D}} \approx 0{,}0208$. Da der Strom zudem nur im aktiven $120^\circ$-Sektor fließt, reduzieren sich der arithmetische Mittelwert auf $\overline{i}_{\mathrm{D}} \approx 0{,}294\,\mathrm{A}$ und der quadratische Effektivstrom auf $i_{\mathrm{D,RMS}}^2 \approx 12{,}47\,\mathrm{A}^2$.
+Zur Bestimmung der in Gleichung \ref{eq:p_d_con_vereinfacht} definierten Verlustleistung müssen die linearisierten Diodenparameter $v_{\mathrm{D,0}}$ und $r_\mathrm{D}$ hergeleitet werden. Da die Durchlassspannung einen negativen Temperaturkoeffizienten aufweist, wird die Datenblattkennlinie zur Worst-Case-Betrachtung bei $175^\circ\mathrm{C}$ grafisch ausgewertet. Um den realen Arbeitsbereich abzubilden, wird eine Sekante durch die typische Knickspannung ($v_{\mathrm{D,0}} = 0{,}58\,\mathrm{V}$) und den Nenn-Arbeitspunkt des Blockstroms ($42{,}4\,\mathrm{A}$ bei $v_{\mathrm{D}} \approx 0{,}92\,\mathrm{V}$) gelegt.
+\begin{figure}[htbp]
+    \centering
+    
+    % --- Linker Plot: semilogarithmische Kennlinie ---
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \begin{semilogyaxis}[
+                width=\textwidth,
+                height=6.5cm,
+                grid=both,
+                grid style={dashed, gray!30},
+                xlabel={Durchlassspannung $v_{\mathrm{D}}$ [V]},
+                ylabel={Durchlassstrom $i_{\mathrm{D}}$ [A]},
+                xmin=0.4, xmax=2.5,
+                ymin=1, ymax=1000,
+                xtick={0.5, 1.0, 1.5, 2.0, 2.5},
+                ytick={1,10,100,1000},
+                legend pos=south east,
+                thick
+            ]
+                % Geglättete Kennlinie
+                \addplot[smooth, tension=0.5, color=black, very thick] coordinates {
+                    (0.58, 1.0) (0.63, 2.2) (0.68, 4.5) (0.73, 8.2)
+                    (0.78, 13.5) (0.83, 20.1) (0.88, 28.4) (0.93, 37.5)
+                    (0.98, 47.8) (1.03, 59.6) (1.08, 73.2) (1.13, 88.4)
+                    (1.18, 105.0) (1.23, 122.8) (1.28, 142.0) (1.33, 162.5)
+                    (1.38, 184.2) (1.43, 207.0) (1.48, 230.5) (1.53, 254.6)
+                    (1.58, 278.8) (1.63, 302.5) (1.68, 325.3) (1.73, 346.9)
+                    (1.78, 366.9) (1.83, 375.5) (1.88, 383.1) (1.93, 389.6)
+                    (2.00, 395.2) (2.10, 398.3) (2.24, 400.0)
+                };
+                \addlegendentry{$175^\circ\mathrm{C}$ (max)}
+
+                % Arbeitspunkt Text mit transparentem Hintergrund
+                \node[color=red, anchor=south east, fill=white, fill opacity=0.85, text opacity=1, inner sep=2pt] 
+                    at (axis cs:0.95, 42.4) {$42{,}4\,\mathrm{A}$};
+                \addplot[mark=*, color=red] coordinates {(0.95, 42.4)};
+            \end{semilogyaxis}
+        \end{tikzpicture}
+        \caption{Logarithmische Gesamtkennlinie}
+        \label{fig:diode_log}
+    \end{subfigure}
+    \hfill
+    % --- Rechter Plot: lineare Darstellung Sekante ---
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=\textwidth,
+                height=6.5cm,
+                grid=both,
+                grid style={dashed, gray!30},
+                xlabel={Durchlassspannung $v_{\mathrm{D}}$ [V]},
+                ylabel={Durchlassstrom $i_{\mathrm{D}}$ [A]},
+                xmin=0.5, xmax=1.05,
+                ymin=0, ymax=60,
+                xtick={0.5, 0.6, 0.7, 0.8, 0.9, 1.0},
+                ytick={0, 10, 20, 30, 40, 50, 60},
+                legend pos=north west,
+                thick
+            ]
+
+                % Sekante in Schwarz (Geradengleichung durch (0.58, 0) und (0.92, 42.4))
+                \addplot[color=black, thick, domain=0.58:1.05, samples=2] {124.706*x - 72.329};
+                \addlegendentry{Linearisierung}
+
+                % Steigungsdreieck
+                \draw[color=green!50!black, thick] (axis cs:0.7, 15) -- (axis cs:0.8, 15) -- (axis cs:0.8, 27.435);
+                \node[color=green!50!black, anchor=north, fill=white, fill opacity=0.85, text opacity=1, inner sep=1pt] 
+                    at (axis cs:0.75, 14) {$\Delta v_{\mathrm{D}}$};
+                \node[color=green!50!black, anchor=west, fill=white, fill opacity=0.85, text opacity=1, inner sep=1pt] 
+                    at (axis cs:0.81, 21.2) {$\Delta i_{\mathrm{D}}$};
+
+                % Formel für r_D mit transparentem Hintergrund
+                \node[color=green!50!black, anchor=north west, fill=white, fill opacity=0.85, text opacity=1, inner sep=3pt] 
+                    at (axis cs:0.9, 25) {$r_{\mathrm{D}} = \frac{\Delta v_{\mathrm{D}}}{\Delta i_{\mathrm{D}}}$};
+
+                % AP Markierung
+                \addplot[mark=*, color=red] coordinates {(0.92, 42.4)};
+                \node[color=red, anchor=south east, fill=white, fill opacity=0.85, text opacity=1, inner sep=2pt] 
+                    at (axis cs:0.92, 42.4) {$42{,}4\,\mathrm{A}$};
+
+                % V_D0 Marker und Text (Blau)
+                \addplot[mark=*, color=blue] coordinates {(0.58, 0)};
+                \node[color=blue, anchor=south west, fill=white, fill opacity=0.85, text opacity=1, inner sep=2pt] 
+                    at (axis cs:0.58, 0) {$v_{\mathrm{D,0}} = 0{,}58\,\mathrm{V}$};
+                
+            \end{axis}
+        \end{tikzpicture}
+        \caption{Linearisierung am Arbeitspunkt}
+        \label{fig:diode_lin}
+    \end{subfigure}
+
+    \caption{Analytische Auswertung der Body-Dioden-Kennlinie. Digitalisierte Kennlinie nach \cite[Diagramm~12]{DS_IPP034N08N5}.}
+    \label{fig:diode_linearisation}
+\end{figure}
+
+Die grafische Herleitung in Abbildung \ref{fig:diode_linearisation} liefert über das Steigungsdreieck einen differentiellen Widerstand von $r_\mathrm{D} \approx 8{,}0\,\mathrm{m\Omega}$. Werden diese Kennwerte eingesetzt, berechnen sich die statischen Durchlassverluste der Body-Diode $P_{\mathrm{D,c}}$ pro Halbbrücke zu:
+\begin{equation}
+    P_{\mathrm{D,c}} = v_{\mathrm{D,0}} \cdot \overline{i}_{\mathrm{D}} + r_\mathrm{D} \cdot i_{\mathrm{D,RMS}}^2 = 0{,}58\,\mathrm{V} \cdot 0{,}294\,\mathrm{A} + 0{,}008\,\Omega \cdot 12{,}47\,\mathrm{A}^2 \approx 0{,}27\,\mathrm{W}
 \end{equation}
 
-Für die gesamte B6-Brücke mit sechs Leistungstransistoren ergibt sich damit im stationären Nennlastfall eine Gesamt-Leitverlustleistung von
-$P_{\mathrm{MOS,c,total}}
-\approx
-6 \cdot 2{,}16\,\mathrm{W}
-\approx
-12{,}96\,\mathrm{W}.$
+Dieses Resultat beweist quantitativ die signifikante thermische Entlastung durch die implementierte Synchrongleichrichtung. Die Verluste der Body-Diode beschränken sich auf die Totzeitintervalle und betragen lediglich etwa $0{,}27\,\mathrm{W}$, womit sie keine kritische Hürde für die thermische Dimensionierung darstellen.
 
-\paragraph{Leitverluste der Body-Diode (Totzeitverluste)}
-Aufgrund der Synchrongleichrichtung leitet die intrinsische Body-Diode des MOSFETs den Phasenstrom ausschließlich während der vom Gate-Treiber erzwungenen Totzeit $t_{\mathrm{dt}}$, um einen Brückenkurzschluss zu verhindern. Der verwendete IR2104 besitzt eine fixierte interne Totzeit von typisch $t_{\mathrm{dt}} = 520\,\mathrm{ns}$ \cite{DS_IR2104}. 
+\subsection{Zusammenfassung und thermische Anforderungen}
 
-Da dieser Kommutierungsvorgang zweimal pro PWM-Periode auftritt, berechnen sich die mittleren Diodenverluste unter Annahme eines arithmetischen Phasenmittelstroms zu:
-\begin{equation}
-    P_{\mathrm{D,dt}} = 2 \cdot V_{\mathrm{SD}} \cdot \frac{2}{\pi} \cdot  I_{\mathrm{phase,RMS}} \cdot \sqrt{2} \cdot t_{\mathrm{dt}} \cdot f_{\mathrm{SW}}
-    \label{eq:p_diode_dt}
-\end{equation}
-Mit einer Dioden-Vorwärtsspannung von $V_{\mathrm{SD}} \approx 0{,}9\,\mathrm{V}$ \cite[S.~6]{DS_IPP034N08N5} resultieren Dioden-Durchlassverluste von:
-\begin{equation}
-    P_{\mathrm{D,dt}} = 2 \cdot 0{,}9\,\mathrm{V} \cdot 27{,}0\,\mathrm{A} \cdot 520 \cdot 10^{-9}\,\mathrm{s} \cdot 20\,\mathrm{kHz} \approx 0{,}51\,\mathrm{W} \text{ pro Halbbrücke}.
-\end{equation}
-Dies belegt rechnerisch transparent, dass die Durchlassverluste der Diode durch den Einsatz des Synchrongleichrichter-Prinzips von untergeordneter thermischer Relevanz sind und das System von den MOSFET-Kanälen dominiert wird.
+Wie in Abschnitt \ref{sec:stromerfassung_hardware} dargelegt, basiert die gesamte thermische Auslegung auf einem abgeregelten, maximalen Phasenstrom von $42{,}4\,\mathrm{A}$. Um dieses Limit in der Praxis zu garantieren, ist die dort beschriebene Signalaufbereitung in Kombination mit einem softwareseitigen Cycle-by-Cycle Current Limiting zwingend erforderlich. Diese aktive Regelung schützt die MOSFETs vor thermischer Zerstörung, indem sie das Tastverhältnis rechtzeitig reduziert. 
+
+Tabelle \ref{tab:loss_summary} fasst die unter diesen Worst-Case-Bedingungen ermittelten Verlustleistungen für eine einzelne Halbbrücke zusammen.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Zusammenfassung der Verlustleistungen pro Halbbrücke}
+    \label{tab:loss_summary}
+    \begin{tabular}{llc}
+        \toprule
+        \textbf{Verlustart} & \textbf{Komponente} & \textbf{Leistung [W]} \\
+        \midrule
+        Statische Leitverluste & High-Side MOSFET ($P_{\mathrm{HS,c}}$) & 2,88 \\
+        Dynamische Schaltverluste & High-Side MOSFET ($P_{\mathrm{MOS,sw}}$) & 0,62 \\
+        Statische Leitverluste & Low-Side MOSFET ($P_{\mathrm{LS,c}}$) & 5,47 \\
+        Totzeit-Leitverluste & Low-Side Body-Diode ($P_{\mathrm{D,c}}$) & 0,27 \\
+        \midrule
+        \textbf{Gesamtverlustleistung} & \textbf{Pro Halbbrücke ($P_{\mathrm{HB,total}}$)} & \textbf{9,24} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Da der Motorcontroller aus drei identisch belasteten Halbbrücken besteht, resultiert bei anhaltender Volllast (z.\,B. Schweranlauf oder Dauerblockade) eine kumulierte transiente Gesamtabwärme von annähernd $27{,}7\,\mathrm{W}$. Die Abführung einer derart hohen Verlustleistung auf einer stark begrenzten Leiterplattenfläche stellt höchste physikalische Anforderungen an das Hardware-Design. Eine rein passive Entwärmung über Kupferflächen der Platine reicht hierbei nicht mehr aus. Diese physikalischen Grenzen motivieren die in Kapitel \ref{chap:thermisch} folgende Dimensionierung eines dedizierten Kühlkörpers, welcher die Wärme zuverlässig aus dem kompakten System abführt.
 %============================================================================
 
+%============================================================================
 \section{Gate-Treiber}
 \todo[inline]{Beschreibung des gewählten Treibers, Totzeiten, Schutzfunktionen, Ansteuerlogik.}
 
 \section{Bootstrap}
 \label{sec:bootstrap}
 
-Für die Ansteuerung der High-Side-MOSFETs in der Halbbrücke wird ein Bootstrap-Konzept verwendet, bei dem ein Kondensator als kurzzeitige, schwimmende Spannungsquelle dient. 
-Dieser \emph{Bootstrap-Kondensator} wird während der Leitphase des Low-Side-MOSFETs aufgeladen und liefert die notwendige Energie, um das Gate des High-Side-MOSFETs vollständig zu treiben. 
-Ohne eine korrekt dimensionierte Bootstrap-Schaltung kann die Gate-Spannung während der Einschaltzeit des High-Side-MOSFETs unter den erforderlichen Wert fallen, was zu erhöhten Leitverlusten oder einem Auslösen der Unterspannungsabschaltung des Treibers führen würde.
+Für die Ansteuerung der High-Side-MOSFETs in der Halbbrücke wird ein Bootstrap-Konzept verwendet, bei dem ein Kondensator als kurzzeitige, schwimmende Spannungsquelle dient. Dieser \emph{Bootstrap-Kondensator} wird während der Leitphase des Low-Side-MOSFETs aufgeladen und liefert die notwendige Energie, um das Gate des High-Side-Schalters vollständig durchzusteuern. 
+Ist die Bootstrap-Schaltung unzureichend dimensioniert, fällt die Gate-Spannung während der Einschaltzeit des High-Side-MOSFETs unter den Schwellenwert. Dies würde zu einem drastischen Anstieg der Leitverluste oder zum Auslösen der Unterspannungsabschaltung (UVLO) des Treibers führen.
 
-Die Dimensionierung des Bootstrap-Kondensators basiert auf der Gesamtladung, die während einer Einschaltphase bereitgestellt werden muss. Diese setzt sich aus der Gateladung des MOSFETs, dem Energiebedarf des Level-Shifters im Treiber sowie den Verlusten durch Leckströme zusammen. 
-Für die vorliegende Schaltung mit dem MOSFET \textbf{IPP034N08N5} und dem Treiber \textbf{IR2104} wurde die Berechnung auf Basis der MOSFET-Datenblätter sowie der Applikationsanleitung AN-6076 von ON Semiconductor durchgeführt \cite{AN6076}. 
-Hierbei wurden alle relevanten Parameter wie Gateladung, Eingangskapazität, Leckströme des Treibers und der Bootstrap-Diode sowie die maximale Einschaltdauer der High-Side-Schalter berücksichtigt, um eine robuste Auslegung auch im Worst-Case zu gewährleisten.
+Die Dimensionierung des Bootstrap-Kondensators basiert auf der Gesamtladung, die während einer Schaltperiode bereitgestellt werden muss. Diese setzt sich aus der Gate-Ladung des MOSFETs, dem Energiebedarf des Level-Shifters im Treiber sowie den Verlusten durch transiente Leckströme zusammen. 
+Für die vorliegende Schaltung mit dem MOSFET IPP034N08N5 und dem Treiber IR2104 wurde die Berechnung auf Basis der Hersteller-Datenblätter sowie der Applikationsschrift AN-6076 \cite{AN6076} durchgeführt. 
+Hierbei wurden alle relevanten Parameter wie extrapoliertem $Q_{\mathrm{Gate}}$, parasitäre Leckströme und die maximale Einschaltdauer im Worst-Case berücksichtigt.
 
-In Tabelle \ref{tab:bootstrap_params} sind die wesentlichen Größen zusammengefasst, die in die Berechnung der erforderlichen Kapazität eingeflossen sind:
+In Tabelle \ref{tab:bootstrap_params} sind die wesentlichen Größen der Dimensionierung zusammengefasst:
 
-\begin{table}[h!]
+\begin{table}[htbp]
     \centering
     \caption{Parameter zur Dimensionierung des Bootstrap-Kondensators}
     \label{tab:bootstrap_params}
-    \begin{tabular}{l c c}
+    \begin{tabular}{lcc}
         \toprule
-        Größe & Symbol & Wert \\
+        \textbf{Größe} & \textbf{Symbol} & \textbf{Wert} \\
         \midrule
-        Gateladung MOSFET & $Q_\mathrm{Gate}$ & \SI{111}{\nano\coulomb} \\
-        Level-Shifter-Verbrauch & $Q_\mathrm{LS}$ & \SI{3}{\nano\coulomb} \\
-        Leckströme während $t_\mathrm{on}$ & $Q_\mathrm{Leak}$ & \SI{5,8}{\nano\coulomb} \\
-        Gesamtladung & $Q_\mathrm{Total}$ & \SI{120}{\nano\coulomb} \\
-        Maximaler Spannungsabfall & $\Delta V_\mathrm{BOOT}$ & \SI{1}{\volt} \\
-        Minimale Kapazität & $C_\mathrm{BOOT,min}$ & \SI{120}{\nano\farad} \\
+        Gesamt-Gateladung (extrapoliert auf $15\,\mathrm{V}$) & $Q_{\mathrm{Gate}}$ & $111\,\mathrm{nC}$ \\
+        Level-Shifter-Ladung (Treiber) & $Q_{\mathrm{LS}}$ & $3\,\mathrm{nC}$ \\
+        Leckstromladung während $t_{\mathrm{on,max}}$ & $Q_{\mathrm{Leak}}$ & $5{,}8\,\mathrm{nC}$ \\
+        \midrule
+        Benötigte Gesamtladung & $Q_{\mathrm{Total}}$ & $\approx 120\,\mathrm{nC}$ \\
+        Zulässiger Spannungsabfall am Kondensator & $\Delta V_{\mathrm{BOOT}}$ & $1{,}0\,\mathrm{V}$ \\
+        \midrule
+        \textbf{Errechnete Minimalkapazität} & $C_{\mathrm{BOOT,min}}$ & $\mathbf{120\,\mathrm{nF}}$ \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-Auf Basis dieser Analyse wurde für die praktische Umsetzung ein Keramikkondensator mit \SI{220}{\nano\farad} gewählt, um Fertigungstoleranzen, Alterungseffekte sowie den DC-Bias-Einfluss bei Keramikkondensatoren ausreichend zu berücksichtigen. 
-Die hier dargestellte Vorgehensweise zeigt, dass die Auslegung des Bootstrap-Kondensators nicht trivial ist und eine detaillierte Analyse unter Berücksichtigung der Datenblattangaben und der einschlägigen Applikationsliteratur notwendig ist, um sowohl Zuverlässigkeit als auch Effizienz der Schaltung sicherzustellen. 
-Eine vollständige, tiefgehende Berechnung inklusive aller Zwischenwerte und Datenblattangaben ist im Anhang \ref{app:bootstrap} dokumentiert.
-
+Auf Basis dieser Analyse wurde für die praktische Umsetzung ein Keramikkondensator mit $220\,\mathrm{nF}$ gewählt. Die Überdimensionierung kompensiert Fertigungstoleranzen, thermische Alterungseffekte sowie den unvermeidlichen Kapazitätsverlust von Keramikkondensatoren unter DC-Bias-Spannung. 
+Die detaillierte, schrittweise Berechnung des Bootstrap-Netzwerks inklusive aller Zwischenwerte ist in Anhang \ref{app:bootstrap} dokumentiert.
 
 \section{Zwischenkreis}
 \todo[inline]{Dimensionierung des DC-Links: Kapazität, Ripple, Wahl der Elkos und Spannungsreserve.}

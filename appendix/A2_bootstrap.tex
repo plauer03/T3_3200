@@ -1,0 +1,53 @@
+%! TeX root = ../main.tex
+
+\section{Berechnung des Bootstrap-Kondensators}
+\label{app:bootstrap}
+
+Dieser Anhang dokumentiert die vollständige, schrittweise Berechnung des Bootstrap-Kondensators $C_{\mathrm{BOOT}}$ für die High-Side-Ansteuerung des MOSFETs IPP034N08N5 über den Treiber IR2104. Alle Werte basieren auf den Datenblättern der Bauteile sowie der ON Semiconductor Applikationsnote AN-6076 \cite{AN6076}.
+
+\subsection{Festlegung der zu liefernden Gesamtladung}
+Die benötigte Gesamtladung $Q_{\mathrm{total}}$ setzt sich primär aus drei Komponenten zusammen: der Gateladung des Transistors, dem Eigenbedarf des Treibers sowie den Leckstromverlusten:
+\begin{equation}
+    Q_{\mathrm{total}} = Q_{\mathrm{Gate}} + Q_{\mathrm{LS}} + Q_{\mathrm{Leak}}
+\end{equation}
+
+\textbf{Gateladung des MOSFETs}\\
+Aus dem Datenblatt des IPP034N08N5 entnehmen wir für eine Gate-Source-Spannung von $V_{\mathrm{GS}} = 10\,\mathrm{V}$ eine Gateladung von $Q_{\mathrm{G(10V)}} = 87\,\mathrm{nC}$ sowie eine Eingangskapazität von $C_{\mathrm{iss}} = 4800\,\mathrm{pF}$. Da der verwendete Gate-Treiber mit einer Versorgungsspannung von $V_{\mathrm{CC}} = 15\,\mathrm{V}$ arbeitet, muss die benötigte Ladung um diese Spannungsdifferenz ($\Delta V = 5\,\mathrm{V}$) extrapoliert werden:
+\begin{align}
+    Q_{\mathrm{Gate}} &= Q_{\mathrm{G(10V)}} + C_{\mathrm{iss}} \cdot \Delta V \\
+    Q_{\mathrm{Gate}} &= 87\,\mathrm{nC} + (4800 \cdot 10^{-12}\,\mathrm{F}) \cdot 5\,\mathrm{V} \\
+    Q_{\mathrm{Gate}} &= 87\,\mathrm{nC} + 24\,\mathrm{nC} \approx 111\,\mathrm{nC}
+\end{align}
+
+\textbf{Level-Shifter-Ladung}\\
+Der typische Ladungsverbrauch des IR2104-Level-Shifters während einer einzelnen High-Side-Einschaltphase beträgt:
+\begin{equation}
+    Q_{\mathrm{LS}} \approx 3\,\mathrm{nC}
+\end{equation}
+
+\textbf{Leckströme während der Einschaltzeit}\\
+Bei einer PWM-Schaltfrequenz von $f_{\mathrm{sw}} = 20\,\mathrm{kHz}$ ergibt sich bei maximaler Aussteuerung eine Worst-Case-Einschaltdauer von:
+\begin{equation}
+    t_{\mathrm{on,max}} = \frac{1}{f_{\mathrm{sw}}} = 50\,\mu\mathrm{s}
+\end{equation}
+Die Summe der relevanten Leckströme ($I_{\mathrm{Driver}}$, $I_{\mathrm{QBS}}$, $I_{\mathrm{GSS}}$, $I_{\mathrm{DIODE}}$) beläuft sich nach Datenblattangaben auf:
+\begin{equation}
+    I_{\mathrm{Leak}} = 50\,\mu\mathrm{A} + 55\,\mu\mathrm{A} + 0{,}1\,\mu\mathrm{A} + 10\,\mu\mathrm{A} \approx 115{,}1\,\mu\mathrm{A}
+\end{equation}
+Daraus resultiert ein Ladungsverlust während der Einschaltdauer von:
+\begin{equation}
+    Q_{\mathrm{Leak}} = I_{\mathrm{Leak}} \cdot t_{\mathrm{on,max}} = 115{,}1 \cdot 10^{-6}\,\mathrm{A} \cdot 50 \cdot 10^{-6}\,\mathrm{s} \approx 5{,}8\,\mathrm{nC}
+\end{equation}
+
+\subsection{Gesamtkapazität und Bauteilauswahl}
+Die während einer Periode bereitzustellende Gesamtladung summiert sich folglich auf:
+\begin{equation}
+    Q_{\mathrm{total}} = 111\,\mathrm{nC} + 3\,\mathrm{nC} + 5{,}8\,\mathrm{nC} \approx 120\,\mathrm{nC}
+\end{equation}
+
+Um sicherzustellen, dass die Bootstrap-Spannung nicht zu stark einbricht, wird ein maximal zulässiger Spannungsabfall von $\Delta V_{\mathrm{BOOT}} = 1{,}0\,\mathrm{V}$ definiert. Daraus ergibt sich die minimal erforderliche Kapazität zu:
+\begin{equation}
+    C_{\mathrm{BOOT,min}} = \frac{Q_{\mathrm{total}}}{\Delta V_{\mathrm{BOOT}}} = \frac{120\,\mathrm{nC}}{1{,}0\,\mathrm{V}} = 120\,\mathrm{nF}
+\end{equation}
+
+Unter Berücksichtigung von Fertigungstoleranzen, dem typischen Kapazitätsverlust bei anliegender DC-Bias-Spannung sowie thermischen Alterungseffekten wird für die praktische Umsetzung eine großzügige Sicherheitsreserve eingeplant. Gewählt wird ein $220\,\mathrm{nF}$ X7R-Keramikkondensator.

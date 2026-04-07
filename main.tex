@@ -18,7 +18,7 @@
 \pagestyle{plain}
 \pagenumbering{roman}
 \input{flyleaf/deckblatt}
-\input{flyleaf/abstract}
+%\input{flyleaf/abstract} % er will kein Abstract!
 \newpage
 \input{disclaimer/disclaimers}
 \cleardoublepage
@@ -111,77 +111,6 @@ Leitverlustleistung mit den grafisch ermittelten Parametern ($v_{\mathrm{D,0}} =
 
 \newpage
 
-\section{Berechnung des Bootstrap-Kondensators}
-\label{app:bootstrap}
-
-Dieser Anhang dokumentiert die vollständige, schrittweise Berechnung des Bootstrap-Kondensators $C_\mathrm{BOOT}$ für die High-Side-Ansteuerung des MOSFETs IPP034N08N5 über den IR2104-Treiber. Alle Werte basieren auf den Datenblättern der Bauteile sowie der ON Semiconductor Applikationsnote AN-6076 \cite{AN6076}.
-
-\subsection{Festlegung der zu liefernden Gesamtladung}
-Die Gesamtladung $Q_\mathrm{Total}$ setzt sich aus drei Komponenten zusammen:
-\begin{equation}
-Q_\mathrm{Total} = Q_\mathrm{Gate} + Q_\mathrm{LS} + Q_\mathrm{Leak}
-\end{equation}
-
-\subsubsection{Gateladung des MOSFETs}
-Aus dem Datenblatt des IPP034N08N5:
-\begin{align}
-Q_{G(10V)} &= \SI{87}{\nano\coulomb} & \text{bei $V_\mathrm{GS} = \SI{10}{\volt}$} \\
-C_\mathrm{iss} &= \SI{4800}{\pico\farad}
-\end{align}
-
-Da der Treiber mit $V_\mathrm{CC} = \SI{15}{\volt}$ arbeitet, erfolgt eine Extrapolation:
-\begin{align}
-\Delta V &= V_\mathrm{CC} - 10\si{V} = 5\si{V} \\
-Q_\mathrm{Gate} &= Q_{G(10V)} + C_\mathrm{iss} \cdot \Delta V \\
-Q_\mathrm{Gate} &= \SI{87}{\nano\coulomb} + (4800 \cdot 10^{-12} \,\mathrm{F}) \cdot 5\,\mathrm{V} \\
-Q_\mathrm{Gate} &= \SI{87}{\nano\coulomb} + \SI{24}{\nano\coulomb} \\
-Q_\mathrm{Gate} &\approx \SI{111}{\nano\coulomb}
-\end{align}
-
-Typischer Verbrauch des IR2104-Level-Shifters während einer High-Side-Einschaltphase:
-\begin{equation}
-Q_\mathrm{LS} \approx \SI{3}{\nano\coulomb}
-\end{equation}
-
-\subsubsection{Leckströme während $t_\mathrm{on}$}
-Worst-Case-Einschaltdauer bei $f_s = \SI{20}{\kilo\hertz}$:
-\begin{equation}
-t_\mathrm{on} = \frac{1}{f_s} / 2 = \SI{50}{\micro\second}
-\end{equation}
-
-Summe der relevanten Leckströme:
-\begin{align}
-I_\mathrm{Leak} &= I_\mathrm{Driver} + I_\mathrm{QBS} + I_\mathrm{GSS} + I_\mathrm{DIODE} \\
-I_\mathrm{Leak} &= \SI{50}{\micro\ampere} + \SI{55}{\micro\ampere} + \SI{0,1}{\micro\ampere} + \SI{10}{\micro\ampere} \\
-I_\mathrm{Leak} &\approx \SI{115,1}{\micro\ampere}
-\end{align}
-
-Ladungsverlust während der Einschaltdauer:
-\begin{align}
-Q_\mathrm{Leak} &= I_\mathrm{Leak} \cdot t_\mathrm{on} \\
-Q_\mathrm{Leak} &= 115,1 \cdot 10^{-6}\,\mathrm{A} \cdot 50 \cdot 10^{-6}\,\mathrm{s} \\
-Q_\mathrm{Leak} &\approx 5,8 \cdot 10^{-9}\,\mathrm{C} = \SI{5,8}{\nano\coulomb}
-\end{align}
-
-\subsection{Gesamtladung}
-\begin{align}
-Q_\mathrm{Total} &= Q_\mathrm{Gate} + Q_\mathrm{LS} + Q_\mathrm{Leak} \\
-Q_\mathrm{Total} &= 111 + 3 + 5,8 \\
-Q_\mathrm{Total} &\approx \SI{119,8}{\nano\coulomb} \approx \SI{120}{\nano\coulomb}
-\end{align}
-
-\subsection{Berechnung der minimalen Kapazität}
-Für einen maximal zulässigen Spannungsabfall von $\Delta V_\mathrm{BOOT} = \SI{1}{\volt}$ ergibt sich:
-\begin{align}
-C_\mathrm{BOOT,min} &= \frac{Q_\mathrm{Total}}{\Delta V_\mathrm{BOOT}} \\
-C_\mathrm{BOOT,min} &= \frac{\SI{120}{\nano\coulomb}}{\SI{1}{\volt}} \\
-C_\mathrm{BOOT,min} &= \SI{120}{\nano\farad}
-\end{align}
-
-\subsection{Auswahl des Kondensators}
-Unter Berücksichtigung von Fertigungstoleranzen, DC-Bias-Effekten bei Keramikkondensatoren und Alterung wird ein \SI{220}{\nano\farad} X7R-Keramikkondensator gewählt. 
-
-
-
+\input{appendix/A2_bootstrap}
 
 \end{document}

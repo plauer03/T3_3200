@@ -9,7 +9,7 @@ Basierend auf den in Kapitel \ref{chap:anforderungen} definierten Systemanforder
 
 Die Auswahl der Leistungshalbleiter stellt einen zentralen Entwurfsschritt im Motorcontroller dar, da diese Bauelemente den Wirkungsgrad, das Schaltverhalten sowie die thermische Zuverlässigkeit des Gesamtsystems maßgeblich bestimmen. Für die Realisierung der dreiphasigen B6-Brückentopologie wurde der N-Kanal-Leistungs-MOSFET IPP034N08N5 aus der OptiMOS\textsuperscript{\texttrademark}-5-Serie von Infineon Technologies ausgewählt \cite{DS_IPP034N08N5}. Die nachfolgend diskutierten elektrischen und thermischen Kennwerte basieren auf den im Datenblatt spezifizierten Parametern.
 Ein wesentliches Auswahlkriterium ist die Spannungsfestigkeit des Transistors. Bei einer maximalen Ladeschlussspannung des verwendeten Akkumulators von $42\,\mathrm{V}$ muss der MOSFET sowohl diese Gleichspannung sicher sperren als auch transiente Überspannungen tolerieren, die infolge schneller Schaltvorgänge an den induktiven Motorwicklungen sowie durch parasitäre Streuinduktivitäten entstehen. Der gewählte MOSFET besitzt eine spezifizierte Drain-Source-Durchbruchspannung von $V_{\mathrm{DS}} = 80\,\mathrm{V}$. Gegenüber der maximalen Zwischenkreisspannung ergibt sich somit eine großzügige Sicherheitsreserve von nahezu $100\,\%$.
-Neben der Spannungsfestigkeit stellt die Stromtragfähigkeit ein weiteres kritisches Kriterium dar. Der Motorcontroller ist für einen Phasenstrom von $30\,\mathrm{A_{RMS}}$ ausgelegt, was in der verwendeten Blockkommutierung einem periodischen Spitzenstrom von $I_{\mathrm{Block}} \approx 42{,}4\,\mathrm{A}$ entspricht. Der ausgewählte MOSFET ist für einen maximalen kontinuierlichen Drainstrom von $I_{\mathrm{D}} = 120\,\mathrm{A}$ (bei einer Gehäusetemperatur von $T_{\mathrm{C}} = 25^\circ\mathrm{C}$) spezifiziert und erlaubt Pulsströme bis zu $480\,\mathrm{A}$. Damit liegt der anvisierte Worst-Case-Betriebspunkt thermisch und elektrisch sicher innerhalb der Betriebsgrenzen (Safe Operating Area) des Bauelements.
+Neben der Spannungsfestigkeit stellt die Stromtragfähigkeit ein weiteres kritisches Kriterium dar. Der Motorcontroller ist für einen äquivalent sinusförmigen Phasenstrom von $30\,\mathrm{A_{RMS}}$ ausgelegt. Der ausgewählte MOSFET ist für einen maximalen kontinuierlichen Drainstrom von $I_{\mathrm{D}} = 120\,\mathrm{A}$ (bei einer Gehäusetemperatur von $T_{\mathrm{C}} = 25^\circ\mathrm{C}$) spezifiziert und erlaubt Pulsströme bis zu $480\,\mathrm{A}$. Damit liegt der anvisierte Worst-Case-Betriebspunkt thermisch und elektrisch sicher innerhalb der Betriebsgrenzen (Safe Operating Area) des Bauelements.
 Zur Minimierung der statischen Leitverluste ist ein möglichst geringer Durchlasswiderstand erforderlich. Der IPP034N08N5 weist bei einer Gate-Source-Spannung von $V_{\mathrm{GS}} = 10\,\mathrm{V}$ einen maximalen Einschaltwiderstand von $R_{\mathrm{DS(on),max}} = 3{,}4\,\mathrm{m\Omega}$ auf. Dieser niedrige ohmsche Widerstand reduziert die im Silizium dissipierte Verlustleistung signifikant.
 Für den dynamischen Betrieb mit einer PWM-Schaltfrequenz von $f_{\mathrm{sw}} = 20\,\mathrm{kHz}$ sind zusätzlich die parasitären Kapazitäten relevant. Eine Reduktion des $R_{\mathrm{DS(on)}}$ geht physikalisch bedingt häufig mit einer Vergrößerung der Chipfläche und folglich mit erhöhten Kapazitäten einher. Der gewählte MOSFET bietet hier ein sehr günstiges Verhältnis. Die typische Gesamtgateladung beträgt $Q_{\mathrm{G}} = 69\,\mathrm{nC}$ (max. $87\,\mathrm{nC}$), und die für die Schaltverluste maßgebliche Umschaltladung liegt bei lediglich $Q_{\mathrm{sw}} = 26\,\mathrm{nC}$. Dies ermöglicht eine schnelle Umladung durch den Gate-Treiber. 
 Ein weiterer relevanter Parameter für die Brückentopologie ist die Reverse-Recovery-Ladung der integrierten Body-Diode, welche beim Umschalten der Halbbrücke abgebaut werden muss. Diese ist mit $Q_{\mathrm{rr}} = 166\,\mathrm{nC}$ (typisch) bzw. $332\,\mathrm{nC}$ (maximal) spezifiziert.
@@ -73,7 +73,7 @@ Dies ermöglicht der Software eine hochauflösende Auswertung des Motorstroms, w
 \section{Verlustanalyse}
 \label{sec:verlustanalyse}
 
-Die Dimensionierung des thermischen Managements erfordert eine präzise Quantifizierung der Halbleiterverluste. Die nachfolgenden Berechnungen basieren auf dem geforderten Phasen-Effektivstrom von $I_{\mathrm{phase,RMS}} = 30\,\mathrm{A}$, was einem Block-Spitzenstrom von $I_{\mathrm{Block}} \approx 42{,}4\,\mathrm{A}$ entspricht. Die Zwischenkreisspannung wird mit $v_{\mathrm{i}} = 42\,\mathrm{V}$ angesetzt, die Schaltfrequenz beträgt $f_{\mathrm{sw}} = 20\,\mathrm{kHz}$. 
+Die Dimensionierung des thermischen Managements erfordert eine präzise Quantifizierung der Halbleiterverluste. Die nachfolgenden Berechnungen basieren auf dem geforderten Phasen-Effektivstrom von $I_{\mathrm{phase,RMS}} = 30\,\mathrm{A}$. Die Zwischenkreisspannung wird mit $v_{\mathrm{i}} = 42\,\mathrm{V}$ angesetzt, die Schaltfrequenz beträgt $f_{\mathrm{sw}} = 20\,\mathrm{kHz}$. 
 Wie in der Systemarchitektur (vgl. Kapitel \ref{sec:anforderungen_spezifikationen}) definiert, greift bei höheren transienten Strömen die aktive Cycle-by-Cycle-Strombegrenzung ein. Eine thermische Überdimensionierung für theoretische Kurzschluss- oder Blockierfälle ist daher nicht erforderlich, da der gemessene Motorstrom von der Firmware exakt auf diese $42{,}4\,\mathrm{A}$ limitiert wird. Da diese Begrenzung symmetrisch für den motorischen und den rekuperativen Betrieb gilt, stellt dieser Arbeitspunkt den globalen thermischen Worst-Case für das Gesamtsystem dar.
 Die analytische Herleitung folgt einem strukturierten Vorgehen. Zunächst wird die physikalische Stromaufteilung in der Topologie analysiert, woraufhin die in Kapitel \ref{chap:grundlagen} definierten Verlustmodelle mit den Spezifikationen der ausgewählten Bauteile verknüpft werden. Alle ausführlichen mathematischen Zwischenschritte sind in Anhang \ref{app:verlustrechnung} hinterlegt.
 
@@ -218,7 +218,7 @@ Zur Bestimmung der in Gleichung \ref{eq:p_d_con_vereinfacht} definierten Verlust
 
                 % Formel für r_D mit transparentem Hintergrund
                 \node[color=green!50!black, anchor=north west, fill=white, fill opacity=0.85, text opacity=1, inner sep=3pt] 
-                    at (axis cs:0.9, 25) {$r_{\mathrm{D}} = \frac{\Delta v_{\mathrm{D}}}{\Delta i_{\mathrm{D}}}$};
+                    at (axis cs:0.85, 15) {$r_{\mathrm{D}} = \frac{\Delta v_{\mathrm{D}}}{\Delta i_{\mathrm{D}}}$};
 
                 % AP Markierung
                 \addplot[mark=*, color=red] coordinates {(0.92, 42.4)};
@@ -271,22 +271,29 @@ Tabelle \ref{tab:loss_summary} fasst die unter diesen Worst-Case-Bedingungen erm
     \end{tabular}
 \end{table}
 
-Da der Motorcontroller aus drei identisch belasteten Halbbrücken besteht, resultiert bei anhaltender Volllast (z.\,B. Schweranlauf oder Dauerblockade) eine kumulierte transiente Gesamtabwärme von annähernd $27{,}7\,\mathrm{W}$. Die Abführung einer derart hohen Verlustleistung auf einer stark begrenzten Leiterplattenfläche stellt höchste physikalische Anforderungen an das Hardware-Design. Eine rein passive Entwärmung über Kupferflächen der Platine reicht hierbei nicht mehr aus. Diese physikalischen Grenzen motivieren die in Kapitel \ref{chap:thermisch} folgende Dimensionierung eines dedizierten Kühlkörpers, welcher die Wärme zuverlässig aus dem kompakten System abführt.
+Da der Motorcontroller aus drei identisch belasteten Halbbrücken besteht, resultiert bei anhaltender Volllast (z.\,B. Schweranlauf oder Dauerblockade) eine kumulierte transiente Gesamtabwärme von annähernd $27{,}7\,\mathrm{W}$. Die Abführung einer derart hohen Verlustleistung auf einer stark begrenzten Leiterplattenfläche stellt höchste physikalische Anforderungen an das Hardware-Design. Eine rein passive Entwärmung über Kupferflächen der Platine reicht hierbei nicht mehr aus. Diese physikalischen Grenzen motivieren die in Kapitel \ref{chap:thermik} folgende Dimensionierung eines dedizierten Kühlkörpers, welcher die Wärme zuverlässig aus dem kompakten System abführt.
 %============================================================================
 
 %============================================================================
 \section{Gate-Treiber}
-\todo[inline]{Beschreibung des gewählten Treibers, Totzeiten, Schutzfunktionen, Ansteuerlogik.}
+\label{sec:gate_treiber}
+
+Zur Ansteuerung der N-Kanal-MOSFETs in der B6-Brücke wird der Halbbrücken-Treiber IR2104 eingesetzt \cite{DS_IR2104}. Seine primäre Aufgabe besteht darin, die $3{,}3\,\mathrm{V}$-Logiksignale des STM32-Mikrocontrollers auf das benötigte Spannungsniveau von $12\,\mathrm{V}$ anzuheben, um die Transistoren sicher in den tiefen Sättigungsbereich zu steuern. 
+
+Der IR2104 zeichnet sich durch eine komplementäre Ansteuerlogik aus \cite{DS_IR2104}. Mit nur einem einzigen PWM-Eingangssignal (IN) steuert der Baustein sowohl den High-Side- als auch den inversen Low-Side-Ausgang (HO und LO). Diese interne Logik erzwingt hardwareseitig die Umsetzung der aktiven Synchrongleichrichtung, bei der der Low-Side-MOSFET während der PWM-Ausschaltphase den Freilaufstrom übernimmt und so die thermische Belastung der Systemarchitektur im Vergleich zur passiven Freilaufdiode maßgeblich reduziert.
+Ein kritischer Aspekt bei der Verwendung einer komplementären Ansteuerung ist die Vermeidung eines gleichzeitigen Leitzustands beider Transistoren einer Halbbrücke, was unweigerlich zu einem zerstörerischen Kurzschluss (Shoot-Through) im Zwischenkreis führen würde. Um dies abzusichern, verfügt der IR2104 über eine fest integrierte Totzeit (Deadtime) von typischerweise $t_{\mathrm{dt}} = 520\,\mathrm{ns}$ \cite{DS_IR2104}. Während dieses transienten Intervalls bei jedem Umschaltvorgang bleiben zwingend beide Gate-Ausgänge auf einem niedrigen Pegel, sodass der Phasenstrom in dieser Zeitspanne sicher über die Body-Diode des Low-Side-MOSFETs abfließt.
+Darüber hinaus integriert der Treiber wesentliche Schutzfunktionen für den zuverlässigen Betrieb der Leistungsendstufe. Eine Unterspannungsabschaltung überwacht kontinuierlich die Versorgungs- und Bootstrap-Spannung. Fällt das Potenzial unter einen definierten Schwellenwert, sperrt der Treiber die Ausgänge \cite{DS_IR2104}. Dies verhindert, dass die MOSFETs mit unzureichender Gate-Spannung betrieben werden, was andernfalls zu einem drastischen Anstieg des Einschaltwiderstands und folglich zur thermischen Zerstörung durch erhöhte Leitverluste führen würde.
+
+Zusätzlich verfügt der IR2104 über einen invertierten Shutdown-Eingang ($\overline{\mathrm{SD}}$), der direkt an die Hardware-Enable-Logik des STM32 angebunden ist \cite{DS_IR2104}. Diese Schnittstelle ermöglicht es der Firmware, im Falle eines erkannten Systemfehlers, wie beispielsweise einem physikalisch unplausiblen Hall-Sensor-Zustand, alle Gate-Treiber verzögerungsfrei zu deaktivieren und die vorgesehene Notabschaltung (Emergency Stop) durchzusetzen.
 
 \section{Bootstrap}
 \label{sec:bootstrap}
 
 Für die Ansteuerung der High-Side-MOSFETs in der Halbbrücke wird ein Bootstrap-Konzept verwendet, bei dem ein Kondensator als kurzzeitige, schwimmende Spannungsquelle dient. Dieser \emph{Bootstrap-Kondensator} wird während der Leitphase des Low-Side-MOSFETs aufgeladen und liefert die notwendige Energie, um das Gate des High-Side-Schalters vollständig durchzusteuern. 
-Ist die Bootstrap-Schaltung unzureichend dimensioniert, fällt die Gate-Spannung während der Einschaltzeit des High-Side-MOSFETs unter den Schwellenwert. Dies würde zu einem drastischen Anstieg der Leitverluste oder zum Auslösen der Unterspannungsabschaltung (UVLO) des Treibers führen.
-
+Ist die Bootstrap-Schaltung unzureichend dimensioniert, fällt die Gate-Spannung während der Einschaltzeit des High-Side-MOSFETs unter den Schwellenwert. Dies würde zu einem drastischen Anstieg der Leitverluste oder zum Auslösen der Unterspannungsabschaltung des Treibers führen.
 Die Dimensionierung des Bootstrap-Kondensators basiert auf der Gesamtladung, die während einer Schaltperiode bereitgestellt werden muss. Diese setzt sich aus der Gate-Ladung des MOSFETs, dem Energiebedarf des Level-Shifters im Treiber sowie den Verlusten durch transiente Leckströme zusammen. 
 Für die vorliegende Schaltung mit dem MOSFET IPP034N08N5 und dem Treiber IR2104 wurde die Berechnung auf Basis der Hersteller-Datenblätter sowie der Applikationsschrift AN-6076 \cite{AN6076} durchgeführt. 
-Hierbei wurden alle relevanten Parameter wie extrapoliertem $Q_{\mathrm{Gate}}$, parasitäre Leckströme und die maximale Einschaltdauer im Worst-Case berücksichtigt.
+Hierbei wurden alle relevanten Parameter wie extrapoliertem $Q_{\mathrm{Gate}}$, parasitäre Leckströme und die maximale Einschaltdauer im Worst-Case berücksichtigt. Die detaillierte, schrittweise Berechnung des Bootstrap-Netzwerks inklusive aller Zwischenwerte ist in Anhang \ref{app:bootstrap} dokumentiert.
 
 In Tabelle \ref{tab:bootstrap_params} sind die wesentlichen Größen der Dimensionierung zusammengefasst:
 
@@ -311,7 +318,20 @@ In Tabelle \ref{tab:bootstrap_params} sind die wesentlichen Größen der Dimensi
 \end{table}
 
 Auf Basis dieser Analyse wurde für die praktische Umsetzung ein Keramikkondensator mit $220\,\mathrm{nF}$ gewählt. Die Überdimensionierung kompensiert Fertigungstoleranzen, thermische Alterungseffekte sowie den unvermeidlichen Kapazitätsverlust von Keramikkondensatoren unter DC-Bias-Spannung. 
-Die detaillierte, schrittweise Berechnung des Bootstrap-Netzwerks inklusive aller Zwischenwerte ist in Anhang \ref{app:bootstrap} dokumentiert.
+
 
 \section{Zwischenkreis}
-\todo[inline]{Dimensionierung des DC-Links: Kapazität, Ripple, Wahl der Elkos und Spannungsreserve.}
+\label{sec:zwischenkreis}
+
+Der Gleichspannungszwischenkreis (DC-Link) stellt das energetische Bindeglied zwischen der Akkumulator-Stromversorgung und der hochfrequent taktenden B6-Brücke dar \cite{DS_IR2104}. Da die parasitären Leitungsinduktivitäten des $36\,\mathrm{V}$-Akkumulators eine verzögerungsfreie Bereitstellung der steilflankigen Motorströme physikalisch verhindern, muss die Energie lokal auf der Leiterplatte gepuffert werden \cite{DS_IR2104}. Andernfalls käme es zu massiven Spannungseinbrüchen im Takt der Schaltfrequenz. Die Dimensionierung des Zwischenkreises gliedert sich primär in die Auslegung der Bulk-Kapazitäten zur Ripple-Strom-Pufferung sowie die hochfrequente Entkopplung der Leistungsschalter.
+
+\subsection{Spannungsreserve und Bulk-Kapazität}
+Wie in den Systemanforderungen (vgl. Abschnitt \ref{sec:anforderungen_spezifikationen}) definiert, beträgt die maximale Ladeschlussspannung des Akkumulators $42\,\mathrm{V}$. Zur Gewährleistung eines sicheren Betriebs auch im rekuperativen Modus, in dem die Spannung im Zwischenkreis dynamisch ansteigen kann, werden ausnahmslos Elektrolytkondensatoren (Elkos) mit einer Nennspannungsfestigkeit von $63\,\mathrm{V}$ eingesetzt. Dies erfüllt die geforderte Spannungsreserve von mindestens $60\,\mathrm{V}$.
+
+Bei der Auslegung der Elkos für Motorinverter ist weniger der absolute Kapazitätswert entscheidend als vielmehr die zulässige Ripple-Strom-Belastbarkeit (Ripple Current Rating) sowie ein minimaler äquivalenter Serienwiderstand (ESR). Die taktenden Halbbrücken generieren bei einem Blockstrom von $I_{\mathrm{Block}} = 42{,}4\,\mathrm{A}$ erhebliche Wechselstromanteile im Zwischenkreis. Ein zu hoher ESR würde quadratisch ($P_{\mathrm{ESR}} = I_{\mathrm{Ripple}}^2 \cdot R_{\mathrm{ESR}}$) zu einer massiven Eigenerwärmung und langfristig zur Austrocknung oder Zerstörung der Kondensatoren führen. 
+Um den geforderten Effektivstrom aufzuteilen und den parasitären Gesamtwiderstand der Anordnung zu minimieren, wird statt eines einzelnen großen Kondensators eine Parallelschaltung mehrerer impedanzarmer (Low-ESR) Aluminium-Elektrolytkondensatoren realisiert. 
+
+\subsection{Kapazitive Entkopplung und Transientenbegrenzung}
+Trotz eines niedrigen ESR weisen Elektrolytkondensatoren bauartbedingt eine parasitäre Serieninduktivität (ESL) auf, weshalb sie hochfrequente Schalttransienten im Megahertz-Bereich nicht filtern können. Bei der Kommutierung der hohen Phasenströme ($di/dt$) rufen jedoch bereits geringste Streuinduktivitäten im Leiterplattenlayout (Kommutierungskreis) signifikante Überspannungsspitzen hervor.
+
+Um die MOSFETs vor einem Überschreiten der $80\,\mathrm{V}$-Durchbruchspannung zu schützen, ist eine konsequente kapazitive Entkopplung zwingend erforderlich. Hierfür werden X7R-Keramikkondensatoren (MLCCs) mit Werten von typischerweise $1\,\mu\mathrm{F}$ und $100\,\mathrm{nF}$ physisch so nah wie möglich an den Drain- und Source-Anschlüssen der jeweiligen Halbbrücken platziert. Durch ihre extrem geringe Impedanz bei hohen Frequenzen schließen sie die transienten Spannungsspitzen lokal kurz, stabilisieren das Schaltverhalten der MOSFETs und reduzieren parallel die leitungsgebundenen EMV-Störaussendungen des Gesamtsystems.

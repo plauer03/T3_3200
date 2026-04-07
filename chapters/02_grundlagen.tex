@@ -175,7 +175,7 @@ Die hardwarenahe und robusteste Methode zur Ansteuerung ist die sogenannte Block
     \end{tabular}
 \end{table}
 
-Um das erzeugte Drehmoment regeln zu können, werden die MOSFETs der aktiven Phasen mit einem pulsweitenmodulierten Signal (PWM) hochfrequent getaktet. Das sich ergebende Tastverhältnis $d$ moduliert die anliegende effektive Phasenspannung gemäß der Relation $\bar{v}_{\mathrm{ph}} = d \cdot V_{\mathrm{DC}}$ und bestimmt somit den mittleren Motorstrom.
+In der hier verwendeten Blockkommutierung sind die Phasenströme nicht sinusförmig, sondern werden idealerweise als 120° breite Stromblöcke eingeprägt, die mit den flachen Dächern der trapezförmigen BEMF überlappen. Der Effektivwert \(I\text{RMS}\) eines Stroms ist allgemein über eine elektrische Periode als quadratischer Mittelwert definiert und gilt unabhängig von der Stromform. Für einen idealen 120°-Blockstrom ergibt sich daraus $I_\mathrm{RMS}=\sqrt{2/3}$. In dieser Arbeit wird der Nennstrom des Motors jedoch zunächst als äquivalenter sinusförmiger Phasenstrom angegeben und anschließend in einen zugehörigen Block-Spitzenstrom umgerechnet, der für die elektrische und thermische Auslegung maßgeblich ist. Um das erzeugte Drehmoment regeln zu können, werden die MOSFETs der aktiven Phasen mit einem pulsweitenmodulierten Signal (PWM) hochfrequent getaktet. Das sich ergebende Tastverhältnis $d$ moduliert die anliegende effektive Phasenspannung gemäß der Relation $\bar{v}_{\mathrm{ph}} = d \cdot V_{\mathrm{DC}}$ und bestimmt somit den mittleren Motorstrom.
 
 \subsection{Begründung der Verfahrenswahl}
 \label{subsec:verfahrenswahl}
@@ -187,7 +187,7 @@ Während diese lineare Interpolation bei stationären Drehzahlen zufriedenstelle
 
 \subsection{Vierquadrantenbetrieb und Rekuperation}
 \label{subsec:rekuperation}
-Ein Traktionsantrieb muss neben dem motorischen Betrieb auch das aktive Bremsen beherrschen. Da der BLDC-Motor bei Rotation eine Spannung in den Statorwicklungen induziert, kann er kinetische Energie in elektrische Energie umwandeln. 
+Ein Traktionsantrieb muss neben dem motorischen Betrieb auch das aktive Bremsen beherrschen. Da der BLDC-Motor bei Rotation eine Spannung in den Statorwicklungen induziert, kann er kinetische Energie in elektrische Energie umwandeln.
 Da die induzierte Gegenspannung bei niedrigen Drehzahlen oft geringer ist als die Zwischenkreisspannung, wird die B6-Brücke in diesem Zustand leistungselektronisch als aktiver Aufwärtswandler betrieben. Durch geeignetes Takten der Low-Side-Transistoren wird magnetische Energie in den Motorinduktivitäten zwischengespeichert und anschließend auf das höhere Spannungsniveau des Zwischenkreises gepumpt. Qualitativ vertauschen sich beim Übergang vom motorischen in den generatorischen Betrieb lediglich die Rollen der taktenden und freilaufenden Schalter.
 
 \subsection{Prinzip der Phasenstromerfassung}

@@ -1,0 +1,29 @@
+\section{Gesamtschaltplan}
+\label{app:schaltplan_gesamt}
+
+Die folgenden Seiten dokumentieren den vollständigen hardwareseitigen Entwurf des BLDC-Motorcontrollers, erstellt in KiCad 9.0.7.
+
+% --- Seite 1: Direkt unter dem Text ---
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[page=1, angle=90, width=1\textwidth, height=0.85\textheight, keepaspectratio]{schaltplan_gesamt.pdf}
+    \caption{KiCad Schaltplan: Spannungsversorgung und Hierarchie-Übersicht}
+\end{figure}
+
+\clearpage % Erzwingt neue Seite für den nächsten Plan
+
+% --- Seite 2 ---
+\begin{figure}[p]
+    \centering
+    \includegraphics[page=2, angle=90, width=1\textwidth, height=1\textheight, keepaspectratio]{schaltplan_gesamt.pdf}
+    \caption{KiCad Schaltplan: STM32 NUCLEO-Anbindung und IR2104 Gate-Treiber}
+\end{figure}
+
+\clearpage
+
+% --- Seite 3 ---
+\begin{figure}[p]
+    \centering
+    \includegraphics[page=3, angle=90, width=1\textwidth, height=1\textheight, keepaspectratio]{schaltplan_gesamt.pdf}
+    \caption{KiCad Schaltplan: B6-Inverterbrücke und INA181 Shunt-Messung}
+\end{figure}

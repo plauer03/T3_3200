@@ -56,7 +56,7 @@
 Dieser Anhang dokumentiert die mathematischen Zwischenschritte der in Abschnitt \ref{sec:verlustanalyse} durchgeführten Verlustleistungsberechnungen. Alle Rechnungen basieren auf den identifizierten Worst-Case-Szenarien ($I_{\mathrm{Block}} = 42{,}4\,\mathrm{A}$, $v_{\mathrm{i}} = 42\,\mathrm{V}$).
 
 \subsection{Leitverluste MOSFET (High-Side und Low-Side)}
-Es wird die Synchrongleichrichtung (IR2104) bei einer Sperrschichttemperatur von $T_{\mathrm{J}} = 100^\circ\mathrm{C}$ ($R_{\mathrm{DS(on)}} = 0{,}0048\,\Omega$) abgebildet. 
+Es wird die Synchrongleichrichtung (IR2104) bei einer Sperrschichttemperatur von $T_{\mathrm{J,design}} = 100^\circ\mathrm{C}$ ($R_{\mathrm{DS(on)}} = 0{,}0048\,\Omega$) abgebildet. 
 
 \textbf{Worst-Case High-Side-Schalter} (Maximale Aussteuerung $d=1$):
 \begin{align}
@@ -64,10 +64,10 @@ Es wird die Synchrongleichrichtung (IR2104) bei einer Sperrschichttemperatur von
     P_{\mathrm{HS,c}} &= 599{,}25\,\mathrm{A}^2 \cdot 0{,}0048\,\Omega \approx 2{,}88\,\mathrm{W}
 \end{align}
 
-\textbf{Worst-Case Low-Side-Schalter} (Maximaler Freilauf bei Anlauf $d=0{,}1$):
+\textbf{Worst-Case Low-Side-Schalter} (Maximaler Freilauf bei Anlauf $d=0$):
 \begin{align}
-    I_{\mathrm{LS,RMS}}^2 &= (42{,}4\,\mathrm{A})^2 \cdot \frac{1}{3} \cdot (2 - 0{,}1) = 1797{,}76\,\mathrm{A}^2 \cdot \frac{1}{3} \cdot 1{,}9 \approx 1138{,}58\,\mathrm{A}^2 \\
-    P_{\mathrm{LS,c}} &= 1138{,}58\,\mathrm{A}^2 \cdot 0{,}0048\,\Omega \approx 5{,}47\,\mathrm{W}
+    I_{\mathrm{LS,RMS}}^2 &= (42{,}4\,\mathrm{A})^2 \cdot \frac{1}{3} \cdot (2 - 0) = 1797{,}76\,\mathrm{A}^2 \cdot \frac{1}{3} \cdot 2 \approx 1138{,}58\,\mathrm{A}^2 \\
+    P_{\mathrm{LS,c}} &= 1138{,}58\,\mathrm{A}^2 \cdot 0{,}0048\,\Omega \approx 5{,}75\,\mathrm{W}
 \end{align}
 
 \subsection{Schaltverluste (High-Side)}

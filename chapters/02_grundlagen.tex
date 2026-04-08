@@ -179,7 +179,7 @@ In der hier verwendeten Blockkommutierung sind die Phasenströme nicht sinusför
 
 \subsection{Begründung der Verfahrenswahl}
 \label{subsec:verfahrenswahl}
-In der modernen Antriebstechnik hat sich neben der Blockkommutierung die Raumzeigermodulation (SVPWM) als Standard etabliert. Dabei wird ein kontinuierlich rotierender Spannungsraumzeiger durch eine präzise Überlagerung aller drei Halbbrücken generiert. Theoretisch bietet die SVPWM eine um den Faktor $2/\sqrt{3} \approx 1{,}15$ bessere Ausnutzung der Zwischenkreisspannung sowie eine Reduktion der Drehmomentwelligkeit wie in \cite{Xia2012} beschrieben.
+In der modernen Antriebstechnik hat sich neben der Blockkommutierung die Raumzeigermodulation (SVPWM) als Standard etabliert. Dabei wird ein kontinuierlich rotierender Spannungsraumzeiger durch eine präzise Überlagerung aller drei Halbbrücken generiert. Theoretisch bietet die SVPWM eine um den Faktor $2\cdot\sqrt{3}^{-1} \approx 1{,}15$ bessere Ausnutzung der Zwischenkreisspannung sowie eine Reduktion der Drehmomentwelligkeit wie in \cite{Xia2012} beschrieben.
 
 Für den im Rahmen dieser Arbeit konzipierten Motorcontroller wird jedoch bewusst auf eine SVPWM zugunsten der robusten Blockkommutierung verzichtet. Die Ursache liegt in den systembedingten Einschränkungen der Rotorlageerfassung. Die SVPWM erfordert zur exakten Vektorsynthese einen kontinuierlichen und hochaufgelösten Rotorwinkel. Da die vorhandenen Hall-Sensoren jedoch lediglich eine diskrete Auflösung von $60^\circ$ aufweisen, müsste der Winkel zwischen zwei Schaltflanken vom Mikrocontroller zeitbasiert interpoliert werden. 
 
@@ -193,7 +193,7 @@ Da die induzierte Gegenspannung bei niedrigen Drehzahlen oft geringer ist als di
 \subsection{Prinzip der Phasenstromerfassung}
 \label{subsec:stromerfassung}
 Für einen sicheren Betrieb ist die Kenntnis des Phasenstroms unerlässlich. Bei hochdynamischen Lastwechseln oder einer mechanischen Blockade des Rotors verschwindet die induzierte Gegenspannung ($e_U \approx 0$). Gemäß der Spannungsgleichung \ref{eq:phase_voltage} würde die anliegende Spannung in diesem Moment nur durch den sehr geringen ohmschen Wicklungswiderstand begrenzt werden, was physikalisch zu zerstörerischen Kurzschlussströmen führt. 
-Um diesen Strom in einer B6-Brücke mit Blockkommutierung messtechnisch zu erfassen, hat sich die Single-Shunt-Topologie etabliert. Hierbei wird ein einzelner, niederohmiger Messwiderstand (Shunt) in den gemeinsamen Rückleiterpfad (GND) der drei Low-Side-Halbbrücken platziert. Da bei der Blockkommutierung stets exakt eine Phase den Hin- und eine Phase den Rückstrom führt, entspricht der im Gleichspannungszwischenkreis gemessene Stromwert betragsmäßig dem aktuell fließenden Phasenstrom.
+Um diesen Strom in einer B6-Brücke mit Blockkommutierung messtechnisch erfassen zu können, wird eine Single-Shunt-Topologie verwendet. Hierbei wird ein einzelner, niederohmiger Messwiderstand (Shunt) in den gemeinsamen Rückleiterpfad (GND) der drei Low-Side-Halbbrücken platziert. Da bei der Blockkommutierung stets exakt eine Phase den Hin- und eine Phase den Rückstrom führt, entspricht der im Gleichspannungszwischenkreis gemessene Stromwert betragsmäßig dem aktuell fließenden Phasenstrom.
 
 % ============================================================
 % 2.5 Verlustmechanismen
@@ -483,7 +483,7 @@ Die während dieser Zeitspanne im MOSFET dissipierte Energie $E_\mathrm{MOS,off}
     \label{eq:energie_ausschaltvorgang}
 \end{equation}
 
-Die dynamischen Umschaltverluste des Transistors hängen folglich maßgeblich von der gewählten Umschaltfrequenz $f_\mathrm{sw}$ ab. Die Gesamtschaltverlustleistung resultiert aus den berechneten Schaltenergien $E_\mathrm{MOS,on}$ und $E_\mathrm{MOS,off}$:
+Die dynamischen Umschaltverluste des Transistors hängen folglich maßgeblich von der gewählten Umschaltfrequenz $f_\mathrm{sw}$ ab. Die Gesamtschaltverlustleistung $P_\mathrm{MOS,sw}$ resultiert aus den berechneten Schaltenergien $E_\mathrm{MOS,on}$ und $E_\mathrm{MOS,off}$:
 
 \begin{equation}
     P_\mathrm{MOS,sw} = P_\mathrm{MOS,on} + P_\mathrm{MOS,off} = f_\mathrm{sw} \cdot (E_\mathrm{MOS,on} + E_\mathrm{MOS,off})

@@ -2,6 +2,26 @@
 \label{chap:aufbau_messungen}
 
 \section{Hardwareaufbau}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{tikzpicture}
+        % Bild
+        \node[inner sep=0] (img) {\includegraphics[width=1\textwidth]{images/schaltplan.pdf}};
+        
+        % Entwurf-Banner
+        \node at (img.center) [
+            rotate=0,
+            scale=5,
+            text opacity=0.35,
+            color=red
+        ] {};
+    \end{tikzpicture}
+    \caption{Blockschaltplan des BLDC Controllers.}
+    \label{fig:block_circuit}
+\end{figure}
+
+
 \todo[inline]{Text: Aufbau des Prototyps beschreiben (THT-Aufbau oder Lochraster).}
 \todo[inline]{Text: Stromführung, Leiterquerschnitte und Bauteilplatzierung erläutern.}
 \todo[inline]{Text: Besonderheiten im Layout, z.B. Kühlkörper, EMV-relevante Punkte.}

@@ -1,52 +1,169 @@
 \chapter{Thermische Auslegung}
 \label{chap:thermik}
 
+Um die Betriebssicherheit der Endstufe zu gewährleisten, ist es notwendig, die thermische Auslegung systematisch zu betrachten. Dies beinhaltet die Abschätzung der maximalen Sperrschichttemperatur der Halbleiter und die Dimensionierung des Kühlkörpers, sodass die Verlustleistung zuverlässig abgeführt wird.
+
 \section{Wärmewiderstandsmodell}
-\label{sec:thermik}
+\label{sec:thermik_modell}
 
-Um die Betriebssicherheit der Endstufe zu gewährleisten, muss sichergestellt werden, dass die maximal zulässige Sperrschichttemperatur $T_{\mathrm{J,max}}$ der Halbleiter unter keinen Umständen überschritten wird. Hierzu bedient man sich eines thermischen Modells. Dabei wird angenommen, dass der entstandene Wärmestrom ($P_{\mathrm{tot}}$) von der innersten Wärmequelle (Junction) über verschiedene thermische Widerstände ($R_{\mathrm{th}}$) bis zur Umgebungsluft (Ambient) abfließt.
-
-Im eingeschwungenen, stationären Zustand lässt sich die resultierende Sperrschichttemperatur nach Gleichung \ref{eq:thermik} berechnen:
-
+Um die Betriebssicherheit der Endstufe zu gewährleisten, muss sichergestellt werden, dass die maximal zulässige Sperrschichttemperatur $T_{\mathrm{J,max}}$ der Halbleiter unter keinen Umständen überschritten wird. Hierzu wird ein stationäres thermisches Widerstandsmodell herangezogen. Es wird angenommen, dass die in der Sperrschicht entstehende Verlustleistung $P_{\mathrm{tot}}$ als Wärmestrom von der innersten Wärmequelle (Junction) über verschiedene thermische Widerstände $R_{\mathrm{th}}$ bis zur Umgebungsluft (Ambient) abgeführt wird.
+Im eingeschwungenen, stationären Zustand lässt sich die resultierende Sperrschichttemperatur nach folgender Gleichung berechnen:
 \begin{equation}
-    T_\mathrm{J} = T_\mathrm{A} + P_{\mathrm{tot}} \cdot (R_{\mathrm{th,JC}} + R_{\mathrm{th,CS}} + R_{\mathrm{th,SA}})
+    T_\mathrm{J} = T_\mathrm{A} + P_{\mathrm{tot}} \cdot \bigl(R_{\mathrm{th,JC}} + R_{\mathrm{th,CS}} + R_{\mathrm{th,SA}}\bigr)
     \label{eq:thermik}
 \end{equation}
 
 Die partiellen Wärmewiderstände beschreiben dabei folgende physikalische Übergänge:
 \begin{itemize}
-    \item $R_{\mathrm{th,JC}}$ (Junction-to-Case): Der innere Wärmewiderstand des MOSFET-Gehäuses, spezifiziert im Datenblatt.
-    \item $R_{\mathrm{th,CS}}$ (Case-to-Sink): Der thermische Übergangswiderstand des Montagematerials, beispielsweise einer Wärmeleitfolie oder Wärmeleitpaste.
-    \item $R_{\mathrm{th,SA}}$ (Sink-to-Ambient): Der thermische Widerstand des Kühlkörpers zur umgebenden Luft, abhängig von Oberfläche und Luftstrom.
+    \item $R_{\mathrm{th,JC}}$ (Junction-to-Case): Innerer Wärmewiderstand des MOSFET-Gehäuses (zwischen Sperrschicht und Gehäuse), im Datenblatt des IPP034N08N5 mit maximal $R_{\mathrm{th,JC}} = 0{,}9\,\mathrm{K/W}$ angegeben.
+    \item $R_{\mathrm{th,CS}}$ (Case-to-Sink): Thermischer Übergangswiderstand zwischen Gehäuse und Kühlkörper, bestimmt durch das Montagematerial. Für die verwendeten Silikon-Isolierpads ist ein Wert von $R_{\mathrm{th,CS}} = 0{,}45\,\mathrm{K/W}$ angegeben.
+    \item $R_{\mathrm{th,SA}}$ (Sink-to-Ambient): Thermischer Widerstand des Kühlkörpers zur umgebenden Luft, abhängig von Oberfläche, Geometrie und Luftstrom.
 \end{itemize}
 
-Dieses thermische System kann analog zu einem elektrischen Netzwerk in einer thermischen Ersatzschaltung abgebildet werden, wie Abbildung \ref{fig:thermal_esb} verdeutlicht. Es ermöglicht die einfache Berechnung der Temperaturabfälle mittels der Kirchhoffschen Maschengleichungen.
+Dieses thermische System kann analog zu einem elektrischen Netzwerk in einem thermischen ESB abgebildet werden (siehe Abbildung~\ref{fig:thermal_esb}). Die Temperaturdifferenzen ergeben sich dabei analog zur Ohmschen Beziehung als Produkt aus Wärmestrom und Wärmewiderstand.
 
-\begin{figure}[htbp]
-    \centering
-    \begin{tikzpicture}
-        % Paths, nodes and wires:
-        \draw (6, -6) to[european current source, l={$P_\mathrm{tot}$}] (6, -9);
-        \draw (6, -6) to[european resistor, l={$R_\mathrm{th,JC}$}] (9, -6);
-        \draw (9, -6) to[european resistor, l={$R_\mathrm{th,CS}$}] (12, -6);
-        \draw (12, -9) to[european resistor, l={$R_\mathrm{th,SA}$}] (12, -6);
-        \draw (6, -9) -- (12, -9);
-        \node[ground] at (12, -9){};
-        \node[circ](N1) at (6, -6){} node[anchor=south] at (N1.north){$T_\mathrm{J}$};
-        \node[circ](N2) at (12, -9){} node[anchor=west] at (N2.east){$T_\mathrm{A}$};
-    \end{tikzpicture}
-    \caption{Stationäres thermisches ESB eines gekühlten MOSFETs.}
-    \label{fig:thermal_esb}
+\begin{figure}[htbp] 
+    \centering 
+    \begin{tikzpicture} % Paths, nodes and wires: 
+    \draw (6, -6) to[european current source, l={$P_\mathrm{tot}$}] (6, -9); \draw (6, -6) to[european resistor, l={$R_\mathrm{th,JC}$}] (9, -6); \draw (9, -6) to[european resistor, l={$R_\mathrm{th,CS}$}] (12, -6); \draw (12, -9) to[european resistor, l={$R_\mathrm{th,SA}$}] (12, -6); \draw (6, -9) -- (12, -9); \node[ground] at (12, -9){}; \node[circ](N1) at (6, -6){} node[anchor=south] at (N1.north){$T_\mathrm{J}$}; \node[circ](N2) at (12, -6){} node[anchor=west] at (N2.east){$T_\mathrm{S}$};
+    \node[circ](N2) at (12, -9){} node[anchor=west] at (N2.east){$T_\mathrm{A}$};
+    \end{tikzpicture} 
+    \caption{Stationäres thermisches ESB eines gekühlten MOSFETs.} 
+    \label{fig:thermal_esb} 
 \end{figure}
 
+\section{Bestimmung des thermischen Anforderungsprofils}
+\label{sec:thermik_anforderung}
 
-Die Aufstellung dieser Wärmekette verdeutlicht, dass eine rein elektrische Betrachtung für die Auslegung von Leistungselektronik nicht ausreichend ist. Erst die Verknüpfung des elektrischen Verlustmodells mit der thermischen Analyse validiert die ausgewählten Komponenten für den Nennbetrieb.
+Auf Basis der Verlustanalyse aus Abschnitt~\ref{sec:verlustanalyse} wird für die thermische Dimensionierung die kumulierte Verlustleistung der drei Halbbrücken im Worst-Case-Betriebspunkt herangezogen. Die Gesamtabwärme des Inverters beträgt $P_{\mathrm{tot}} = 28{,}56\,\mathrm{W}$.
+Ziel der Auslegung ist es, die Sperrschichttemperatur des thermisch kritischsten LS-MOSFETs ($P_{\mathrm{LS}} = 6{,}02\,\mathrm{W}$) bei einer maximalen Umgebungstemperatur von $T_{\mathrm{A,max}} = 40\,^{\circ}\mathrm{C}$ unterhalb der Designgrenze von $T_{\mathrm{J,design}} = 100\,^{\circ}\mathrm{C}$ zu halten. Durch Umformung von Gleichung~\eqref{eq:thermik} ergibt sich der maximal zulässige Wärmewiderstand des Kühlkörpers $R_{\mathrm{th,SA,max}}$ zu:
 
-\section{Temperaturberechnung}
-\todo[inline]{Berechnung der MOSFET- und Treiber-Temperaturen unter Nennlast.}
+\begin{equation}
+    R_{\mathrm{th,SA,max}} = \frac{T_{\mathrm{J,design}} - T_{\mathrm{A,max}} - P_{\mathrm{LS}} \cdot (R_{\mathrm{th,JC}} + R_{\mathrm{th,CS}})}{P_{\mathrm{tot}}}
+\end{equation}
 
-\section{Kühlkörperdimensionierung}
-\todo[inline]{Ermittlung der notwendigen Kühlfläche und ggf. Lüfterunterstützung.}
+Eingesetzt ergibt sich:
+\begin{equation}
+    R_{\mathrm{th,SA,max}} = \frac{100\,^{\circ}\mathrm{C} - 40\,^{\circ}\mathrm{C} - 6{,}02\,\mathrm{W} \cdot (0{,}9\,\mathrm{K/W} + 0{,}45\,\mathrm{K/W})}{28{,}56\,\mathrm{W}} \approx 1{,}82\,\mathrm{K/W}
+\end{equation}
 
-\section{Worst-Case-Betrachtung}
-\todo[inline]{Analyse extremer Bedingungen: maximale Umgebungstemperatur, Dauerlast, kurzzeitige Lastspitzen.}
+Diese Berechnung belegt, dass für einen dauerhaften Betrieb unter theoretischen Volllast-Bedingungen ein leistungsfähiger Kühlkörper mit einem Wärmewiderstand von $\leq 1{,}82\,\mathrm{K/W}$ erforderlich ist.
+
+\section{Kritische Bewertung der Hardware-Realisierung}
+\label{sec:thermik_bewertung}
+
+Die Gegenüberstellung der theoretischen Anforderungen mit der physischen Umsetzung des Prototyps zeigt, dass die angestrebte rein passive Kühlung nicht ausreicht. Für einen sicheren Dauerbetrieb im Worst-Case-Betriebspunkt ist ein maximal zulässiger Wärmewiderstand des Kühlkörpers von $R_{\mathrm{th,SA,max}} \approx 1{,}82\,\mathrm{K/W}$ erforderlich, wie in Abschnitt~\ref{sec:thermik_anforderung} berechnet. Der eingesetzte Aluminium-Rippenkühlkörper, dessen Konstruktion in Abbildung~\ref{fig:kuehlkoerper_3d} maßstäblich dargestellt ist, erreicht bei seinen kompakten Abmessungen von $78 \times 20 \times 10\,\mathrm{mm}$ unter rein passiver Konvektion jedoch nur einen geschätzten Wert von $R_{\mathrm{th,SA,passiv}} \approx 12\,\mathrm{K/W}$.
+
+Daraus folgt unmittelbar, dass die in Kapitel~\ref{chap:anforderungen} als Ziel gesetzte rein passive Entwärmung bei einer dauerhaften Verlustleistung von $28{,}56\,\mathrm{W}$ physikalisch nicht in der Lage ist, die Sperrschichttemperaturen unterhalb der Designgrenze von $100\,^{\circ}\mathrm{C}$ zu stabilisieren. Ohne zusätzliche Maßnahmen würde die Gehäusetemperatur im Volllastbetrieb rechnerisch Werte erreichen, die weit über der Schmelztemperatur der verwendeten Isoliermaterialien liegen.
+
+\begin{figure}[!ht]
+\centering
+\resizebox{0.8\textwidth}{!}{%
+\begin{circuitikz}
+% --- FÜLLUNGEN ---
+\def\dx{11.25}   % Tiefe
+\def\dy{5.625}   % Höhe der Schräge
+
+% Frontfläche der Rippen
+\fill[gray!30] (4.25,2.5) rectangle (7.5,4.25);
+
+% Rippen X-Positionen
+\foreach \x in {4.25,4.375,4.75,5.125,5.5,5.875,7.25,7.375} {
+    % Seiten der Rippen
+    \fill[gray!55] (\x+0.125,3) -- (\x+\dx+0.125,3+\dy) -- (\x+\dx+0.125,4.25+\dy) -- (\x+0.125,4.25) -- cycle;
+    % Oberseiten der Rippen
+    \fill[gray!20] (\x,4.25) -- (\x+0.125,4.25) -- (\x+0.125+\dx,4.25+\dy) -- (\x+\dx,4.25+\dy) -- cycle;
+}
+
+\fill[gray!30] (4.25,3) rectangle (4.5,4.25);
+\fill[gray!30] (4.75,3) rectangle (4.875,4.25);
+\fill[gray!30] (5.125,3) rectangle (5.25,4.25);
+\fill[gray!30] (5.5,3) rectangle (5.625,4.25);
+\fill[gray!30] (5.875,3) rectangle (6,4.25);
+\fill[gray!30] (7.25,3) rectangle (7.5,4.25);
+
+% Rechte Außenwand
+\fill[gray!55] (7.5,2.5) -- (7.5+\dx,2.5+\dy) -- (7.5+\dx,4.25+\dy) -- (7.5,4.25) -- cycle;
+
+\tikzstyle{every node}=[font=\fontsize{10.2pt}{13.3pt}\selectfont]
+\draw [short] (7.5,2.5) -- (18.75,8.125);
+\draw [short] (18.75,8.625) -- (18.75,8.125);
+\draw [short] (7.5,2.5) -- (4.25,2.5);
+\draw [{Stealth[scale=1.5]}-{Stealth[scale=1.5]}, ] (4.25,2) -- (7.5,2);
+\draw [{Stealth[scale=1.5]}-{Stealth[scale=1.5]}, ] (7.5,2) -- (18.75,7.75);
+\draw [short] (7.5,2.25) -- (7.5,1.75);
+\draw [short] (4.25,2.5) -- (4.25,4.25);
+\draw [short] (4.25,4.25) -- (4.5,4.25);
+\draw [short] (4.5,4.25) -- (4.5,3);
+\draw [short] (4.75,3) -- (4.75,4.25);
+\draw [short] (4.75,4.25) -- (4.875,4.25);
+\draw [short] (4.875,4.25) -- (4.875,3);
+\draw [short] (5.125,3) -- (5.125,4.25);
+\draw [short] (5.125,4.25) -- (5.25,4.25);
+\draw [short] (5.25,4.25) -- (5.25,3);
+\draw [short] (5.5,3) -- (5.5,4.25);
+\draw [short] (5.5,4.25) -- (5.625,4.25);
+\draw [short] (5.625,4.25) -- (5.625,3);
+\draw [short] (5.875,3) -- (5.875,4.25);
+\draw [short] (5.875,4.25) -- (6,4.25);
+\draw [short] (6,4.25) -- (6,3);
+\draw [short] (7.25,3) -- (7.25,4.25);
+\draw [short] (7.25,4.25) -- (7.5,4.25);
+\draw [short] (7.5,2.5) -- (7.5,4.25);
+\draw [short] (15.5,9.875) -- (15.75,9.875);
+\draw [short] (16,9.875) -- (16.125,9.875);
+\draw [short] (16.375,9.875) -- (16.5,9.875);
+\draw [short] (16.75,9.875) -- (16.875,9.875);
+\draw [short] (17.25,9.875) -- (17.125,9.875);
+\draw [short] (18.5,9.875) -- (18.75,9.875);
+\draw [short] (18.75,8.625) -- (18.75,9.875);
+\node [font=\fontsize{10.2pt}{13.3pt}\selectfont, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm] at (5.875,2) {20 mm};
+\node [font=\fontsize{10.2pt}{13.3pt}\selectfont, rotate around={27.6:(0,0)}, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm] at (13.75,5.25) {78 mm};
+
+\draw [short] (4.25,2.25) -- (4.25,1.75);
+\draw [short] (18.75,7.9375) -- (18.75,7.525);
+\draw [short] (15.75,9.75) -- (15.75,9.875);
+\draw [short] (4,2.5) -- (3.5,2.5);
+\draw [short] (4,4.25) -- (3.5,4.25);
+\draw [{Stealth[scale=1.5]}-{Stealth[scale=1.5]}, ] (3.75,4.25) -- (3.75,2.5);
+\node [font=\fontsize{10.2pt}{13.3pt}\selectfont, fill={rgb,255:red,255; green,255; blue,255}, fill opacity=1, text opacity=1, inner xsep=0.080cm, inner ysep=0.085cm, rounded corners=0.020cm] at (3.125,3.375) {10 mm};
+\draw [short] (7.5,4.25) -- (18.75,9.875);
+\draw [short] (7.25,4.25) -- (18.5,9.875);
+\draw [short] (5.875,4.25) -- (17.125,9.875);
+\draw [short] (6,4.25) -- (17.25,9.875);
+\draw [short] (5.5,4.25) -- (16.75,9.875);
+\draw [short] (5.625,4.25) -- (16.875,9.875);
+\draw [short] (5.125,4.25) -- (16.375,9.875);
+\draw [short] (5.25,4.25) -- (16.5,9.875);
+\draw [short] (4.75,4.25) -- (16,9.875);
+\draw [short] (4.875,4.25) -- (16.125,9.875);
+\draw [short] (4.25,4.25) -- (15.5,9.875);
+\draw [short] (4.5,4.25) -- (15.75,9.875);
+\draw [short] (7.25,3) -- (6,3);
+\draw [short] (17.25,9.875) -- (17.25,9.25);
+\draw [short] (5.125,3) -- (4.875,3);
+\draw [short] (5.5,3) -- (5.25,3);
+\draw [short] (5.875,3) -- (5.625,3);
+\draw [short] (4.75,3) -- (4.5,3);
+\draw [short] (16.125,9.75) -- (16.125,9.875);
+\draw [short] (16.5,9.75) -- (16.5,9.875);
+\draw [short] (16.875,9.75) -- (16.875,9.875);
+\draw [short] (6,3) -- (7.25,3.625);
+\draw [short] (5.625,3) -- (5.875,3.125);
+\draw [short] (5.25,3) -- (5.5,3.125);
+\draw [short] (4.875,3) -- (5.125,3.125);
+\draw [short] (4.5,3) -- (4.75,3.125);
+\end{circuitikz}
+}%
+\caption{Technische Darstellung des Aluminium-Rippenkühlkörpers.}
+\label{fig:kuehlkoerper_3d}
+\end{figure}
+
+Dass sich das Gesamtsystem unter realen Betriebsbedingungen dennoch stabil betreiben lässt, ist primär auf zwei wesentliche Faktoren zurückzuführen. Zum einen tritt die berechnete maximale Verlustleistung ausschließlich bei Erreichen des aktiven Stromlimits von $42{,}4\,\mathrm{A}$ auf, beispielsweise während eines Schweranlaufs oder im Falle einer mechanischen Blockade. In diesen zeitlich begrenzten Intervallen wirkt die thermische Zeitkonstante des massiven Aluminiumblocks als Puffer, der den Temperaturanstieg über mehrere Sekunden verzögert. Zum anderen erfährt der Motorcontroller eine signifikante thermische Entlastung durch parasitäre Kühlpfade, die in der konservativen Rechnung unberücksichtigt blieben. So verteilt die großflächige Anbindung der MOSFETs an die internen Masseflächen (GND-Planes) der Leiterplatte die Abwärme effektiv, während die massiven Kupferquerschnitte der Motor- und Batteriezuleitungen als zusätzliche Kühlkörper fungieren. 
+Um die Betriebssicherheit jedoch auch bei länger anhaltenden Hochlastphasen zweifelsfrei zu garantieren, wurde im Rahmen dieser Evaluation die Entscheidung getroffen, das Systemkonzept um eine aktive Belüftung mittels eines Axiallüfters zu ergänzen. Durch die erzwungene Konvektion sinkt der effektive Wärmewiderstand des Kühlkörpers in Abhängigkeit von Lüfterleistung und Luftgeschwindigkeit auf den Zielwert $R_{\mathrm{th,SA,aktiv}} \approx 1{,}5\,\mathrm{K/W}$, sodass die Sperrschichttemperaturen der Leistungshalbleiter sicher in den geforderten Zielbereich geführt werden.
+
+\section{Zusammenfassung der thermischen Analyse}
+\label{sec:thermik_zusammenfassung}
+
+Die thermische Analyse verdeutlicht, dass eine rein passive Kühlung für den theoretischen Worst-Case-Betrieb bei der vorliegenden Baugröße physikalisch nicht haltbar ist. Die Realisierbarkeit des Projekts wird stattdessen durch ein mehrstufiges Sicherheitskonzept ermöglicht, welches erst durch die hier durchgeführte Evaluation finalisiert wurde. 
+Die softwareseitige Cycle-by-Cycle-Strombegrenzung limitiert die maximale elektrische Belastung primär, die thermische Trägheit der Komponenten überbrückt transiente Lastspitzen, und die im Designprozess ergänzte aktive Belüftung stellt die notwendige Wärmeabfuhr für den stationären Betrieb sicher. Damit verbleiben die Leistungshalbleiter auch unter ungünstigen thermischen Randbedingungen sicher innerhalb ihrer spezifizierten SOA.

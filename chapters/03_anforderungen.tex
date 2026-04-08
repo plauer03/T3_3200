@@ -13,7 +13,6 @@ Das Antriebssystem basiert auf zwei bürstenlosen Gleichstrommotoren mit einer m
 Während des Betriebs können durch induktive Lastwechsel und parasitäre Leitungsinduktivitäten kurzzeitige Überspannungen auftreten. Ein weiterer relevanter Effekt ist der Spannungsanstieg im Zwischenkreis während generatorischer Betriebszustände (rekuperatives Bremsen). Um einen sicheren Betrieb im Vierquadrantenbetrieb zu gewährleisten, müssen alle leistungstragenden Komponenten (MOSFETs, Kondensatoren) für eine Spannungsfestigkeit von mindestens $60\,\mathrm{V}$ ausgelegt werden. Aus Gründen der Bauteilzuverlässigkeit wird eine Auslegungsreserve auf $80\,\mathrm{V}$ angestrebt.
 Bei einer Nennleistung von $400\,\mathrm{W}$ und $36\,\mathrm{V}$ ergibt sich im stationären Betrieb ein mittlerer Strom von etwa $11{,}1\,\mathrm{A}$ pro Motor. Um einen kraftvollen Anlauf aus dem Stillstand zu garantieren, wird die Endstufe für einen transienten, äquivalent sinusförmigen Phasen-Effektivstrom von $30\,\mathrm{A_{RMS}}$ dimensioniert, woraus für die verwendete Blockkommutierung konservativ ein zulässiger Block-Spitzenstrom von $42{,}4\,\mathrm{A}$ entspricht. Um das System vor den in Abschnitt \ref{subsec:stromerfassung} beschriebenen Überströmen zu schützen, ist eine hardwarenahe Strombegrenzung (Cycle-by-Cycle Current Limiting) zwingend erforderlich, welche den Maximalstrom strikt auf diese $42{,}4\,\mathrm{A}$ limitiert und die Obergrenze für die Safe Operating Area (SOA) bildet.
 
-Um zu garantieren, dass dieser Strom im Fehlerfall nicht überschritten und die Endstufe thermisch zerstört wird, ist eine hardwarenahe aktive Strombegrenzung (Cycle-by-Cycle Current Limiting) zwingend erforderlich. Diese muss den Maximalstrom strikt auf $42{,}4\,\mathrm{A}$ limitieren und bildet die Obergrenze für die Safe Operating Area (SOA) der Transistoren.
 
 \subsection{Thermische Randbedingungen}
 Die thermische Dimensionierung stellt eine der größten Herausforderungen beim Entwurf kompakter Motorcontroller dar. Das System muss in der Lage sein, die bei $42{,}4\,\mathrm{A}$ entstehenden Halbleiterverluste zuverlässig abzuführen. Als Randbedingung wird ein passives Kühlkonzept (Aluminium-Kühlkörper ohne erzwungene Konvektion) bei einer maximalen Umgebungstemperatur von $40\,^\circ\mathrm{C}$ definiert. 
@@ -34,11 +33,11 @@ Zur besseren Übersicht sind alle abgeleiteten Systemanforderungen in Tabelle \r
 Nominale Akkumulatorspannung & $V_{\mathrm{bat,nom}}$ & 36 & V \\
 Maximale Ladeschlussspannung & $V_{\mathrm{bat,max}}$ & 42 & V \\
 Geforderte Spannungsfestigkeit & $V_{\mathrm{DS,max}}$ & $\ge 60$ & V \\
-Maximales aktives Stromlimit & $I_{\mathrm{Block,max}}$ & 42,4 & A (Peak) \\
+Maximales aktives Stromlimit & $I_{\mathrm{Block,max}}$ & 42,4 & A) \\
 PWM-Schaltfrequenz & $f_{\mathrm{sw}}$ & 20 & kHz \\
 Logikpegel des Mikrocontrollers & $V_{\mathrm{logic}}$ & 3,3 & V \\
 Max. zulässige Umgebungstemperatur & $T_{\mathrm{A}}$ & 40 & $^\circ$C \\
-Thermische Auslegungsgrenze & $T_{\mathrm{J,max}}$ & 100 & $^\circ$C \\
+Thermische Auslegungsgrenze & $T_{\mathrm{J,design}}$ & 100 & $^\circ$C \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -127,9 +126,9 @@ Der Gleichspannungszwischenkreis wird durch Elektrolytkondensatoren realisiert u
 \section{Softwarekonzept und Zustandsautomat}
 \label{sec:softwarekonzept}
 
-Während die Hardware die physikalischen Leistungsgrenzen definiert, bestimmt die Architektur der Firmware die dynamische Reaktionsfähigkeit des Antriebs. Zur echtzeitfähigen Umsetzung der Blockkommutierung und der Systemüberwachung ist die Steuerungssoftware als deterministischer, strikt ereignisgesteuerter Zustandsautomat ausgeführt. 
-
-Die Architektur gliedert sich primär in zwei parallel ablaufende, hochpriorisierte Hardware-Interrupts. Die asynchrone Rotorlageerfassung (Position Control) und die synchrone Stromüberwachung (Current Control). Das funktionale Zusammenspiel dieser beiden Kernprozesse ist im Flussdiagramm in Abbildung \ref{fig:software_flowchart} detailliert dargestellt und wird im Folgenden erläutert.
+Während die Hardware die physikalischen Leistungsgrenzen definiert, bestimmt die Architektur der Firmware die dynamische Reaktionsfähigkeit des Antriebs. Zur echtzeitfähigen Umsetzung der Blockkommutierung und der Systemüberwachung ist die Steuerungssoftware als deterministischer, strikt ereignisgesteuerter Zustandsautomat ausgeführt. Der Fokus liegt dabei auf minimalen Latenzen, hoher zeitlicher Deterministik sowie einem definierten Fail-Safe-Verhalten.
+Die Architektur gliedert sich primär in zwei parallel ablaufende, hochpriorisierte Hardware-Interrupts: die asynchrone Rotorlageerfassung (Position Control) und die synchrone Stromüberwachung (Current Control). Beide Routinen sind so ausgelegt, dass sie unabhängig voneinander arbeiten, jedoch über gemeinsam genutzte Zustandsgrößen implizit gekoppelt sind. Die Priorisierung der Interrupts stellt sicher, dass zeitkritische Kommutierungsvorgänge stets deterministisch ausgeführt werden, während die Strombegrenzung als überlagerte Schutzfunktion wirkt.
+Das funktionale Zusammenspiel dieser beiden Kernprozesse ist im Flussdiagramm in Abbildung \ref{fig:software_flowchart} detailliert dargestellt und wird im Folgenden erläutert.
 
 \begin{figure}[htbp]
     \centering
@@ -141,28 +140,31 @@ Die Architektur gliedert sich primär in zwei parallel ablaufende, hochpriorisie
             >=stealth,
             font=\sffamily\scriptsize,
             node distance=1.3cm,
-            block/.style={draw=black!80, rectangle, fill=white, thick, minimum width=3.6cm, minimum height=0.7cm, align=center, rounded corners=1pt},
+            block/.style={draw=black!80, rectangle, fill=white, thick, minimum width=3.8cm, minimum height=0.7cm, align=center, rounded corners=1pt},
             decision/.style={draw=black!80, diamond, fill=white, thick, aspect=2, align=center, inner sep=2pt},
-            terminator/.style={draw=black!80, rounded corners=6pt, fill=black!10, thick, minimum width=3.6cm, minimum height=0.7cm, align=center},
+            terminator/.style={draw=black!80, rounded corners=6pt, fill=black!10, thick, minimum width=3.8cm, minimum height=0.7cm, align=center},
             line/.style={->, thick, draw=black!80}
         ]
 
         \node[terminator] (start) {EXTI Interrupt (Hall)};
         \node[block, below of=start] (read) {Read Hall Sensors};
-        \node[block, below of=read] (state) {Compute State Vector};
+        \node[block, below of=read] (state) {Compute Hall State (3-bit)};
         \node[decision, below of=state, yshift=-0.2cm] (valid) {Valid\\State?};
-        \node[block, below of=valid, yshift=-0.4cm] (lut) {LUT Mapping};
-        \node[block, below of=lut] (pwm) {Update PWM Channels};
+
+        \node[block, below of=valid, yshift=-0.4cm] (dir) {Apply Direction\\(Forward / Reverse)};
+        \node[block, below of=dir] (lut) {LUT Mapping\\(Sector)};
+        \node[block, below of=lut] (pwm) {Update CCR Registers\\(PWM Output)};
         \node[terminator, below of=pwm] (end) {Exit ISR};
         
-        \node[block, right of=valid, xshift=2.2cm, text width=1.5cm] (error) {Emergency\\Stop};
+        \node[block, right of=valid, xshift=2.4cm, text width=1.6cm] (error) {Emergency\\Stop};
 
         \draw[line] (start) -- (read);
         \draw[line] (read) -- (state);
         \draw[line] (state) -- (valid);
-        \draw[line] (valid) -- node[left]{Yes} (lut);
+        \draw[line] (valid) -- node[left]{Yes} (dir);
         \draw[line] (valid) -- node[above]{No} (error);
         \draw[line] (error) |- (end);
+        \draw[line] (dir) -- (lut);
         \draw[line] (lut) -- (pwm);
         \draw[line] (pwm) -- (end);
 
@@ -178,44 +180,51 @@ Die Architektur gliedert sich primär in zwei parallel ablaufende, hochpriorisie
             >=stealth,
             font=\sffamily\scriptsize,
             node distance=1.3cm,
-            block/.style={draw=black!80, rectangle, fill=white, thick, minimum width=3.6cm, minimum height=0.7cm, align=center, rounded corners=1pt},
+            block/.style={draw=black!80, rectangle, fill=white, thick, minimum width=3.8cm, minimum height=0.7cm, align=center, rounded corners=1pt},
             decision/.style={draw=black!80, diamond, fill=white, thick, aspect=2, align=center, inner sep=2pt},
-            terminator/.style={draw=black!80, rounded corners=6pt, fill=black!10, thick, minimum width=3.6cm, minimum height=0.7cm, align=center},
-            line/.style={->, thick, draw=black!80}
+            terminator/.style={draw=black!80, rounded corners=6pt, fill=black!10, thick, minimum width=3.8cm, minimum height=0.7cm, align=center},
+            line/.style={->, thick, draw=black!80},
+            dashedline/.style={->, thick, dashed, draw=black!60}
         ]
 
         \node[terminator] (start) {ADC Watchdog Interrupt};
         \node[block, below of=start] (read) {Read Current (Shunt)};
         \node[decision, below of=read, yshift=-0.5cm] (check) {$I_{\mathrm{phase}} > I_{\mathrm{max}}$?};
-        \node[block, below of=check, yshift=-0.5cm] (limit) {Reduce Duty Cycle\\(Current Limiting)};
-        \node[terminator, below of=limit, yshift=-0.22cm] (end) {Exit ISR};
+        \node[block, below of=check, yshift=-0.5cm] (limit) {Limit PWM Duty Cycle\\(Override CCR)};
+        \node[terminator, below of=limit, yshift=-0.2cm] (end) {Exit ISR};
 
         \draw[line] (start) -- (read);
         \draw[line] (read) -- (check);
         \draw[line] (check) -- node[left]{Yes} (limit);
         \draw[line] (limit) -- (end);
         
-        % Bypass path for 'No'
-        \draw[line] (check) -- node[above]{No} (2.6, -3.1) |- (end);
+        % No path
+        \draw[line] (check) -- node[above]{No} (2.8, -3.1) |- (end);
 
         \end{tikzpicture}
         \caption{Current Control (Synchron)}
         \label{fig:flowchart_adc}
     \end{subfigure}
 
-    \caption{Architektur der Interrupt-Routinen (ISR) auf dem Mikrocontroller.}
+    \caption{Architektur der ISR mit Kommutierungslogik und Strombegrenzung.}
     \label{fig:software_flowchart}
 \end{figure}
 
-\subsection{Ereignisgesteuerte Kommutierung (Position Control)}
-Die Erfassung der absoluten Rotorlage sowie die physikalische Umschaltung der Phasen erfolgen ausnahmslos innerhalb der Interrupt-Service-Routine der externen Interrupts (Abbildung \ref{fig:flowchart_exti}). Die drei Hall-Sensoren sind an dedizierte GPIO-Pins angebunden, die bei jeder detektierten Signalflanke den Mikrocontroller unterbrechen. 
+\subsection{Ereignisgesteuerte Kommutierung}
+Die Erfassung der absoluten Rotorlage sowie die physikalische Umschaltung der Phasen erfolgen ausnahmslos innerhalb der Interrupt-Service-Routine (ISR) der externen Interrupts (Abbildung \ref{fig:flowchart_exti}). Die drei Hall-Sensoren sind an dedizierte GPIO-Pins angebunden, die bei jeder detektierten Signalflanke den Mikrocontroller unterbrechen. Dadurch ergibt sich eine strikt ereignisgetriebene Verarbeitung ohne zyklisches Polling, was die Reaktionszeit minimiert und die CPU-Last reduziert.
+Innerhalb dieser ISR werden die Signalzustände eingelesen und mittels bitweiser Kodierung zu einem Zustandsvektor zusammengefasst. Dieser Vektor korrespondiert über eine zeiteffiziente Lookup Table (LUT) eindeutig mit dem aktuellen physikalischen Sektor des Motors. Die Verwendung einer LUT ermöglicht einen Zugriff in konstanter Zeit ohne zusätzliche Berechnungen und trägt somit wesentlich zur deterministischen Laufzeit der ISR bei.
+Unmittelbar im Anschluss aktualisiert die Software die Timer-Capture-Compare-Register (CCR), welche die hardwareseitige PWM-Ausgabe an die Gate-Treiber modulieren. Die gesamte ISR ist auf minimale Ausführungszeit optimiert und bewegt sich typischerweise im Mikrosekundenbereich, wodurch auch bei hohen Drehzahlen und entsprechend hoher Interruptfrequenz eine zuverlässige Kommutierung gewährleistet ist.
 
-Innerhalb dieser ISR werden die Signalzustände eingelesen und mittels bitweiser Kodierung zu einem Zustandsvektor zusammengefasst. Dieser Vektor korrespondiert über eine zeiteffiziente Lookup Table (LUT) eindeutig mit dem aktuellen physikalischen Sektor des Motors. Unmittelbar im Anschluss aktualisiert die Software die Timer-Capture-Compare-Register (CCR), welche die hardwareseitige PWM-Ausgabe an die Gate-Treiber modulieren.
+\subsection{Nebenläufigkeit und Interrupt-Priorisierung}
+Da sowohl die Positions- als auch die Stromregelung interruptbasiert realisiert sind, ist das Verhalten bei konkurrierenden Ereignissen von zentraler Bedeutung. Die EXTI-Interrupts zur Kommutierung sind höher priorisiert als der ADC-Interrupt, um sicherzustellen, dass die korrekte Phasenumschaltung niemals durch die Stromüberwachung verzögert wird.
+Im Falle simultaner Interrupt-Ereignisse wird die laufende ADC-ISR durch die EXTI-ISR unterbrochen (Preemption). Durch diese Priorisierung wird garantiert, dass keine inkonsistenten Schaltzustände entstehen. Gemeinsame Variablen, insbesondere das PWM-Tastverhältnis, sind so ausgelegt, dass sie atomar aktualisiert werden oder nur in definierten Kontexten beschrieben werden, wodurch Race Conditions vermieden werden.
 
 \subsection{Sicherheitslogik und Notabschaltung}
-Wie im Kommutierungspfad ersichtlich, beinhaltet die Softwarearchitektur eine essenzielle Plausibilitätsprüfung. Sollte durch Störeinflüsse (EMV) oder einen Kabelbruch ein physikalisch unmöglicher Hall-Zustand (wie \texttt{0b000} oder \texttt{0b111}) auftreten, wird unmittelbar der Default-Case aktiviert. In diesem Notfall werden ausnahmslos alle Gate-Treiber deaktiviert (Emergency Stop), um gefährliche Brückenkurzschlüsse im Inverter zu verhindern.
+Wie im Kommutierungspfad ersichtlich, beinhaltet die Softwarearchitektur eine essenzielle Plausibilitätsprüfung. Sollte durch Störeinflüsse (EMV), Sensorfehler oder einen Kabelbruch ein physikalisch unmöglicher Hall-Zustand (wie \texttt{0b000} oder \texttt{0b111}) auftreten, wird unmittelbar der Default-Case aktiviert.
+In diesem Notfall werden ausnahmslos alle Gate-Treiber deaktiviert (Emergency Stop), um gefährliche Brückenkurzschlüsse im Inverter zu verhindern. Der Fehlerzustand wird dabei persistent gehalten, sodass ein automatischer Wiederanlauf ausgeschlossen ist. Eine Wiederinbetriebnahme erfordert eine explizite Rücksetzung durch die übergeordnete Steuerlogik. Dieses Fail-Safe-Konzept stellt sicher, dass auch bei transienten Fehlern kein unkontrollierter Betrieb möglich ist.
 
-\subsection{Aktive Strombegrenzung und Rekuperation (Current Control)}
-Zusätzlich zur reinen Kommutierung regelt ein synchroner Steuerungspfad den Phasenstrom (vgl. Abbildung \ref{fig:software_flowchart}, rechts). Um den thermischen Worst-Case abzusichern, ist im STM32 ein an den Analog Watchdog gekoppelter ADC-Interrupt konfiguriert. Übersteigt der gemessene Strom den Grenzwert von $42{,}4\,\mathrm{A}$, erzwingt die Firmware in Echtzeit eine Reduktion des PWM-Tastverhältnisses, wodurch sich der Phasenstrom dynamisch am Limit einpendelt.
-
-Diese Systemarchitektur bildet zeitgleich die Basis für die Steuerung der Rekuperation. Wird ein negatives Drehmoment gefordert, invertiert die Hauptschleife das Kommutierungsmuster. Der Inverter arbeitet daraufhin als Boost-Converter und speist Energie zurück, während die Strombegrenzung parallel sicherstellt, dass auch der Bremsstrom das festgelegte Hardware-Limit nicht verletzt.
+\subsection{Aktive Strombegrenzung und Rekuperation}
+Zusätzlich zur reinen Kommutierung regelt ein synchroner Steuerungspfad den Phasenstrom (vgl. Abbildung \ref{fig:flowchart_adc}). Um den thermischen Worst-Case abzusichern, ist im Mikrocontroller ein an den Analog Watchdog gekoppelter ADC-Interrupt konfiguriert. Dieser überwacht kontinuierlich den Spannungsabfall über einen Shunt-Widerstand und ermöglicht so eine indirekte Strommessung.
+Übersteigt der gemessene Strom den Grenzwert von $42{,}4\,\mathrm{A}$, erzwingt die Firmware in Echtzeit eine Reduktion des PWM-Tastverhältnisses. Dies führt zu einer unmittelbaren Verringerung der angelegten Phasenspannung und somit zu einer Begrenzung des Stromanstiegs. Das System verhält sich dabei wie ein nichtlinearer Stromregler, der den Phasenstrom dynamisch am Grenzwert stabilisiert.
+Diese Systemarchitektur bildet gleichzeitig die Grundlage für die Rekuperation. Wird ein negatives Drehmoment gefordert, invertiert die Hauptschleife das Kommutierungsmuster. Der Motor arbeitet in diesem Betriebszustand als Generator, wobei die mechanische Energie in elektrische Energie umgewandelt und in den Zwischenkreis zurückgespeist wird. Der Inverter verhält sich dabei funktional wie ein Boost-Converter, da die induzierte Gegenspannung des Motors über die Schaltzustände angehoben und dem Versorgungssystem zugeführt wird.
+Die Strombegrenzung bleibt auch im Rekuperationsbetrieb aktiv und stellt sicher, dass der Rückspeisestrom das definierte Hardware-Limit nicht überschreitet. Dadurch wird sowohl die Leistungselektronik als auch die Energiequelle vor Überlast geschützt.

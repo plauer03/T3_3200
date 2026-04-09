@@ -1,0 +1,209 @@
+\section{STM32-Quellcode (Auszug)}
+\label{app:software}
+
+Das folgende Listing dokumentiert die implementierte Kernlogik der Motorsteuerung in der Programmiersprache C. Zur Steigerung der Übersichtlichkeit und Fokussierung auf die eigenständig entwickelten Algorithmen wurden die mittels STM32CubeMX generierten Initialisierungssequenzen (System Clock, GPIO-Peripherie) abstrahiert. Die Darstellung konzentriert sich auf die softwareseitige Realisierung der 6-Schritt-Blockkommutierung, die Auswertung der Hall-Sensorik sowie die zeitkritische ISR zur Strombegrenzung.
+\\
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codeblue}{rgb}{0.0, 0.3, 0.6}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{backcolour}{rgb}{0.98,0.98,0.97} % Ganz leichtes Off-White für den Hintergrund
+
+\lstset{
+    language=C,
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{codeblue}\bfseries,
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{orange},
+    basicstyle=\fontfamily{fvm}\selectfont\scriptsize, 
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=10pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    % --- Rahmen-Setup ---
+    frame=single,           % Voller Rahmen (oben, unten, links, rechts)
+    rulecolor=\color{black}, % Der Standardrahmen ist schwarz
+    framerule=0.5pt,        % Dünne schwarze Linie rundherum
+    % Hier kommt der blaue "Akzent" links:
+    framexleftmargin=4pt,   % Platz zwischen Rahmen und blauem Balken
+    xleftmargin=20pt,       % Verschiebt das ganze Listing nach rechts
+}
+
+
+\begin{lstlisting}[caption={Kernlogik der 6-Step Blockkommutierung und Strombegrenzung}, label={lst:stm32_code}]
+/**
+ * @file    main.c
+ * @brief   BLDC 6-Step Commutation with Cycle-by-Cycle Current Limiting
+ * @author  Pascal Lauer
+ */
+
+#include "main.h"
+
+/* --- Configuration Macros --- */
+#define PWM_MAX_LIMIT           8075  // Max 95% Duty Cycle (sichert Bootstrap-Umladung)
+#define PWM_MIN_THRESHOLD       425   // Min 5% Duty Cycle (Totzone / Abschaltung)
+#define PWM_CURRENT_LIMIT_DROP  400   // Aggressives Abregeln bei Ueberstrom
+#define PWM_RECOVERY_STEP       10    // Sanftes Nachfuehren nach Stromspitzen
+#define ADC_MAX_RAW_VALUE       4095  // 12-Bit ADC Aufloesung
+
+/* --- Global Variables --- */
+uint32_t pwm_current = 0;
+uint32_t pwm_target = 0; 
+
+/* --- Hardware Handles --- */
+ADC_HandleTypeDef hadc1;
+TIM_HandleTypeDef htim1;
+
+/**
+ * @brief Fuehrt die harte Blockkommutierung basierend auf dem Hall-Zustand durch.
+ */
+void BLDC_UpdateCommutation(void)
+{
+    // Sicherheitsabschaltung: Bei Sollwert unter Minimum treiben die Endstufen nicht
+    if (pwm_current < PWM_MIN_THRESHOLD) {
+        HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6, GPIO_PIN_RESET);
+        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
+        return;
+    }
+
+    // Hall-Sensoren einlesen und Bit-Maske erstellen (PB4, PB5, PB6)
+    uint8_t h1 = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4);
+    uint8_t h2 = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5);
+    uint8_t h3 = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6);
+    uint8_t hall_state = (h3 << 2) | (h2 << 1) | h1;
+
+    // 6-Schritt Kommutierungslogik (SD-Pins aktivieren die Treiber)
+    switch (hall_state) {
+        case 5: // Phase A: PWM (HS), Phase B: GND (LS), Phase C: Floating
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, pwm_current);
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0); 
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4 | GPIO_PIN_5, GPIO_PIN_SET);
+            break;
+            
+        case 1: // Phase A: PWM (HS), Phase C: GND (LS), Phase B: Floating
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET); 
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, pwm_current);
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0); 
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4 | GPIO_PIN_6, GPIO_PIN_SET);
+            break;
+            
+        case 3: // Phase B: PWM (HS), Phase C: GND (LS), Phase A: Floating
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, pwm_current);
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5 | GPIO_PIN_6, GPIO_PIN_SET);
+            break;
+            
+        case 2: // Phase B: PWM (HS), Phase A: GND (LS), Phase C: Floating
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, pwm_current);
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5 | GPIO_PIN_4, GPIO_PIN_SET);
+            break;
+            
+        case 6: // Phase C: PWM (HS), Phase A: GND (LS), Phase B: Floating
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET); 
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, pwm_current);
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6 | GPIO_PIN_4, GPIO_PIN_SET);
+            break;
+            
+        case 4: // Phase C: PWM (HS), Phase B: GND (LS), Phase A: Floating
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, pwm_current);
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6 | GPIO_PIN_5, GPIO_PIN_SET);
+            break;
+            
+        default:
+            // Fehlerfall (z.B. Leitungsbruch): Emergency Stop erzwingen
+            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6, GPIO_PIN_RESET);
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+            __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
+            break;
+    }
+}
+
+/**
+ * @brief Hardware-Interrupt: Wird bei Flankenwechsel eines Hall-Sensors getriggert.
+ */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == GPIO_PIN_4 || GPIO_Pin == GPIO_PIN_5 || GPIO_Pin == GPIO_PIN_6) {
+        BLDC_UpdateCommutation();
+    }
+}
+
+/**
+ * @brief Hardware-Interrupt: Analog Watchdog detektiert Uberstrom am Shunt.
+ */
+void HAL_ADC_LevelOutOfWindowCallback(ADC_HandleTypeDef* hadc)
+{
+    if (hadc->Instance == ADC1) {
+        // Cycle-by-Cycle Current Limiting: Duty Cycle aggressiv drosseln
+        if (pwm_current > PWM_CURRENT_LIMIT_DROP) {
+            pwm_current -= PWM_CURRENT_LIMIT_DROP; 
+        } else {
+            pwm_current = 0;
+        }
+        // Direkter Hardware-Update zur Unterdrueckung der Stromspitze
+        BLDC_UpdateCommutation(); 
+    }
+}
+
+/**
+ * @brief Main Control Loop
+ */
+int main(void)
+{
+    /* ... STM32 HAL Initialisierung & Clock Config ... */
+    
+    // Konfiguration des Analog Watchdogs fuer 42.4A Abschaltgrenze
+    ADC_AnalogWDGConfTypeDef AnalogWDGConfig = {0};
+    AnalogWDGConfig.WatchdogMode = ADC_ANALOGWATCHDOG_SINGLE_REG;
+    AnalogWDGConfig.HighThreshold = 2630; // ADC Wert = 2.12V (am Shunt OPV)
+    AnalogWDGConfig.LowThreshold = 0;
+    AnalogWDGConfig.Channel = ADC_CHANNEL_1; 
+    AnalogWDGConfig.ITMode = ENABLE;         
+    HAL_ADC_AnalogWDGConfig(&hadc1, &AnalogWDGConfig);
+
+    // Timer und ADC starten
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+    __HAL_TIM_MOE_ENABLE(&htim1);
+    HAL_ADC_Start_IT(&hadc1); 
+
+    while (1)
+    {
+        // Polling des analogen Throttle-Signals (Gaspedal)
+        if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK) {
+            uint32_t adc_throttle_raw = HAL_ADC_GetValue(&hadc1);
+
+            // Skalierung auf maximal 95% Duty Cycle
+            pwm_target = (adc_throttle_raw * PWM_MAX_LIMIT) / ADC_MAX_RAW_VALUE;
+
+            // Soft-Recovery: PWM sanft an den Zielwert heranfuehren 
+            // (Verhindert Schwingen bei aktiver Strombegrenzung)
+            if (pwm_current < pwm_target) {
+                pwm_current += PWM_RECOVERY_STEP; 
+            } else {
+                pwm_current = pwm_target; 
+            }
+
+            BLDC_UpdateCommutation();
+        }
+        HAL_Delay(2); // ADC Zyklus entlasten
+    }
+}
+\end{lstlisting}

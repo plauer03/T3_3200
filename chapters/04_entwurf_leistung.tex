@@ -1,7 +1,7 @@
 \chapter{Entwurf der Leistungselektronik}
 \label{chap:entwurf_leistung}
 
-Basierend auf den in Kapitel \ref{chap:anforderungen} definierten Systemanforderungen erfolgt in diesem Kapitel die konkrete Dimensionierung der leistungselektronischen Komponenten. Der Fokus liegt dabei auf der Auswahl der Leistungshalbleiter, der Berechnung der zugehörigen Verlustleistungen sowie der Auslegung der Treiber- und Zwischenkreisstrukturen.
+Basierend auf den in Kapitel \ref{chap:anforderungen} definierten Systemanforderungen erfolgt in diesem Kapitel die konkrete Dimensionierung der leistungselektronischen Komponenten. Der Fokus liegt dabei auf der Auswahl der Leistungshalbleiter, der Berechnung der zugehörigen Verlustleistungen sowie der Auslegung der Treiber- und Zwischenkreisstrukturen. Der vollständige Schaltplan des Gesamtsystems, aus dem die nachfolgend diskutierten Teilschaltungen entnommen sind, ist zur detaillierten Übersicht in Anhang \ref{app:schaltplan_gesamt} dokumentiert.
 
 
 \section{Auswahl der Leistungshalbleiter}
@@ -47,7 +47,7 @@ Wie in den theoretischen Grundlagen (vgl. Kapitel \ref{subsec:stromerfassung}) h
 
 \subsection{Dimensionierung des Shunt-Widerstands}
 Die Dimensionierung des Shunts erfordert einen Kompromiss. Ein hoher Widerstandswert maximiert das zu messende Spannungssignal und verbessert das Signal-Rausch-Verhältnis (SNR), führt jedoch quadratisch zu höheren ohmschen Verlustleistungen ($P = I^2 \cdot R$), die abgeführt werden müssen. 
-Für den vorliegenden Motorcontroller wurde der WSLP25121L000FEA von Vishay \cite{DS_SHUNT}. Dieser besitzt einen Widerstandswert von $R_{\mathrm{shunt}} = 1\,\mathrm{m\Omega}$ bei einer Toleranz von $1\,\%$. Die WSLP-Serie zeichnet sich durch eine sehr geringe Induktivität und einen niedrigen Temperaturkoeffizienten aus, was parasitäre Spannungsspitzen bei den steilen PWM-Schaltflanken minimiert. Bei dem definierten Worst-Case-Blockstrom von $I_{\mathrm{Block}} = 42{,}4\,\mathrm{A}$ fällt über dem Widerstand eine proportionale Messspannung ab:
+Für den vorliegenden Motorcontroller wurde der WSLP25121L000FEA von Vishay \cite{DS_SHUNT} verwendet. Dieser besitzt einen Widerstandswert von $R_{\mathrm{shunt}} = 1\,\mathrm{m\Omega}$ bei einer Toleranz von $1\,\%$. Die WSLP-Serie zeichnet sich durch eine sehr geringe Induktivität und einen niedrigen Temperaturkoeffizienten aus, was parasitäre Spannungsspitzen bei den steilen PWM-Schaltflanken minimiert. Bei dem definierten Worst-Case-Blockstrom von $I_{\mathrm{Block}} = 42{,}4\,\mathrm{A}$ fällt über dem Widerstand eine proportionale Messspannung ab:
 \begin{equation}
     V_{\mathrm{shunt}} = I_{\mathrm{Block}} \cdot R_{\mathrm{shunt}} = 42{,}4\,\mathrm{A} \cdot 0{,}001\,\Omega = 42{,}4\,\mathrm{mV}
 \end{equation}
@@ -59,16 +59,25 @@ Die dabei im Bauteil dissipierte Verlustleistung berechnet sich zu:
 Da der ausgewählte Widerstand in der Bauform 2512 für eine maximale Dauerleistung von $3{,}0\,\mathrm{W}$ spezifiziert ist, wird das thermische Derating auch im Volllastbetrieb zuverlässig eingehalten \cite{DS_SHUNT}.
 
 \subsection{Signalverstärkung für den Mikrocontroller}
-Die anliegende Messspannung von maximal $42{,}4\,\mathrm{mV}$ ist zu gering, um vom Analog-Digital-Wandler (ADC) des STM32-Mikrocontrollers mit ausreichender Auflösung quantisiert zu werden. Eine Vorverstärkung des Signals ist daher zwingend erforderlich.
 
-Hierfür wird der dedizierte Current-Sense-Amplifier INA181A2IDBVR von Texas Instruments eingesetzt \cite{DS_OPAMP}. Im Gegensatz zu standardmäßigen Operationsverstärkern verfügt diese Baureihe über ein werksseitig integriertes und hochpräzise gelasertes Widerstandsnetzwerk, welches eine exakte Verstärkung garantiert und externe Bauteiltoleranzen eliminiert. Die Variante liefert einen festen Verstärkungsfaktor von $G = 50\,\mathrm{V/V}$.
-Die aufbereitete Ausgangsspannung $V_{\mathrm{ADC}}$, welche direkt an den Mikrocontroller geleitet wird, berechnet sich folglich als:
+Die anliegende Messspannung von maximal $42{,}4\,\mathrm{mV}$ ist zu gering, um vom Analog-Digital-Wandler (ADC) des STM32-Mikrocontrollers mit ausreichender Auflösung quantisiert zu werden. Eine Vorverstärkung des Signals ist daher zwingend erforderlich.
+Zur Umsetzung wird der dedizierte Current-Sense-Amplifier INA181A2IDBVR von Texas Instruments eingesetzt \cite{DS_OPAMP}. Im Gegensatz zu standardmäßigen Operationsverstärkern verfügt diese Baureihe über ein werksseitig integriertes und hochpräzise gelasertes Widerstandsnetzwerk, welches eine exakte Verstärkung garantiert und externe Bauteiltoleranzen eliminiert. Die verwendete Variante besitzt einen festen Verstärkungsfaktor von $G = 50\,\mathrm{V/V}$.
+Die aufbereitete Ausgangsspannung $V_{\mathrm{ADC}}$, welche direkt an den Mikrocontroller geführt wird, ergibt sich zu:
 \begin{equation}
     V_{\mathrm{ADC}} = V_{\mathrm{shunt}} \cdot G = 42{,}4\,\mathrm{mV} \cdot 50 = 2{,}12\,\mathrm{V}
 \end{equation}
-
-Der STM32-Mikrocontroller arbeitet mit einer Logik- und Referenzspannung von $3{,}3\,\mathrm{V}$. Die maximale Messspannung von $2{,}12\,\mathrm{V}$ liegt somit ideal im linearen Erfassungsbereich des 12-Bit-ADCs. Es verbleibt eine dynamische Messreserve von rund $1{,}18\,\mathrm{V}$, wodurch auch transiente Überschwinger des Stroms (bis ca. $66\,\mathrm{A}$) vom Mikrocontroller sicher detektiert werden können, bevor die Schutzmechanismen das Tastverhältnis abregeln. 
+Der STM32-Mikrocontroller arbeitet mit einer Logik- und Referenzspannung von $3{,}3\,\mathrm{V}$. Die maximale Messspannung von $2{,}12\,\mathrm{V}$ liegt somit im optimalen linearen Erfassungsbereich des 12-Bit-ADCs. Es verbleibt eine dynamische Messreserve von rund $1{,}18\,\mathrm{V}$, wodurch auch transiente Stromspitzen (bis ca. $66\,\mathrm{A}$) sicher detektiert werden können, bevor Schutzmechanismen eingreifen und das Tastverhältnis reduzieren.
+Zur zusätzlichen Signalaufbereitung ist am Ausgang des Verstärkers ein RC-Tiefpass mit $R = 1\,\mathrm{k\Omega}$ und $C = 10\,\mathrm{nF}$ vorgesehen. Dieser dient der Unterdrückung hochfrequenter Störanteile, insbesondere von Schaltflanken des Leistungsteils, und verhindert gleichzeitig Aliasing-Effekte im ADC.
+Der vollständige Signalpfad von der Strommessung über den Shunt bis hin zur ADC ist in Abbildung~\ref{fig:schaltplan_shunt} dargestellt.
 Dies ermöglicht der Software eine hochauflösende Auswertung des Motorstroms, welche die zwingende Voraussetzung für das in Kapitel \ref{sec:verlustanalyse} vorausgesetzte Cycle-by-Cycle Current Limiting bildet.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{shunt.pdf}
+    \caption{Schaltplan der Strommessung mit Shunt, INA181 und RC-Tiefpass.}
+    \label{fig:schaltplan_shunt}
+\end{figure}
+
 
 \section{Verlustanalyse}
 \label{sec:verlustanalyse}
@@ -82,7 +91,6 @@ Die analytische Herleitung folgt einem strukturierten Vorgehen. Zunächst wird d
 
 Bei der sensorbasierten Blockkommutierung durchläuft jede Motorphase pro elektrischer $360^\circ$-Periode kontinuierlich drei Zustände: Sie leitet für $120^\circ$ einen positiven Strom, ist für $120^\circ$ hochohmig und dient für weitere $120^\circ$ als Rückleiter für den negativen Strom. In der vorliegenden Brückentopologie wird der Freilaufstrom während der PWM-Ausschaltphasen jedoch nicht passiv der verlustbehafteten Body-Diode überlassen. Der gewählte Gate-Treiber IR2104 verfügt über eine komplementäre Ansteuerlogik. Wird der High-Side-MOSFET (HS) in der PWM-Logik abgeschaltet, steuert der Treiber nach einer kurzen Totzeit automatisch den korrespondierenden Low-Side-MOSFET (LS) durch. Diese aktive Synchrongleichrichtung führt zusammen mit der Blockkommutierung zu stark asymmetrischen Belastungsprofilen der Transistoren.
 Im positiven $120^\circ$-Sektor taktet der HS-MOSFET mit dem Tastverhältnis $d$ und treibt die Energie in den Motor, während der komplementäre LS-MOSFET in der Ausschaltphase für die Zeit $(1-d)$ den Freilaufstrom übernimmt. Im negativen $120^\circ$-Sektor ist der HS-MOSFET hingegen permanent gesperrt, während der LS-MOSFET statisch zu $100\,\%$ durchgeschaltet bleibt und den vollen Blockstrom als Rückleiter führt. 
-
 Daraus lassen sich die effektiven Quadratströme für den Dauerbetrieb ableiten:
 \begin{align}
     I_{\mathrm{HS,RMS}}^2 &= I_{\mathrm{Block}}^2 \cdot \frac{1}{3} \cdot d \label{eq:i_hs_rms} \\
@@ -91,7 +99,6 @@ Daraus lassen sich die effektiven Quadratströme für den Dauerbetrieb ableiten:
 
 Es wird ersichtlich, dass der LS-MOSFET thermisch deutlich stärker belastet wird als der HS-MOSFET, da er sowohl Rückleiter- als auch Freilauffunktionen übernimmt. Dies gilt insbesondere bei minimalen Tastverhältnissen unter Hochlast, beispielsweise bei einem schweren Motoranlauf. 
 Zur Bestimmung der Verlustleistung gemäß Gleichung \ref{eq:p_cond} muss der temperaturabhängige Einschaltwiderstand $R_{\mathrm{DS(on)}}$ ermittelt werden. Für eine konservative Auslegung wird eine Worst-Case-Sperrschichttemperatur von $T_{\mathrm{J,design}} = 100^\circ\mathrm{C}$ angenommen. Da der Gate-Treiber eine Steuerspannung von $v_{\mathrm{dr}} = 12\,\mathrm{V}$ bereitstellt, operieren die Transistoren sicher im tiefen Sättigungsbereich. Zur Ermittlung des exakten Widerstandswertes wurde die Datenblattkennlinie grafisch ausgewertet.
-
 \begin{figure}[htbp]
     \centering
     \begin{tikzpicture}
@@ -121,7 +128,6 @@ Zur Bestimmung der Verlustleistung gemäß Gleichung \ref{eq:p_cond} muss der te
     \caption{Temperaturabhängigkeit des maximalen Einschaltwiderstands. Grafisch ermittelter Arbeitspunkt bei $100^\circ\mathrm{C}$. Eigene Digitalisierung nach \cite[Diagramm~9]{DS_IPP034N08N5}.}
     \label{fig:rdson_temp}
 \end{figure}
-
 Wie in Abbildung \ref{fig:rdson_temp} ersichtlich, beläuft sich der Widerstand bei der Zieltemperatur auf $R_{\mathrm{DS(on)}}(100^\circ\mathrm{C}) \approx 4{,}8\,\mathrm{m\Omega}$. Werden diese Werte in die entsprechende Verlustgleichung (vgl. Kapitel \ref{subsec:mosfet_verluste}) eingesetzt, ergibt sich für den HS-MOSFET bei maximaler Aussteuerung ($d=1$) eine statische Verlustleistung von $P_{\mathrm{HS,c}} \approx 2{,}88\,\mathrm{W}$. Der thermische Worst-Case des LS-MOSFETs tritt hingegen bei geringer Aussteuerung ($d=0$) und gleichzeitigem Anlauf-Blockstrom auf, was zu einer Verlustleistung von $P_{\mathrm{LS,c}} \approx 5{,}75\,\mathrm{W}$ führt. Diese Analyse belegt analytisch, dass das thermische Design zwingend auf die signifikant höhere Abwärme der LS-MOSFETs dimensioniert werden muss.
 
 \subsection{Dynamische Schaltverluste der MOSFETs}
@@ -284,16 +290,15 @@ Darüber hinaus integriert der Treiber wesentliche Schutzfunktionen für den zuv
 
 Zusätzlich verfügt der IR2104 über einen invertierten Shutdown-Eingang ($\overline{\mathrm{SD}}$), der direkt an die Hardware-Enable-Logik des STM32 angebunden ist \cite{DS_IR2104}. Diese Schnittstelle ermöglicht es der Firmware, im Falle eines erkannten Systemfehlers, wie beispielsweise einem physikalisch unplausiblen Hall-Sensor-Zustand, alle Gate-Treiber verzögerungsfrei zu deaktivieren und die vorgesehene Notabschaltung (Emergency Stop) durchzusetzen.
 
-\section{Bootstrap}
+\section{Bootstrap-Schaltung}
 \label{sec:bootstrap}
 
-Für die Ansteuerung der HS-MOSFETs in der Halbbrücke wird ein Bootstrap-Konzept verwendet, bei dem ein Kondensator als kurzzeitige, schwimmende Spannungsquelle fungiert. Dieser \emph{Bootstrap-Kondensator} wird während der Leitphase des LS-MOSFETs aufgeladen und liefert die notwendige Energie, um das Gate des HS-MOSFETs vollständig durchzusteuern. 
+Für die Ansteuerung der HS-MOSFETs in der Halbbrücke wird ein Bootstrap-Konzept verwendet, bei dem ein Kondensator als kurzzeitige, schwimmende Spannungsquelle fungiert. Dieser Bootstrap-Kondensator wird während der Leitphase des LS-MOSFETs aufgeladen und liefert die notwendige Energie, um das Gate des HS-MOSFETs vollständig durchzusteuern. 
 Ist die Bootstrap-Schaltung unzureichend dimensioniert, fällt die Gate-Spannung während der Einschaltzeit des HS-MOSFETs unter den Schwellenwert. Dies würde zu einem drastischen Anstieg der Leitverluste oder zum Auslösen der Unterspannungsabschaltung des Treibers führen.
 Die Dimensionierung des Bootstrap-Kondensators basiert auf der Gesamtladung, die während einer Schaltperiode bereitgestellt werden muss. Diese setzt sich aus der Gate-Ladung des MOSFETs, dem Energiebedarf des Level-Shifters im Treiber sowie den Verlusten durch transiente Leckströme zusammen. 
-Für die vorliegende Schaltung mit dem MOSFET IPP034N08N5 und dem Treiber IR2104 wurde die Berechnung auf Basis der Hersteller-Datenblätter sowie der Applikationsschrift AN-6076 \cite{AN6076} durchgeführt. 
-Hierbei wurden alle relevanten Parameter, wie extrapoliertem $Q_{\mathrm{Gate}}$, parasitäre Leckströme und die maximale Einschaltdauer im Worst-Case berücksichtigt. Die detaillierte, schrittweise Berechnung des Bootstrap-Netzwerks inklusive aller Zwischenwerte ist in Anhang \ref{app:bootstrap} dokumentiert.
-
-In Tabelle \ref{tab:bootstrap_params} sind die wesentlichen Größen der Dimensionierung zusammengefasst:
+Für die vorliegende Schaltung mit dem MOSFET und dem Treiber wurde die Berechnung auf Basis der Datenblätter sowie der Applikationsschrift AN-6076 \cite{AN6076} durchgeführt. 
+Hierbei wurden alle relevanten Parameter, wie extrapoliertem $Q_{\mathrm{Gate}}$, parasitäre Leckströme und die maximale Einschaltdauer im Worst-Case berücksichtigt. Die detaillierte Berechnung des Bootstrap-Netzwerks inklusive aller Zwischenwerte ist in Anhang \ref{app:bootstrap} dokumentiert.
+In Tabelle \ref{tab:bootstrap_params} sind die Größen der Dimensionierung zusammengefasst:
 
 \begin{table}[!htbp] 
     \centering
@@ -315,10 +320,17 @@ In Tabelle \ref{tab:bootstrap_params} sind die wesentlichen Größen der Dimensi
     \end{tabular}
 \end{table}
 
-Auf Basis dieser Analyse wurde für die praktische Umsetzung ein Keramikkondensator mit $220\,\mathrm{nF}$ gewählt. Die Überdimensionierung kompensiert Fertigungstoleranzen, thermische Alterungseffekte sowie den unvermeidlichen Kapazitätsverlust von Keramikkondensatoren unter DC-Bias-Spannung. 
+Auf Basis dieser Analyse wurde für die praktische Umsetzung ein Keramikkondensator mit $220\,\mathrm{nF}$ gewählt. Die Überdimensionierung kompensiert Fertigungstoleranzen und thermische Alterung. Abbildung~\ref{fig:schaltplan_bootstrap} veranschaulicht die resultierende Beschaltung am Beispiel des IR2104.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{gate-driver.pdf}
+    \caption{Beschaltung des IR2104 mit der dimensionierten Bootstrap-Schaltung.}
+    \label{fig:schaltplan_bootstrap}
+\end{figure}
 
 
-\section{Zwischenkreis}
+\section{Auslegung des Zwischenkreises}
 \label{sec:zwischenkreis}
 
 Der Gleichspannungszwischenkreis verbindet die Akkumulator-Stromversorgung mit der B6-Brücke, die hochfrequent getaktet wird. Da die parasitären Leitungsinduktivitäten des $36\,\mathrm{V}$-Akkumulators eine verzögerungsfreie Bereitstellung der steilflankigen Motorströme physikalisch verhindern, muss die Energie lokal auf der Leiterplatte gepuffert werden. Andernfalls käme es zu massiven Spannungseinbrüchen im Takt der Schaltfrequenz. Die Dimensionierung des Zwischenkreises gliedert sich primär in die Auslegung der Kapazitäten zur Ripple-Strom-Pufferung sowie die hochfrequente Entkopplung der Leistungstransistoren.
@@ -332,4 +344,11 @@ Um den geforderten Effektivstrom aufzuteilen und den parasitären Gesamtwidersta
 
 Trotz eines niedrigen ESR weisen Elkos bauartbedingt eine parasitäre Serieninduktivität (ESL) auf, weshalb sie hochfrequente Schalttransienten im Megahertz-Bereich nur unzureichend filtern. Bei der Kommutierung der hohen Phasenströme ($di/dt$) erzeugen bereits kleinste Streuinduktivitäten im Leiterplattenlayout signifikante Überspannungsspitzen.  
 Um die MOSFETs vor dem Überschreiten ihrer $80\,\mathrm{V}$-Durchbruchspannung zu schützen, ist eine konsequente kapazitive Entkopplung unerlässlich. Hierfür werden X7R-Keramikkondensatoren mit typischen Werten von $1\,\mu\mathrm{F}$ und $100\,\mathrm{nF}$ möglichst nahe an den Drain- und Source-Anschlüssen der jeweiligen Halbbrücken platziert. Durch ihre extrem geringe Impedanz bei hohen Frequenzen schließen sie die transienten Spannungsspitzen lokal kurz, stabilisieren das Schaltverhalten der MOSFETs und reduzieren parallel leitungsgebundene EMV-Störaussendungen des Gesamtsystems.
-Darüber hinaus ist auch die Versorgungsspannung der Gate-Treiber (IR2104) direkt am VCC-Pin mit Keramikkondensatoren von $100\,\mathrm{nF}$ und $1\,\mu\mathrm{F}$ zu entkoppeln. Dies reduziert die VCC-Impedanz bei schnellen Schaltflanken und gewährleistet ein sauberes und störungsfreies Umschaltverhalten der Treiber, was wiederum den Gesamtwirkungsgrad und die Zuverlässigkeit der Halbbrücken verbessert.
+Darüber hinaus ist auch die Versorgungsspannung der Gate-Treiber (IR2104) direkt am VCC-Pin mit Keramikkondensatoren von $100\,\mathrm{nF}$ und $1\,\mu\mathrm{F}$ zu entkoppeln. Dies reduziert die VCC-Impedanz bei schnellen Schaltflanken und gewährleistet ein sauberes und störungsfreies Umschaltverhalten der Treiber, was wiederum den Gesamtwirkungsgrad und die Zuverlässigkeit der Halbbrücken verbessert. Die praktische Umsetzung der hochfrequenten Entkopplung auf der Leiterplatte ist in Abbildung~\ref{fig:schaltplan_kopplung} zusammengefasst.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{kopplung.pdf}
+    \caption{Hochfrequente Entkopplung der Logik- und Treiberspannungen.}
+    \label{fig:schaltplan_kopplung}
+\end{figure}

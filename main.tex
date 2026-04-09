@@ -13,6 +13,7 @@
                numbers=noenddot,            
                ]{scrbook}
 \input{settings}
+\newcounter{savepage}
 
 \begin{document}
 \pagestyle{plain}
@@ -22,14 +23,18 @@
 \newpage
 \input{disclaimer/disclaimers}
 \cleardoublepage
-\tableofcontents  
-%\input{abkürzungen}
-%\input{symbol_formel}
+\tableofcontents 
 \listoffigures
+%\addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
 \listoftables   
+%\addcontentsline{toc}{chapter}{Tabellenverzeichnis}
+\input{flyleaf/abkuerzungen}
+\input{flyleaf/symbol_formel}
+ 
 %\listoflistings             
-\newpage
+\clearpage
 \pagestyle{headings}
+\setcounter{savepage}{\value{page}}
 \pagenumbering{arabic}
 \cleardoublepage
 
@@ -41,6 +46,9 @@
 \input{chapters/06_aufbau_mess}
 \input{chapters/07_fazit}
 
+\clearpage
+\pagenumbering{roman}
+\setcounter{page}{\value{savepage}}
 % --- VERZEICHNISSE & LITERATUR ---
 \printbibliography
 
@@ -50,71 +58,26 @@
 
 \chapter{Anhang}
 
-\section{Berechnung der Verlustleistungen}
-\label{app:verlustrechnung}
+\input{appendix/loss_calc}
 
-Dieser Anhang dokumentiert die mathematischen Zwischenschritte der in Abschnitt \ref{sec:verlustanalyse} durchgeführten Verlustleistungsberechnungen. Alle Rechnungen basieren auf den identifizierten Worst-Case-Szenarien ($I_{\mathrm{Block}} = 42{,}4\,\mathrm{A}$, $v_{\mathrm{i}} = 42\,\mathrm{V}$).
+\clearpage
 
-\subsection{Leitverluste MOSFET (High-Side und Low-Side)}
-Es wird die Synchrongleichrichtung (IR2104) bei einer Sperrschichttemperatur von $T_{\mathrm{J,design}} = 100^\circ\mathrm{C}$ ($R_{\mathrm{DS(on)}} = 0{,}0048\,\Omega$) abgebildet. 
+\input{appendix/bootstrap}
 
-\textbf{Worst-Case High-Side-Schalter} (Maximale Aussteuerung $d=1$):
-\begin{align}
-    I_{\mathrm{HS,RMS}}^2 &= (42{,}4\,\mathrm{A})^2 \cdot \frac{1}{3} \cdot 1 = 599{,}25\,\mathrm{A}^2 \\
-    P_{\mathrm{HS,c}} &= 599{,}25\,\mathrm{A}^2 \cdot 0{,}0048\,\Omega \approx 2{,}88\,\mathrm{W}
-\end{align}
-
-\textbf{Worst-Case Low-Side-Schalter} (Maximaler Freilauf bei Anlauf $d=0$):
-\begin{align}
-    I_{\mathrm{LS,RMS}}^2 &= (42{,}4\,\mathrm{A})^2 \cdot \frac{1}{3} \cdot (2 - 0) = 1797{,}76\,\mathrm{A}^2 \cdot \frac{1}{3} \cdot 2 \approx 1138{,}58\,\mathrm{A}^2 \\
-    P_{\mathrm{LS,c}} &= 1138{,}58\,\mathrm{A}^2 \cdot 0{,}0048\,\Omega \approx 5{,}75\,\mathrm{W}
-\end{align}
-
-\subsection{Schaltverluste (High-Side)}
-Bestimmung der Gateströme in der Miller-Phase ($v_{\mathrm{dr}} = 12\,\mathrm{V}$, $v_{\mathrm{GS,Mi}} = 5{,}0\,\mathrm{V}$, $R_{\mathrm{G}} = 10\,\Omega$):
-\begin{align}
-    i_{\mathrm{G,on}} &= \frac{12\,\mathrm{V} - 5{,}0\,\mathrm{V}}{10\,\Omega} = 0{,}7\,\mathrm{A} \\
-    i_{\mathrm{G,off}} &= \frac{5{,}0\,\mathrm{V} - 0\,\mathrm{V}}{10\,\Omega} = 0{,}5\,\mathrm{A}
-\end{align}
-
-Berechnung der Umschaltdauern mit der Umschaltladung $Q_{\mathrm{sw}} = 26\,\mathrm{nC}$:
-\begin{align}
-    t_{\mathrm{on}} &= \frac{26\,\mathrm{nC}}{0{,}7\,\mathrm{A}} \approx 37{,}14\,\mathrm{ns} \\
-    t_{\mathrm{off}} &= \frac{26\,\mathrm{nC}}{0{,}5\,\mathrm{A}} = 52{,}0\,\mathrm{ns}
-\end{align}
-
-Berechnung der Schaltenergien ($v_{\mathrm{i}} = 42\,\mathrm{V}$, $I_{\mathrm{Block}} = 42{,}4\,\mathrm{A}$):
-\begin{align}
-    E_{\mathrm{MOS,on}} &= \frac{1}{2} \cdot 42{,}4\,\mathrm{A} \cdot 42\,\mathrm{V} \cdot 37{,}14\,\mathrm{ns} \approx 33{,}07\,\mu\mathrm{J} \\
-    E_{\mathrm{on,rr}} &= 332\,\mathrm{nC} \cdot 42\,\mathrm{V} \approx 13{,}94\,\mu\mathrm{J} \quad \text{(Reverse Recovery)} \\
-    E_{\mathrm{on,total}} &= 33{,}07\,\mu\mathrm{J} + 13{,}94\,\mu\mathrm{J} = 47{,}01\,\mu\mathrm{J} \\
-    E_{\mathrm{MOS,off}} &= \frac{1}{2} \cdot 42{,}4\,\mathrm{A} \cdot 42\,\mathrm{V} \cdot 52{,}0\,\mathrm{ns} \approx 46{,}30\,\mu\mathrm{J}
-\end{align}
-
-Dynamische Verlustleistung ($f_{\mathrm{sw}} = 20\,\mathrm{kHz}$ bei aktiven $120^\circ$ pro Periode):
-\begin{equation}
-    P_{\mathrm{MOS,sw}} = (47{,}01\,\mu\mathrm{J} + 46{,}30\,\mu\mathrm{J}) \cdot 20000\,\mathrm{Hz} \cdot \frac{1}{3} \approx 0{,}62\,\mathrm{W}
-\end{equation}
-
-\subsection{Leitverluste Freilaufdiode (Totzeitverluste)}
-Die Diode leitet aus Sicherheitsgründen nur während der Treiber-Totzeit $t_{\mathrm{dt}} = 520\,\mathrm{ns}$.
-\begin{align}
-    d_{\mathrm{D}} &= 2 \cdot 520\,\mathrm{ns} \cdot 20\,\mathrm{kHz} = 0{,}0208 \\
-    \overline{i}_{\mathrm{D}} &= 42{,}4\,\mathrm{A} \cdot 0{,}0208 \cdot \frac{1}{3} \approx 0{,}294\,\mathrm{A} \\
-    i_{\mathrm{D,RMS}}^2 &= (42{,}4\,\mathrm{A})^2 \cdot 0{,}0208 \cdot \frac{1}{3} \approx 12{,}46\,\mathrm{A}^2
-\end{align}
-
-Leitverlustleistung mit den grafisch ermittelten Parametern ($v_{\mathrm{D,0}} = 0{,}58\,\mathrm{V}$, $r_{\mathrm{D}} = 0{,}008\,\Omega$):
-\begin{equation}
-    P_{\mathrm{D,c}} = 0{,}58\,\mathrm{V} \cdot 0{,}294\,\mathrm{A} + 0{,}008\,\Omega \cdot 12{,}46\,\mathrm{A}^2 = 0{,}171\,\mathrm{W} + 0{,}100\,\mathrm{W} \approx 0{,}27\,\mathrm{W}
-\end{equation}
-
-\newpage
-
-\input{appendix/A2_bootstrap}
-
-\newpage
+\clearpage
 
 \input{appendix/schaltplan}
+
+\clearpage
+
+\input{appendix/software}
+
+\clearpage
+
+\input{appendix/messung}
+
+\clearpage
+
+\input{appendix/arduino_temp}
 
 \end{document}

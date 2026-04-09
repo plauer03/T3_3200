@@ -6,7 +6,7 @@ Dieses Kapitel legt das theoretische Fundament für die Dimensionierung des Moto
 % ============================================================
 % 2.1 Der BLDC Motor
 % ============================================================
-\section{Der BLDC-Motor}
+\section{Grundlagen des BLDC-Motors}
 \label{sec:bldc_motor}
 
 Der BLDC-Motor stellt eine technologische Weiterentwicklung der konventionellen Gleichstrommaschine dar, bei der die mechanische Kommutierung durch eine elektronische Steuerung ersetzt wird. Im Gegensatz zu bürstenbehafteten Motoren, bei denen Kohlebürsten und ein Kollektor für die Stromwendung sorgen, erfolgt die Ansteuerung der Statorwicklungen hier in Abhängigkeit von der Rotorlage. Dies eliminiert den mechanischen Verschleiß und die Funkenbildung, was zu einer höheren Zuverlässigkeit, geringerem Wartungsaufwand und einer verbesserten thermischen Charakteristik führt, da die Verlustwärme primär im außenliegenden Stator entsteht und effektiv abgeführt werden kann \cite[S.~9]{MPS_BLDC_AN}.
@@ -26,15 +26,8 @@ Das Drehmoment entsteht durch die Lorentzkraft, die auf die bestromten Leiter im
     \centering
     \begin{tikzpicture}
         % Bild
-        \node[inner sep=0] (img) {\includegraphics[width=0.7\textwidth]{BLDC_1.png}};
+        \node[inner sep=0] (img) {\includegraphics[width=0.7\textwidth]{BLDC.png}};
         
-        % Entwurf-Banner (halbtransparent, diagonal)
-        \node at (img.center) [
-            rotate=0,
-            scale=5,
-            text opacity=0.35,
-            color=red
-        ] {DRAFT};
     \end{tikzpicture}
     \caption{Querschnitt und prinzipieller Aufbau eines BLDC-Motors. Nach \cite[Abb.~5b]{MPS_BLDC_AN}.}
     \label{fig:bldc_aufbau}
@@ -85,15 +78,10 @@ Dabei ist $k_e$ die spezifische BEMF-Konstante des Motors. Charakteristisch für
     \centering
     \begin{tikzpicture}
         % Bild
-        \node[inner sep=0] (img) {\includegraphics[width=0.7\textwidth]{BEMF.png}};
+        \node[inner sep=0] (img) {\includegraphics[width=0.7\textwidth]{BEMF1.png}};
         
         % Entwurf-Banner
-        \node at (img.center) [
-            rotate=0,
-            scale=5,
-            text opacity=0.35,
-            color=red
-        ] {DRAFT};
+
     \end{tikzpicture}
     \caption{Verlauf der BEMF und der korrespondierenden Blockströme \cite[Abb.~15]{MPS_BLDC_AN}.}
     \label{fig:bemf_trapez}

@@ -3,10 +3,10 @@
 \section{Berechnung des Bootstrap-Kondensators}
 \label{app:bootstrap}
 
-Dieser Anhang dokumentiert die vollständige, schrittweise Berechnung des Bootstrap-Kondensators $C_{\mathrm{BOOT}}$ für die High-Side-Ansteuerung des MOSFETs IPP034N08N5 über den Treiber IR2104. Alle Werte basieren auf den Datenblättern der Bauteile sowie der ON Semiconductor Applikationsnote AN-6076 \cite{AN6076}.
+Dieser Anhang dokumentiert die schrittweise Berechnung des Bootstrap-Kondensators $C_{\mathrm{BOOT}}$ für die HS-Ansteuerung des MOSFETs IPP034N08N5 über den Treiber IR2104. Alle Werte basieren auf den Datenblättern der Bauteile sowie der ON Semiconductor Applikationsschrift AN-6076 \cite{AN6076}.
 
 \subsection{Festlegung der zu liefernden Gesamtladung}
-Die benötigte Gesamtladung $Q_{\mathrm{total}}$ setzt sich primär aus drei Komponenten zusammen: der Gateladung des Transistors, dem Eigenbedarf des Treibers sowie den Leckstromverlusten:
+Die benötigte Gesamtladung $Q_{\mathrm{total}}$ setzt sich primär aus drei Komponenten zusammen. Der Gateladung des Transistors, dem Eigenbedarf des Treibers sowie den Leckstromverlusten:
 \begin{equation}
     Q_{\mathrm{total}} = Q_{\mathrm{Gate}} + Q_{\mathrm{LS}} + Q_{\mathrm{Leak}}
 \end{equation}
@@ -20,7 +20,7 @@ Aus dem Datenblatt des IPP034N08N5 entnehmen wir für eine Gate-Source-Spannung 
 \end{align}
 
 \textbf{Level-Shifter-Ladung}\\
-Der typische Ladungsverbrauch des IR2104-Level-Shifters während einer einzelnen High-Side-Einschaltphase beträgt:
+Der typische Ladungsverbrauch des IR2104-Level-Shifters während einer einzelnen HS-Einschaltphase beträgt:
 \begin{equation}
     Q_{\mathrm{LS}} \approx 3\,\mathrm{nC}
 \end{equation}

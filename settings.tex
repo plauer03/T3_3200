@@ -27,6 +27,8 @@
 \setkomafont{pagenumber}{\normalfont\sffamily\fontsize{12pt}{14pt}\selectfont}
 
 
+
+
 % --- GRUNDLAGEN & SPRACHE ---
 \usepackage{layout} 
 \usepackage{geometry}
@@ -42,12 +44,16 @@
 \usepackage{caption} % fett gedruckt Abbildung/Tabelle
 \captionsetup[figure]{labelfont=bf,textfont=normalfont}
 \captionsetup[table]{labelfont=bf,textfont=normalfont}
+\usepackage{longtable}
 
 
 \usepackage[utf8]{inputenc}
+\usepackage[scaled=0.85]{beramono} % Lädt die Schrift
 \usepackage[T1]{fontenc}
 \usepackage[ngerman]{babel}
 \usepackage[nopatch=footnote]{microtype} % Typografische Feinheiten
+\usepackage{upgreek} % mu, pi etc nicht kurisv
+\usepackage{float}
 \setlength{\marginparwidth}{2cm}
 
 
@@ -63,6 +69,9 @@
 \usepackage{afterpage}
 % \usepackage{sfmath} % full on arial
 
+% --- CODE LISTINGS
+\usepackage{listings}
+\usepackage{xcolor} % Wichtig, da wir in \lstset Farben wie "blue" oder "gray" verwenden
 
 % --- MATHE & TECHNIK ---
 \usepackage{amsmath, amssymb}
@@ -93,6 +102,7 @@
 % --- SONSTIGES ---
 \usepackage[colorlinks=true, allcolors=black, hidelinks]{hyperref}
 \usepackage[colorinlistoftodos, textsize=tiny]{todonotes}
+\renewcommand{\mu}{\upmu} % hier neu definiert
 
 
 % Metadaten-Kommandos

@@ -123,7 +123,7 @@ Die Steuerungsebene wird durch einen STM32-Mikrocontroller abgebildet. Die Firmw
 Der Gleichspannungszwischenkreis wird durch Elektrolytkondensatoren realisiert und puffert die hochfrequenten Rippleströme des Inverters, um den Akkumulator vor transienten Stromspitzen zu schützen.
 
 % ============================================================
-\section{Softwarekonzept und Zustandsautomat}
+\section{Softwarearchitektur und Zustandsautomat}
 \label{sec:softwarekonzept}
 
 Während die Hardware die physikalischen Leistungsgrenzen definiert, bestimmt die Architektur der Firmware die dynamische Reaktionsfähigkeit des Antriebs. Zur echtzeitfähigen Umsetzung der Blockkommutierung und der Systemüberwachung ist die Steuerungssoftware als deterministischer, strikt ereignisgesteuerter Zustandsautomat ausgeführt. Der Fokus liegt dabei auf minimalen Latenzen, hoher zeitlicher Deterministik sowie einem definierten Fail-Safe-Verhalten.

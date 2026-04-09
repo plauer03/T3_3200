@@ -6,8 +6,8 @@ Die folgenden Seiten dokumentieren den vollständigen hardwareseitigen Entwurf d
 % --- Seite 1: Direkt unter dem Text ---
 \begin{figure}[ht!]
     \centering
-    \includegraphics[page=1, angle=90, width=1\textwidth, height=0.85\textheight, keepaspectratio]{schaltplan_gesamt.pdf}
-    \caption{KiCad Schaltplan: Spannungsversorgung und Hierarchie-Übersicht}
+    \includegraphics[trim=25 25 25 25, clip, page=1, angle=90, width=1\textwidth, height=0.85\textheight, keepaspectratio]{schaltplan_gesamt.pdf}
+    \caption{KiCad Schaltplan: Spannungsversorgung und Block-Übersicht}
 \end{figure}
 
 \clearpage % Erzwingt neue Seite für den nächsten Plan
@@ -15,8 +15,9 @@ Die folgenden Seiten dokumentieren den vollständigen hardwareseitigen Entwurf d
 % --- Seite 2 ---
 \begin{figure}[p]
     \centering
-    \includegraphics[page=2, angle=90, width=1\textwidth, height=1\textheight, keepaspectratio]{schaltplan_gesamt.pdf}
-    \caption{KiCad Schaltplan: STM32 NUCLEO-Anbindung und IR2104 Gate-Treiber}
+    \includegraphics[trim=15 15 15 15, clip, page=2, angle=90, width=1\textwidth, height=0.99\textheight, keepaspectratio]{schaltplan_gesamt.pdf}
+    \label{fig:schaltplan-page2}
+    \caption{KiCad Schaltplan: STM32 NUCLEO und IR2104 Gate-Treiber}
 \end{figure}
 
 \clearpage
@@ -24,6 +25,7 @@ Die folgenden Seiten dokumentieren den vollständigen hardwareseitigen Entwurf d
 % --- Seite 3 ---
 \begin{figure}[p]
     \centering
-    \includegraphics[page=3, angle=90, width=1\textwidth, height=1\textheight, keepaspectratio]{schaltplan_gesamt.pdf}
+    \includegraphics[trim=15 15 15 15, clip, page=3, angle=90, width=1\textwidth, height=0.99\textheight, keepaspectratio]{schaltplan_gesamt.pdf}
+    \label{fig:schaltplan-page3}
     \caption{KiCad Schaltplan: B6-Inverterbrücke und INA181 Shunt-Messung}
 \end{figure}

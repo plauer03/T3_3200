@@ -1,0 +1,44 @@
+\section{Arduino Software zur Temperaturerfassung}
+\label{app:arduino_code}
+
+Das folgende Listing zeigt die in Abschnitt \ref{sec:thermik_eval} verwendete Software zur Aufzeichnung der Kühlkörpertemperatur. Der Code wandelt die analoge Spannung des TMP36GT9Z mittels Oversampling in eine geglättete Temperatur in Grad Celsius um und formatiert die serielle Ausgabe direkt als `.csv` Datenstrom.
+\\
+
+\begin{lstlisting}[language=C, caption=Arduino Nano Firmware für den TMP36-Sensor]
+const int sensorPin = A0;
+unsigned long lastTime = 0;
+const unsigned long interval = 10000; // 10 Sekunden Intervalle
+
+void setup() {
+  Serial.begin(9600);
+  // CSV Header
+  Serial.println("Zeit_s,Temperatur_C");
+}
+
+void loop() {
+  unsigned long currentTime = millis();
+
+  if (currentTime - lastTime >= interval) {
+    lastTime = currentTime;
+    float time_s = currentTime / 1000.0; // Zeit in Sekunden
+
+    // Oversampling zur Rauschunterdrueckung (10 Samples)
+    int samples = 10;
+    float sum = 0;
+    for (int i = 0; i < samples; i++) {
+      sum += analogRead(sensorPin);
+      delay(5);
+    }
+    float adcValue = sum / samples;
+
+    // ADC zu Spannung (5V Referenz) und Temperaturumrechnung
+    float voltage = adcValue * (5.0 / 1023.0);
+    float temperatureC = (voltage - 0.5) * 100.0;
+
+    // Datenausgabe ueber die serielle Schnittstelle
+    Serial.print(time_s, 0);
+    Serial.print(",");
+    Serial.println(temperatureC, 2);
+  }
+}
+\end{lstlisting}

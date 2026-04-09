@@ -125,7 +125,7 @@ Zur Bestimmung der Verlustleistung gemäß Gleichung \ref{eq:p_cond} muss der te
         \addplot[mark=*, color=blue] coordinates {(100,4.8)};
         \end{axis}
     \end{tikzpicture}
-    \caption{Temperaturabhängigkeit des maximalen Einschaltwiderstands. Grafisch ermittelter Arbeitspunkt bei $100^\circ\mathrm{C}$. Eigene Digitalisierung nach \cite[Diagramm~9]{DS_IPP034N08N5}.}
+    \caption{Temperaturabhängigkeit des maximalen Einschaltwiderstands. Digitalisierte Kennlinie nach \cite[Diagramm 9]{DS_IPP034N08N5}.}
     \label{fig:rdson_temp}
 \end{figure}
 Wie in Abbildung \ref{fig:rdson_temp} ersichtlich, beläuft sich der Widerstand bei der Zieltemperatur auf $R_{\mathrm{DS(on)}}(100^\circ\mathrm{C}) \approx 4{,}8\,\mathrm{m\Omega}$. Werden diese Werte in die entsprechende Verlustgleichung (vgl. Kapitel \ref{subsec:mosfet_verluste}) eingesetzt, ergibt sich für den HS-MOSFET bei maximaler Aussteuerung ($d=1$) eine statische Verlustleistung von $P_{\mathrm{HS,c}} \approx 2{,}88\,\mathrm{W}$. Der thermische Worst-Case des LS-MOSFETs tritt hingegen bei geringer Aussteuerung ($d=0$) und gleichzeitigem Anlauf-Blockstrom auf, was zu einer Verlustleistung von $P_{\mathrm{LS,c}} \approx 5{,}75\,\mathrm{W}$ führt. Diese Analyse belegt analytisch, dass das thermische Design zwingend auf die signifikant höhere Abwärme der LS-MOSFETs dimensioniert werden muss.

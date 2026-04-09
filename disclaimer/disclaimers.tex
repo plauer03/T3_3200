@@ -3,6 +3,12 @@
 \section*{Eidesstattliche Erklärung}
 Ich versichere hiermit, dass ich meine Studienarbeit mit dem Thema: „\titel“ selbstständig verfasst und keine anderen als die angegebenen Quellen und Hilfsmittel benutzt habe.
 
+% Overlay-Bild, das Text ignoriert
+\begin{tikzpicture}[remember picture, overlay]
+    % Koordinaten relativ zur unteren linken Ecke der Seite
+    \node at (11.3cm, -1cm) {\includegraphics[width=3cm]{images/image.png}};
+\end{tikzpicture}
+
 \begin{tabular}{@{}p{0.5\textwidth} p{0.35\textwidth}@{}}
     \\[0.3cm]
     {\centering Baden-Baden, \today\par} & {\centering \par} \\[-2.0ex]
@@ -27,7 +33,7 @@ GmbH.
 Die in der vorliegenden Arbeit verwendeten Personenbezeichnungen beziehen sich 
 gleichermaßen auf weibliche, männliche und diverse Personen. Auf eine 
 Doppelnennung und gegenderte Bezeichnung wird zugunsten einer besseren 
-Lesbarkeit verzichtet.1
+Lesbarkeit verzichtet.
 
 \section*{KI-Disclaimer}
 Zur sprachlichen Überarbeitung einzelner Abschnitte wurde das Sprachmodell Gemini von Google verwendet. Die inhaltliche Verantwortung liegt vollständig beim Verfasser. Es wurden ausschließlich vorhandene, selbst verfasste Inhalte überarbeitet, nicht generiert. 
